@@ -153,8 +153,10 @@ namespace TheOtherRoles.Patches {
             // Assign Santa
             if (rnd.Next(1, 101) <= CustomOptionHolder.santaSpawnRate.getSelection() * 10)
             {
-                // For now assign to crewmates only!
-                setRoleToRandomPlayer((byte)RoleId.Santa, data.crewmates, 1, false);
+                // For now assign to neutrals and crew only (except lovers)
+                var crewmatesWithoutLovers = data.crewmates.ToList();
+                //crewmatesWithoutLovers.RemoveAll(p => p.PlayerId == Lovers.lover1.PlayerId || p.PlayerId == Lovers.lover2.PlayerId);
+                setRoleToRandomPlayer((byte)RoleId.Santa, crewmatesWithoutLovers, 0, false);
             }
         }
 

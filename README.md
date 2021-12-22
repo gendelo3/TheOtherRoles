@@ -539,10 +539,10 @@ docker run -d -p 22023:22023/udp --env IMPOSTOR_AntiCheat__Enabled=false --env I
 - An (extra) copy of the current TheOtherRoles Among Us folder (i.e. a copy of your TOR folder)
 - Set the Windows environment variables AmongUs and AmongUsLatest, both pointing to the copied Among Us Folder.
 
-## Clone and Build the Repo
+## Clone and build the repository
 - clone the TOR repo from github: `git clone https://github.com/Eisbison/TheOtherRoles.git` (can be done with VisualStudio too!)
 - open the `TheOtherRoles.sln` file with VisualStudio
-- hit build and it should work (the new version can be found in `$(AmongUs)/BepinEx/plugins/TheOtherRoles.dll`)
+- hit build and it should work (the new version can be found in `$(AmongUsLatest)/BepinEx/plugins/TheOtherRoles.dll`)
 
 # Settings
 The mod adds a few new settings to Among Us (in addition to the role settings):

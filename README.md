@@ -532,6 +532,18 @@ docker run -d -p 22023:22023/udp --env IMPOSTOR_AntiCheat__Enabled=false --env I
 [Crowded-Mod](https://github.com/CrowdedMods/CrowdedMod) - Our implementation for 10+ player lobbies is inspired by the one from the **Crowded Mod Team**\
 [Goose-Goose-Duck](https://store.steampowered.com/app/1568590/Goose_Goose_Duck) - Idea for the Vulture role come from **Slushygoose**
 
+# Compiling
+
+## Prerequisites
+- Visual Studio
+- An (extra) copy of the current TheOtherRoles Among Us folder (i.e. a copy of your TOR folder)
+- Set the Windows environment variables AmongUs and AmongUsLatest, both pointing to the copied Among Us Folder.
+
+## Clone and Build the Repo
+- clone the TOR repo from github: `git clone https://github.com/Eisbison/TheOtherRoles.git` (can be done with VisualStudio too!)
+- open the `TheOtherRoles.sln` file with VisualStudio
+- hit build and it should work (the new version can be found in `$(AmongUs)/BepinEx/plugins/TheOtherRoles.dll`)
+
 # Settings
 The mod adds a few new settings to Among Us (in addition to the role settings):
 - **Streamer Mode:** You can activate the streamer mode in the Among Us settings. It hides the lobby code, the custom server ip and the custom server port. You can set a custom lobby code replacement text, by changing the *Streamer Mode Replacement Text* in the `BepInEx\config\me.eisbison.theotherroles.cfg` file.

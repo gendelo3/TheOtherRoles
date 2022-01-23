@@ -497,9 +497,10 @@ namespace TheOtherRoles
                 Doppelganger.trackerUsedTracker = Tracker.usedTracker;
             }
 
-            if (Doppelganger.copiedRole == RoleInfo.deputy || Doppelganger.copiedRole == RoleInfo.sheriff && Sheriff.formerDeputies.Contains(Sheriff.sheriff))
+            if (Doppelganger.copiedRole == RoleInfo.deputy || Doppelganger.copiedRole == RoleInfo.sheriff && Sheriff.formerDeputies.Contains(Sheriff.sheriff.PlayerId))
             {
                 Doppelganger.deputyRemainingHandcuffs = Deputy.remainingHandcuffs;
+                if (RoleInfo.sheriff == Doppelganger.copiedRole) Sheriff.formerDeputies.Add(Doppelganger.doppelganger.PlayerId);
             }
 
             // Set cooldown to max
@@ -542,7 +543,7 @@ namespace TheOtherRoles
             if (Engineer.engineer != null && Engineer.engineer == player)
                 Engineer.engineer = oldShifter;
             if (Sheriff.sheriff != null && Sheriff.sheriff == player) {
-                if (Sheriff.formerDeputies.Count != 0 && Sheriff.formerDeputies.Contains(Sheriff.sheriff)) Sheriff.formerDeputies.Add(oldShifter);  // Shifter also shifts info on promoted deputy (to get handcuffs)
+                if (Sheriff.formerDeputies.Contains(Sheriff.sheriff.PlayerId)) Sheriff.formerDeputies.Add(oldShifter.PlayerId);  // Shifter also shifts info on promoted deputy (to get handcuffs)
                 Sheriff.sheriff = oldShifter;
             }
             if (Deputy.deputy != null && Deputy.deputy == player)
@@ -658,8 +659,8 @@ namespace TheOtherRoles
 
         public static void deputyUsedHandcuffs(byte targetId, byte deputyId)
         {
-            if (Deputy.deputy != null && deputyId == Deputy.deputy.PlayerId) Deputy.remainingHandcuffs--;
-            else Doppelganger.deputyRemainingHandcuffs--;
+            if (Doppelganger.doppelganger != null && deputyId == Doppelganger.doppelganger.PlayerId) Doppelganger.deputyRemainingHandcuffs--;
+            else Deputy.remainingHandcuffs--;
             Deputy.handcuffedPlayers.Add(targetId);
         }
 
@@ -668,12 +669,12 @@ namespace TheOtherRoles
             // figure out, which doppelganger promotes!
             if (Deputy.deputy != null && !Deputy.deputy.Data.IsDead) {
                 Sheriff.replaceCurrentSheriff(Deputy.deputy);
-                Sheriff.formerDeputies.Add(Deputy.deputy);
+                Sheriff.formerDeputies.Add(Deputy.deputy.PlayerId);
                 Deputy.deputy = null;
                 // No clear and reload, as we need to keep the number of handcuffs left etc
             } else { // Doppelganger promotes!
                 Doppelganger.copiedRole = RoleInfo.sheriff;
-                Sheriff.formerDeputies.Add(Doppelganger.doppelganger);
+                Sheriff.formerDeputies.Add(Doppelganger.doppelganger.PlayerId);
             }
         }
 

@@ -326,7 +326,6 @@ namespace TheOtherRoles
                     byte targetId = 0;
                     if (PlayerControl.LocalPlayer == Doppelganger.doppelganger) targetId = Doppelganger.currentTarget.PlayerId;
                     else targetId = Sheriff.sheriff == PlayerControl.LocalPlayer ? Sheriff.currentTarget.PlayerId : Deputy.currentTarget.PlayerId;  // If the deputy is now the sheriff, sheriffs target, else deputies target
-                    
 
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.DeputyUsedHandcuffs, Hazel.SendOption.Reliable, -1);
                     writer.Write(targetId);
@@ -336,11 +335,16 @@ namespace TheOtherRoles
                     Deputy.currentTarget = null;
                     deputyHandcuffButton.Timer = deputyHandcuffButton.MaxTimer;
                 },
-                () => { return (Deputy.deputy != null && Deputy.deputy == PlayerControl.LocalPlayer || Doppelganger.isRoleAndLocalPlayer(RoleInfo.deputy) || ((Sheriff.sheriff != null && Sheriff.sheriff == PlayerControl.LocalPlayer || Doppelganger.isRoleAndLocalPlayer(RoleInfo.sheriff)) && Sheriff.formerDeputies.Contains(PlayerControl.LocalPlayer) && Deputy.keepsHandcuffsOnPromotion)) && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { // Make sure this works, by using variables instead of nested nested nested SAT problem ;)
+                    bool isDeputy = Deputy.deputy != null && Deputy.deputy == PlayerControl.LocalPlayer || Doppelganger.isRoleAndLocalPlayer(RoleInfo.deputy);
+                    bool isSheriff = Sheriff.sheriff != null && Sheriff.sheriff == PlayerControl.LocalPlayer || Doppelganger.isRoleAndLocalPlayer(RoleInfo.sheriff);
+                    bool isFormerDeputy = Sheriff.formerDeputies.Contains(PlayerControl.LocalPlayer.PlayerId);
+                    return (isDeputy || isSheriff && isFormerDeputy && Deputy.keepsHandcuffsOnPromotion) && !PlayerControl.LocalPlayer.Data.IsDead;
+                },
                 () => {
-                    var remainingCuffs = PlayerControl.LocalPlayer == Deputy.deputy ? Deputy.remainingHandcuffs : Doppelganger.deputyRemainingHandcuffs;
+                    var remainingCuffs = PlayerControl.LocalPlayer == Doppelganger.doppelganger ? Doppelganger.deputyRemainingHandcuffs : Deputy.remainingHandcuffs;
                     if (deputyButtonHandcuffsText != null) deputyButtonHandcuffsText.text = $"{remainingCuffs}";
-                    return (((Deputy.deputy != null && Deputy.deputy == PlayerControl.LocalPlayer && Deputy.currentTarget || Sheriff.sheriff != null && Sheriff.sheriff == PlayerControl.LocalPlayer && Sheriff.formerDeputies.Contains(PlayerControl.LocalPlayer) && Sheriff.currentTarget) && Deputy.remainingHandcuffs > 0 || Doppelganger.currentTarget && Doppelganger.deputyRemainingHandcuffs > 0) && PlayerControl.LocalPlayer.CanMove);
+                    return (((Deputy.deputy != null && Deputy.deputy == PlayerControl.LocalPlayer && Deputy.currentTarget || Sheriff.sheriff != null && Sheriff.sheriff == PlayerControl.LocalPlayer && Sheriff.formerDeputies.Contains(PlayerControl.LocalPlayer.PlayerId) && Sheriff.currentTarget) && Deputy.remainingHandcuffs > 0 || Doppelganger.currentTarget && Doppelganger.deputyRemainingHandcuffs > 0) && PlayerControl.LocalPlayer.CanMove);
                 },
                 () => { deputyHandcuffButton.Timer = deputyHandcuffButton.MaxTimer; },
                 Deputy.getButtonSprite(),

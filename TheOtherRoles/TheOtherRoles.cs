@@ -157,7 +157,7 @@ namespace TheOtherRoles
 
             public static PlayerControl currentTarget;
 
-            public static List<PlayerControl> formerDeputies;  // Needed for keeping handcuffs + shifting
+            public static List<byte> formerDeputies;  // Needed for keeping handcuffs + shifting
             public static PlayerControl formerSheriff;  // When deputy gets promoted...
 
             public static void replaceCurrentSheriff(PlayerControl deputy)
@@ -171,7 +171,7 @@ namespace TheOtherRoles
             public static void clearAndReload() {
                 sheriff = null;
                 currentTarget = null;
-                formerDeputies = new List<PlayerControl>();
+                formerDeputies = new List<byte>();
                 formerSheriff = null;
                 cooldown = CustomOptionHolder.sheriffCooldown.getFloat();
                 canKillNeutrals = CustomOptionHolder.sheriffCanKillNeutrals.getBool();

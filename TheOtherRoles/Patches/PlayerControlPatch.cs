@@ -154,6 +154,28 @@ namespace TheOtherRoles.Patches {
             setPlayerOutline(Sheriff.currentTarget, Sheriff.color);
         }
 
+        static void deputySetTarget()
+        {
+            if (Deputy.deputy == null || Deputy.deputy != PlayerControl.LocalPlayer) return;
+            Deputy.currentTarget = setTarget();
+            setPlayerOutline(Deputy.currentTarget, Deputy.color);
+        }
+
+        public static void deputyCheckPromotion(bool isMeeting=false)
+        {
+            // If LocalPlayer is Deputy, the Sheriff is disconnected and Deputy promotion is enabled, then trigger promotion
+            if (Deputy.deputy == null || Deputy.deputy != PlayerControl.LocalPlayer) {
+                if (!Doppelganger.isRoleAndLocalPlayer(RoleInfo.deputy) || Deputy.deputy != null && !Deputy.deputy.Data.IsDead) return; // Doppelganger promotes after normal deputy!!
+            }
+            if (Deputy.promotesToSheriff == 0 || PlayerControl.LocalPlayer.Data.IsDead == true || Deputy.promotesToSheriff == 2 && !isMeeting) return;
+            if (Sheriff.sheriff == null || Sheriff.sheriff?.Data?.Disconnected == true || Sheriff.sheriff.Data.IsDead)
+            {
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.DeputyPromotes, Hazel.SendOption.Reliable, -1);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                RPCProcedure.deputyPromotes();
+            }
+        }
+
         static void trackerSetTarget() {
             if (Tracker.tracker == null || Tracker.tracker != PlayerControl.LocalPlayer) return;
             Tracker.currentTarget = setTarget();
@@ -246,6 +268,19 @@ namespace TheOtherRoles.Patches {
             if (Spy.spy != null) untargetables.Add(Spy.spy);
             Eraser.currentTarget = setTarget(onlyCrewmates: !Eraser.canEraseAnyone, untargetablePlayers: Eraser.canEraseAnyone ? new List<PlayerControl>() : untargetables);
             setPlayerOutline(Eraser.currentTarget, Eraser.color);
+        }
+
+        static void deputyUpdate()
+        {
+            if (PlayerControl.LocalPlayer == null || !Deputy.handcuffedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId)) return;
+            
+            if (Deputy.handcuffedKnows[PlayerControl.LocalPlayer.PlayerId] <= 0)
+            {
+                Deputy.handcuffedKnows.Remove(PlayerControl.LocalPlayer.PlayerId);
+                // Resets the buttons
+                Deputy.setHandcuffedKnows(false);
+            }
+            
         }
 
         static void engineerUpdate() {
@@ -497,6 +532,17 @@ namespace TheOtherRoles.Patches {
 
         }
 
+        public static void securityGuardUpdate() {
+            if (SecurityGuard.securityGuard == null || PlayerControl.LocalPlayer != SecurityGuard.securityGuard) {
+                if (!Doppelganger.isRoleAndLocalPlayer(RoleInfo.securityGuard) || PlayerControl.LocalPlayer.Data.IsDead) return;
+            }
+            var (playerCompleted, _) = Doppelganger.isRoleAndLocalPlayer(RoleInfo.securityGuard) ? TasksHandler.taskInfo(Doppelganger.doppelganger.Data) : TasksHandler.taskInfo(SecurityGuard.securityGuard.Data);
+            if (playerCompleted == SecurityGuard.rechargedTasks) {
+                SecurityGuard.rechargedTasks += SecurityGuard.rechargeTasksNumber;
+                if (SecurityGuard.maxCharges > SecurityGuard.charges) SecurityGuard.charges++;
+            }
+        }
+
         public static void arsonistSetTarget() {
             if (Arsonist.arsonist == null || Arsonist.arsonist != PlayerControl.LocalPlayer) return;
             List<PlayerControl> untargetables;
@@ -598,8 +644,9 @@ namespace TheOtherRoles.Patches {
                 BountyHunter.arrowUpdateTimer = 0f; // Force arrow to update
                 BountyHunter.bountyUpdateTimer = BountyHunter.bountyDuration;
                 var possibleTargets = new List<PlayerControl>();
+                if (Lovers.getPartner(BountyHunter.bountyHunter) != null) 
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
-                    if (!p.Data.IsDead && !p.Data.Disconnected && p != p.Data.Role.IsImpostor && p != Spy.spy && (p != Mini.mini || Mini.isGrownUp())) possibleTargets.Add(p);
+                    if (!p.Data.IsDead && !p.Data.Disconnected && p != p.Data.Role.IsImpostor && p != Spy.spy && (p != Mini.mini || Mini.isGrownUp()) && (Lovers.getPartner(BountyHunter.bountyHunter) == null || p != Lovers.getPartner(BountyHunter.bountyHunter))) possibleTargets.Add(p);
                 }
                 BountyHunter.bounty = possibleTargets[TheOtherRoles.rnd.Next(0, possibleTargets.Count)];
                 if (BountyHunter.bounty == null) return;
@@ -833,6 +880,9 @@ namespace TheOtherRoles.Patches {
                 shifterSetTarget();
                 // Sheriff
                 sheriffSetTarget();
+                // Deputy
+                deputySetTarget();
+                deputyUpdate();
                 // Detective
                 detectiveUpdateFootPrints();
                 // Tracker
@@ -854,10 +904,13 @@ namespace TheOtherRoles.Patches {
                 impostorSetTarget();
                 // Warlock
                 warlockSetTarget();
+                // Check for deputy promotion on Sheriff disconnect
+                deputyCheckPromotion();
                 // Check for sidekick promotion on Jackal disconnect
                 sidekickCheckPromotion();
                 // SecurityGuard
                 securityGuardSetTarget();
+                securityGuardUpdate();
                 // Arsonist
                 arsonistSetTarget();
                 // Snitch
@@ -990,7 +1043,7 @@ namespace TheOtherRoles.Patches {
                     otherLover.MurderPlayer(otherLover);
                 }
             }
-            
+
             // Sidekick promotion trigger on murder
             if (Sidekick.promotesToJackal && Sidekick.sidekick != null && !Sidekick.sidekick.Data.IsDead && target == Jackal.jackal && Jackal.jackal == PlayerControl.LocalPlayer) {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SidekickPromotes, Hazel.SendOption.Reliable, -1);

@@ -18,6 +18,7 @@ namespace TheOtherRoles
         Mayor,
         Engineer,
         Sheriff,
+        Deputy,
         Lighter,
         Godfather,
         Mafioso,
@@ -89,6 +90,8 @@ namespace TheOtherRoles
         TrackerUsedTracker,
         VampireSetBitten,
         PlaceGarlic,
+        DeputyUsedHandcuffs,
+        DeputyPromotes,
         JackalCreatesSidekick,
         SidekickPromotes,
         ErasePlayerRoles,
@@ -164,6 +167,9 @@ namespace TheOtherRoles
                         break;
                     case RoleId.Sheriff:
                         Sheriff.sheriff = player;
+                        break;
+                    case RoleId.Deputy:
+                        Deputy.deputy = player;
                         break;
                     case RoleId.Lighter:
                         Lighter.lighter = player;
@@ -485,10 +491,15 @@ namespace TheOtherRoles
 
             if (Doppelganger.copiedRole == RoleInfo.securityGuard)  // copy screws
                 Doppelganger.securityGuardRemainingScrews = SecurityGuard.remainingScrews;
-            if (Doppelganger.copiedRole == RoleInfo.tracker)
+                // Maybe todo: calculate charges on copy...
             {
                 Doppelganger.trackerTracked = Tracker.tracked;
                 Doppelganger.trackerUsedTracker = Tracker.usedTracker;
+            }
+
+            if (Doppelganger.copiedRole == RoleInfo.deputy || Doppelganger.copiedRole == RoleInfo.sheriff && Sheriff.formerDeputies.Contains(Sheriff.sheriff))
+            {
+                Doppelganger.deputyRemainingHandcuffs = Deputy.remainingHandcuffs;
             }
 
             // Set cooldown to max
@@ -530,8 +541,12 @@ namespace TheOtherRoles
                 Mayor.mayor = oldShifter;
             if (Engineer.engineer != null && Engineer.engineer == player)
                 Engineer.engineer = oldShifter;
-            if (Sheriff.sheriff != null && Sheriff.sheriff == player)
+            if (Sheriff.sheriff != null && Sheriff.sheriff == player) {
+                if (Sheriff.formerDeputies.Count != 0 && Sheriff.formerDeputies.Contains(Sheriff.sheriff)) Sheriff.formerDeputies.Add(oldShifter);  // Shifter also shifts info on promoted deputy (to get handcuffs)
                 Sheriff.sheriff = oldShifter;
+            }
+            if (Deputy.deputy != null && Deputy.deputy == player)
+                Deputy.deputy = oldShifter;
             if (Lighter.lighter != null && Lighter.lighter == player)
                 Lighter.lighter = oldShifter;
             if (Detective.detective != null && Detective.detective == player)
@@ -641,6 +656,27 @@ namespace TheOtherRoles
             
         }
 
+        public static void deputyUsedHandcuffs(byte targetId, byte deputyId)
+        {
+            if (Deputy.deputy != null && deputyId == Deputy.deputy.PlayerId) Deputy.remainingHandcuffs--;
+            else Doppelganger.deputyRemainingHandcuffs--;
+            Deputy.handcuffedPlayers.Add(targetId);
+        }
+
+        public static void deputyPromotes()
+        {
+            // figure out, which doppelganger promotes!
+            if (Deputy.deputy != null && !Deputy.deputy.Data.IsDead) {
+                Sheriff.replaceCurrentSheriff(Deputy.deputy);
+                Sheriff.formerDeputies.Add(Deputy.deputy);
+                Deputy.deputy = null;
+                // No clear and reload, as we need to keep the number of handcuffs left etc
+            } else { // Doppelganger promotes!
+                Doppelganger.copiedRole = RoleInfo.sheriff;
+                Sheriff.formerDeputies.Add(Doppelganger.doppelganger);
+            }
+        }
+
         public static void jackalCreatesSidekick(byte targetId) {
             PlayerControl player = Helpers.playerById(targetId);
             if (player == null) return;
@@ -671,6 +707,7 @@ namespace TheOtherRoles
             if (player == Mayor.mayor) Mayor.clearAndReload();
             if (player == Engineer.engineer) Engineer.clearAndReload();
             if (player == Sheriff.sheriff) Sheriff.clearAndReload();
+            if (player == Deputy.deputy) Deputy.clearAndReload();
             if (player == Lighter.lighter) Lighter.clearAndReload();
             if (player == Detective.detective) Detective.clearAndReload();
             if (player == TimeMaster.timeMaster) TimeMaster.clearAndReload();
@@ -887,6 +924,14 @@ namespace TheOtherRoles
                         pva.SetDead(pva.DidReport, true);
                         pva.Overlay.gameObject.SetActive(true);
                     }
+
+                    //Give players back their vote if target is shot dead
+                    if (pva.VotedFor != dyingTargetId || pva.VotedFor != partnerId) continue;
+                    pva.UnsetVote();
+                    var voteAreaPlayer = Helpers.playerById(pva.TargetPlayerId);
+                    if (!voteAreaPlayer.AmOwner) continue;
+                    MeetingHud.Instance.ClearVote();
+
                 }
                 if (AmongUsClient.Instance.AmHost) 
                     MeetingHud.Instance.CheckForEndVoting();
@@ -1032,6 +1077,13 @@ namespace TheOtherRoles
                     break;
                 case (byte)CustomRPC.TrackerUsedTracker:
                     RPCProcedure.trackerUsedTracker(reader.ReadByte(), reader.ReadByte());
+
+                    break;               
+                case (byte)CustomRPC.DeputyUsedHandcuffs:
+                    RPCProcedure.deputyUsedHandcuffs(reader.ReadByte(), reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.DeputyPromotes:
+                    RPCProcedure.deputyPromotes();
                     break;
                 case (byte)CustomRPC.JackalCreatesSidekick:
                     RPCProcedure.jackalCreatesSidekick(reader.ReadByte());

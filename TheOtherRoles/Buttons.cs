@@ -449,6 +449,7 @@ namespace TheOtherRoles
                     writer.Write(Doppelganger.currentTarget.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.setFutureDoppelgangerTarget(Doppelganger.currentTarget.PlayerId);
+                    SoundEffectsManager.play("shifterShift");
                 },
                 () => { return Doppelganger.doppelganger != null && Doppelganger.doppelganger == PlayerControl.LocalPlayer
                         && !PlayerControl.LocalPlayer.Data.IsDead && !Doppelganger.hasCopied; },
@@ -686,9 +687,11 @@ namespace TheOtherRoles
 
             trackerTrackCorpsesButton = new CustomButton(
 
-                () => {
+                () =>
+                {
                     Tracker.corpsesTrackingTimer = Tracker.corpsesTrackingDuration;
                     SoundEffectsManager.play("trackerTrackCorpses");
+                },
                 () => { return (Tracker.tracker != null && Tracker.tracker == PlayerControl.LocalPlayer || Doppelganger.isRoleAndLocalPlayer(RoleInfo.tracker)) && !PlayerControl.LocalPlayer.Data.IsDead && Tracker.canTrackCorpses; },
                 () => { return PlayerControl.LocalPlayer.CanMove; },
                 () => {

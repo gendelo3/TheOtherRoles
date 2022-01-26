@@ -368,11 +368,10 @@ namespace TheOtherRoles
 
         public static void timeMasterRewindTime(byte masterId) {
             TimeMaster.shieldActive = false; // Shield is no longer active when rewinding
+            SoundEffectsManager.stop("timemasterShield");  // Shield sound stopped when rewinding
+
             Doppelganger.timeMasterShieldActive = false; // Doesn't hurt to deactivate this one too.
-            
-            /*if(TimeMaster.timeMaster != null && TimeMaster.timeMaster == PlayerControl.LocalPlayer) {
-                resetTimeMasterButton();
-            }*/
+
             if (masterId == PlayerControl.LocalPlayer.PlayerId)
             {
                 resetTimeMasterButton();

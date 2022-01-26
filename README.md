@@ -1,3 +1,7 @@
+# This is only a fork of the original mod with some added features / development branches!
+(Check out the original!)
+
+
 ![eisbison banner](./Images/TOR_logo.png)
 <p align="center"><a href="https://github.com/Eisbison/TheOtherRoles/releases/"><img src="https://badgen.net/github/release/eisbison/theotherroles"></a></p>
 
@@ -35,6 +39,7 @@ Even more roles are coming soon :)
 |  |  [Tracker](#tracker) |  |  |
 |  |  [Bait](#bait) |  |
 |  |  [Medium](#medium) |  |
+|  |  [Doppelganger](#doppelganger) |  |
 
 The [Role Assignment](#role-assignment) sections explains how the roles are being distributed among the players.
 
@@ -48,7 +53,7 @@ The [Role Assignment](#role-assignment) sections explains how the roles are bein
 | 2021.12.15s| v3.3.2| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.3.2/TheOtherRoles.zip)
 | 2021.12.14s| v3.3.1| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.3.1/TheOtherRoles.zip)
 | 2021.12.14s| v3.3.0| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.3.0/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.2.4| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.4/TheOtherRoles.zip)
+| 2021.11.9.5s| v3.2.4| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.4/TheOtherRoles.zip)| [Inofficial Download](https://github.com/gendelo3/TheOtherRolesInofficial/releases/download/v3.2.4/TheOtherRolesInofficial_3.2.4.zip)
 | 2021.11.9.5s| v3.2.3| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.3/TheOtherRoles.zip)
 | 2021.11.9.5s| v3.2.2| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.2/TheOtherRoles.zip)
 | 2021.11.9.5s| v3.2.1| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.1/TheOtherRoles.zip)
@@ -1161,6 +1166,8 @@ The **special interactions** with the Shifter are noted in the chapters of the r
 - One time use abilities (e.g. shielding a player or Engineer sabotage fix) can only used by one player in the game (i.e. the Shifter
 can only use them, if the previous player did not use them before)
 
+- If there is a Doppelganger in the game, there can't be a Shifter!
+
 ### Game Options
 | Name | Description
 |----------|:-------------:|
@@ -1444,6 +1451,39 @@ The Pursuer is still a neutral role, but has a different goal to win the game; t
 In order to achieve this goal, the Pursuer has an ability called "Blank", where they can fill a killers (this also includes the Sheriff) weapon with a blank. So, if the killer attempts to kill someone, the killer will miss their target, and their cooldowns will be triggered as usual.
 If the killer fires the "Blank", shields (e.g. Medic shield or Time Master shield) will not be triggered.
 The Pursuer has tasks (which can already be done while being a Lawyer), that count towards the task win for the Crewmates. If the Pursuer dies, their tasks won't be counted anymore.
+
+
+
+
+
+-----------------------
+
+
+## Doppelganger
+### **Team: Crewmates**
+\
+Created by  [gendelo3](https://github.com/gendelo3), idea by Mr_Fluff\
+\
+The Doppelganger is a Crewmate that can copy another crewmates role, similar to the shifter (the new role will be his second role and added **after the next meeting**).
+
+- If there is a Shifter in the game, there can't be a Doppelganger! (and vice versa)
+
+**NOTE:**
+
+- Copy an impostor or neutral: die (after the next meeting)
+- Copy Spy: become a crewmate
+- Copy any other crewmate role: Become their double with the same abilities. (It will be an exact copy **at the time of the meeting**. E.g. if the engineer has already used their fix, the doppelganger will not have a fix. If the security guard has 3 screws left, the doppelganger will also have 3 screws, that they can use separately. If the medic has used their shield, the doppelganger cannot distribute another shield, but becomes a second medic for the shielded player)
+- The medic doppelganger cannot shield the original medic, the other way around is possible. (Cyclic shields would be overpowered)
+- The doppelganger swapper will swap **after** the original swapper, so 3-way swaps are possible.
+- The doppelganger deputy will only be promoted, if the original deputy is dead or erased. (The original deputy will be promoted first!)
+- The doppelganger can be guessed for both roles!
+
+### Game Options
+| Name | Description
+|----------|:-------------:|
+| Doppelganger Spawn Chance | -
+| Doppelganger Can Be Guesser | if set to true, the doppelganger can copy the Nice Guesser role
+
 
 # Source code
 It's bad I know, this is a side project and my second week of modding. So there are no best practices around here.

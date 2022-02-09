@@ -492,6 +492,8 @@ namespace TheOtherRoles {
             blockedRolePairings.Add((byte)RoleId.Mini, new[] { (byte)RoleId.Spy });
             blockedRolePairings.Add((byte)RoleId.Shifter, new[] { (byte)RoleId.Doppelganger });
             blockedRolePairings.Add((byte)RoleId.Doppelganger, new[] { (byte)RoleId.Shifter });
+            blockedRolePairings.Add((byte)RoleId.Vulture, new [] { (byte)RoleId.Cleaner});
+            blockedRolePairings.Add((byte)RoleId.Cleaner, new [] { (byte)RoleId.Vulture});
         }
     }
 }

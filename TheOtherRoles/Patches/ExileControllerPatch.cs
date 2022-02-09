@@ -20,8 +20,18 @@ namespace TheOtherRoles.Patches {
             if (Medic.medic != null && AmongUsClient.Instance.AmHost && Medic.futureShielded != null && !Medic.medic.Data.IsDead) { // We need to send the RPC from the host here, to make sure that the order of shifting and setting the shield is correct(for that reason the futureShifted and futureShielded are being synced)
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MedicSetShielded, Hazel.SendOption.Reliable, -1);
                 writer.Write(Medic.futureShielded.PlayerId);
+                writer.Write(Medic.medic.PlayerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.medicSetShielded(Medic.futureShielded.PlayerId);
+                RPCProcedure.medicSetShielded(Medic.futureShielded.PlayerId, Medic.medic.PlayerId);
+            }
+            // Doppelganger Medic shield
+            if (Doppelganger.doppelganger != null && AmongUsClient.Instance.AmHost && Doppelganger.medicFutureShielded != null && !Doppelganger.doppelganger.Data.IsDead)
+            { // We need to send the RPC from the host here, to make sure that the order of shifting and setting the shield is correct(for that reason the futureShifted and futureShielded are being synced)
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MedicSetShielded, Hazel.SendOption.Reliable, -1);
+                writer.Write(Doppelganger.medicFutureShielded.PlayerId);
+                writer.Write(Doppelganger.doppelganger.PlayerId);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                RPCProcedure.medicSetShielded(Doppelganger.medicFutureShielded.PlayerId, Doppelganger.doppelganger.PlayerId);
             }
 
             // Shifter shift
@@ -32,6 +42,16 @@ namespace TheOtherRoles.Patches {
                 RPCProcedure.shifterShift(Shifter.futureShift.PlayerId);
             }
             Shifter.futureShift = null;
+            
+            // Doppelganger Copy
+            if (Doppelganger.doppelganger != null && AmongUsClient.Instance.AmHost && Doppelganger.copyTarget != null)
+            { // We need to send the RPC from the host here, to make sure that the order of shifting, copying and erasing is correct (for that reason the futureShifted, copyTarget and futureErased are being synced)
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.DoppelgangerCopy, Hazel.SendOption.Reliable, -1);
+                writer.Write(Doppelganger.copyTarget.PlayerId);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                RPCProcedure.doppelgangerCopy(Doppelganger.copyTarget.PlayerId);
+            }
+            Doppelganger.copyTarget = null;
 
             // Eraser erase
             if (Eraser.eraser != null && AmongUsClient.Instance.AmHost && Eraser.futureErased != null) {  // We need to send the RPC from the host here, to make sure that the order of shifting and erasing is correct (for that reason the futureShifted and futureErased are being synced)
@@ -128,7 +148,8 @@ namespace TheOtherRoles.Patches {
             }
 
             // Seer spawn souls
-            if (Seer.deadBodyPositions != null && Seer.seer != null && PlayerControl.LocalPlayer == Seer.seer && (Seer.mode == 0 || Seer.mode == 2)) {
+            if (Seer.deadBodyPositions != null && (Seer.seer != null && PlayerControl.LocalPlayer == Seer.seer 
+                                                   || Doppelganger.isRoleAndLocalPlayer(RoleInfo.seer)) && (Seer.mode == 0 || Seer.mode == 2)) {
                 foreach (Vector3 pos in Seer.deadBodyPositions) {
                     GameObject soul = new GameObject();
                     soul.transform.position = pos;
@@ -180,7 +201,7 @@ namespace TheOtherRoles.Patches {
                 BountyHunter.bountyUpdateTimer = 0f;
 
             // Medium spawn souls
-            if (Medium.medium != null && PlayerControl.LocalPlayer == Medium.medium) {
+            if (Medium.medium != null && PlayerControl.LocalPlayer == Medium.medium || Doppelganger.isRoleAndLocalPlayer(RoleInfo.medium)) {
                 if (Medium.souls != null) {
                     foreach (SpriteRenderer sr in Medium.souls) UnityEngine.Object.Destroy(sr.gameObject);
                     Medium.souls = new List<SpriteRenderer>();

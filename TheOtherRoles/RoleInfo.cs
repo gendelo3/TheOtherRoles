@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheOtherRoles
 {
-    class RoleInfo {
+    public class RoleInfo {
         public Color color;
         public string name;
         public string introDescription;
@@ -64,6 +64,9 @@ namespace TheOtherRoles
         public static RoleInfo medium = new RoleInfo("Medium", Medium.color, "Question the souls of the dead to gain informations", "Question the souls", RoleId.Medium);
         public static RoleInfo lawyer = new RoleInfo("Lawyer", Lawyer.color, "Defend your client", "Defend your client", RoleId.Lawyer, true);
         public static RoleInfo pursuer = new RoleInfo("Pursuer", Pursuer.color, "Blank the Impostors", "Blank the Impostors", RoleId.Pursuer);
+        public static RoleInfo doppelganger = new RoleInfo("Doppelganger", Doppelganger.color, "Become someones Role-Double", "Become someones Role-Double", RoleId.Doppelganger);
+        public static RoleInfo doppelgangerShort = new RoleInfo("#2", Doppelganger.color, "You're a copy", "You're a copy", RoleId.Doppelganger);
+
         public static RoleInfo impostor = new RoleInfo("Impostor", Palette.ImpostorRed, Helpers.cs(Palette.ImpostorRed, "Sabotage and kill everyone"), "Sabotage and kill everyone", RoleId.Impostor);
         public static RoleInfo crewmate = new RoleInfo("Crewmate", Color.white, "Find the Impostors", "Find the Impostors", RoleId.Crewmate);
         public static RoleInfo lover = new RoleInfo("Lover", Lovers.color, $"You are in love", $"You are in love", RoleId.Lover);
@@ -113,7 +116,8 @@ namespace TheOtherRoles
             spy,
             securityGuard,
             bait,
-            medium
+            medium,
+            doppelganger
         };
 
         public static List<RoleInfo> getRoleInfoForPlayer(PlayerControl p) {
@@ -161,6 +165,18 @@ namespace TheOtherRoles
             if (p == Medium.medium) infos.Add(medium);
             if (p == Lawyer.lawyer) infos.Add(lawyer);
             if (p == Pursuer.pursuer) infos.Add(pursuer);
+            if (p == Doppelganger.doppelganger)
+            {
+                if (Doppelganger.copiedRole != null)
+                {
+                    infos.Add(Doppelganger.copiedRole);
+                    infos.Add(doppelgangerShort);
+                }
+                else
+                {
+                    infos.Add(doppelganger);
+                }
+            }
 
             // Default roles
             if (infos.Count == 0 && p.Data.Role.IsImpostor) infos.Add(impostor); // Just Impostor

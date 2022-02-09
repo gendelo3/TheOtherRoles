@@ -115,6 +115,7 @@ namespace TheOtherRoles {
             return res;
         }
 
+
         public static void handleVampireBiteOnBodyReport() {
             // Murder the bitten player and reset bitten (regardless whether the kill was successful or not)
             Helpers.checkMuderAttemptAndKill(Vampire.vampire, Vampire.bitten, true, false);
@@ -284,6 +285,8 @@ namespace TheOtherRoles {
             bool roleCouldUse = false;
             if (Engineer.engineer != null && Engineer.engineer == player)
                 roleCouldUse = true;
+            if (Doppelganger.doppelganger != null && Doppelganger.doppelganger == player && Doppelganger.copiedRole == RoleInfo.engineer)
+                roleCouldUse = true;
             else if (Jackal.canUseVents && Jackal.jackal != null && Jackal.jackal == player)
                 roleCouldUse = true;
             else if (Sidekick.canUseVents && Sidekick.sidekick != null && Sidekick.sidekick == player)
@@ -323,8 +326,10 @@ namespace TheOtherRoles {
             // Block impostor shielded kill
             if (Medic.shielded != null && Medic.shielded == target) {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.ShieldedMurderAttempt, Hazel.SendOption.Reliable, -1);
+                writer.Write(target.PlayerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.shieldedMurderAttempt();
+
+                RPCProcedure.shieldedMurderAttempt(target.PlayerId);
                 return MurderAttemptResult.SuppressKill;
             }
 
@@ -334,11 +339,14 @@ namespace TheOtherRoles {
             }
 
             // Block Time Master with time shield kill
-            else if (TimeMaster.shieldActive && TimeMaster.timeMaster != null && TimeMaster.timeMaster == target) {
+            else if (TimeMaster.shieldActive && TimeMaster.timeMaster != null && TimeMaster.timeMaster == target
+                     || Doppelganger.doppelganger != null && Doppelganger.copiedRole == RoleInfo.timeMaster
+                        && Doppelganger.timeMasterShieldActive && Doppelganger.doppelganger == target) {
                 if (!blockRewind) { // Only rewind the attempt was not called because a meeting startet 
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.TimeMasterRewindTime, Hazel.SendOption.Reliable, -1);
+                    writer.Write((byte)target.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.timeMasterRewindTime();
+                    RPCProcedure.timeMasterRewindTime(target.PlayerId);
                 }
                 return MurderAttemptResult.SuppressKill;
             }

@@ -215,6 +215,7 @@ namespace TheEpicRoles {
 
         public static CustomOption doppelgangerSpawnRate;
         public static CustomOption doppelgangerCanBeGuesser;
+        public static CustomOption doppelgangerDiesBeforeMeeting;
 
         public static CustomOption vultureSpawnRate;
         public static CustomOption vultureCooldown;
@@ -487,8 +488,10 @@ namespace TheEpicRoles {
             baitHighlightAllVents = CustomOption.Create(331, "Highlight All Vents If A Vent Is Occupied", "crewmate", false, baitSpawnRate);
             baitReportDelay = CustomOption.Create(332, "Bait Report Delay", "crewmate", 0f, 0f, 10f, 1f, baitSpawnRate);
             baitShowKillFlash = CustomOption.Create(333, "Warn The Killer With A Flash", "crewmate", true, baitSpawnRate);
+
             doppelgangerSpawnRate = CustomOption.Create(340, cs(Doppelganger.color, "Doppelganger"), "crewmate", rates, null, true);
-            doppelgangerCanBeGuesser = CustomOption.Create(341, "Doppelganger can be guesser", "crewmate", true, doppelgangerSpawnRate);
+            doppelgangerCanBeGuesser = CustomOption.Create(341, "Doppelganger Can Be Guesser", "crewmate", true, doppelgangerSpawnRate);
+            doppelgangerDiesBeforeMeeting = CustomOption.Create(342, "Doppelganger Dies Before Meeting", "crewmate", false, doppelgangerSpawnRate);
 
             mediumSpawnRate = CustomOption.Create(360, cs(Medium.color, "Medium"), "crewmate", rates, null, true);
             mediumCooldown = CustomOption.Create(361, "Medium Questioning Cooldown", "crewmate", 30f, 5f, 120f, 5f, mediumSpawnRate);

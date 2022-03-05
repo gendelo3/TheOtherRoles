@@ -581,6 +581,19 @@ namespace TheEpicRoles.Patches {
                     }
                 }
             }
+
+            // Add Doppelganger overlay for bad shift
+            if (Doppelganger.doppelganger != null && Doppelganger.copiedBadRole) {
+                foreach (PlayerVoteArea pva in __instance.playerStates) {
+                    if (Doppelganger.doppelganger.PlayerId == pva.TargetPlayerId) {
+                        SpriteRenderer rend = (new GameObject()).AddComponent<SpriteRenderer>();
+                        rend.transform.SetParent(pva.transform);
+                        rend.gameObject.layer = pva.Megaphone.gameObject.layer;
+                        rend.transform.localPosition = new Vector3(-0.55f, -0.03f, -1f);
+                        rend.sprite = Shifter.getBadShiftOverlaySprite();
+                    }
+                }
+            }
         }
 
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.ServerStart))]

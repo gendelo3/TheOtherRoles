@@ -1275,6 +1275,8 @@ namespace TheEpicRoles
         public static bool hasCopied = false;
         public static RoleInfo copiedRole = null;
         public static bool canBeGuesser = true;
+        public static bool diesBeforeMeeting = false;
+        public static bool copiedBadRole = false;
 
         // Parameters needed from other roles. Some don't need to be initialized, as they will be copied too!
         public static int guesserRemainingShots;
@@ -1283,7 +1285,6 @@ namespace TheEpicRoles
         public static PlayerControl medicFutureShielded;
         public static bool medicUsedShield;
         public static int securityGuardRemainingScrews;
-        public static bool baitWasCleaned;
         public static bool baitReported;
         public static bool timeMasterShieldActive;
         public static byte swapperPlayerId1 = Byte.MaxValue;
@@ -1311,7 +1312,6 @@ namespace TheEpicRoles
             hasCopied = false;
             copiedRole = null;
             canBeGuesser = CustomOptionHolder.doppelgangerCanBeGuesser.getBool();
-            baitWasCleaned = false;
             baitReported = false;
             timeMasterShieldActive = false;
             medicShielded = null;
@@ -1330,6 +1330,8 @@ namespace TheEpicRoles
             }
             snitchLocalArrows = new List<Arrow>();
             deputyRemainingHandcuffs = 0f;
+            diesBeforeMeeting = CustomOptionHolder.doppelgangerDiesBeforeMeeting.getBool();
+            copiedBadRole = false;
         }
         
         public static void trackerResetTracked()

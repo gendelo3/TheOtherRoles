@@ -113,6 +113,7 @@ namespace TheEpicRoles {
         LawyerPromotesToPursuer,
         SetBlanked,
         DoppelgangerCopy,
+        DoppelgangerKilledDueToBadCopy,
         SetFutureDoppelgangerTarget
     }
 
@@ -365,8 +366,6 @@ namespace TheEpicRoles {
                 if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == playerId) {
                     UnityEngine.Object.Destroy(array[i].gameObject);
                 }
-                if (Bait.bait != null && playerId == Bait.bait.PlayerId) Bait.wasCleaned = true;
-                if (Doppelganger.doppelganger != null && playerId == Doppelganger.doppelganger.PlayerId) Doppelganger.baitWasCleaned = true;
             }
         }
 
@@ -605,6 +604,11 @@ namespace TheEpicRoles {
             }
         }
 
+        public static void doppelgangerKilledDueToBadCopy() {
+            if (Doppelganger.doppelganger != null) {
+                Doppelganger.copiedBadRole = true;
+            }        
+        }
         public static void swapperSwap(byte playerId1, byte playerId2, byte swapperId) {
             if (MeetingHud.Instance) {
                 if (Swapper.swapper != null && Swapper.swapper.PlayerId == swapperId)
@@ -1084,6 +1088,9 @@ namespace TheEpicRoles {
                     break;
                 case (byte)CustomRPC.DoppelgangerCopy:
                     RPCProcedure.doppelgangerCopy(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.DoppelgangerKilledDueToBadCopy:
+                    RPCProcedure.doppelgangerKilledDueToBadCopy();
                     break;
                 case (byte)CustomRPC.ShifterShift:
                     RPCProcedure.shifterShift(reader.ReadByte());

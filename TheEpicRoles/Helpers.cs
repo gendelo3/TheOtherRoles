@@ -120,6 +120,16 @@ namespace TheEpicRoles {
                 RPCProcedure.shifterKilledDueBadShift();
             }
 
+            // Doppelganger: Kill if copied player is a bad role and doppelganger wasn't already killed by vampire bite.
+            if (Doppelganger.doppelganger != null && Doppelganger.diesBeforeMeeting && !Doppelganger.doppelganger.Data.IsDead && Doppelganger.copyTarget != null && Shifter.checkTargetIsBad(Doppelganger.copyTarget) &&
+                (Vampire.bitten == null || vampireBite != MurderAttemptResult.PerformKill || Vampire.bitten != Doppelganger.doppelganger)) {
+                Helpers.uncheckedMurderPlayer(Doppelganger.doppelganger, Doppelganger.doppelganger, false);
+
+                writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.DoppelgangerKilledDueToBadCopy, Hazel.SendOption.Reliable, -1);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                RPCProcedure.doppelgangerKilledDueToBadCopy();
+            }
+
             // Vampire: Reset bitten (regardless whether the kill was successful or not)
             writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VampireSetBitten, Hazel.SendOption.Reliable, -1);
             writer.Write(byte.MaxValue);

@@ -53,6 +53,7 @@ namespace TheEpicRoles.Patches {
                 RPCProcedure.doppelgangerCopy(Doppelganger.copyTarget.PlayerId);
             }
             Doppelganger.copyTarget = null;
+            Doppelganger.copiedBadRole = false; // Remove bad copy icon after meeting
 
             // Eraser erase
             if (Eraser.eraser != null && AmongUsClient.Instance.AmHost && Eraser.futureErased != null) {  // We need to send the RPC from the host here, to make sure that the order of shifting and erasing is correct (for that reason the futureShifted and futureErased are being synced)

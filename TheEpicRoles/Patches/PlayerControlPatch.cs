@@ -714,7 +714,7 @@ namespace TheEpicRoles.Patches {
                     Bait.reported = true;
                 }
             }
-            if (Doppelganger.doppelganger == PlayerControl.LocalPlayer && Doppelganger.doppelganger.Data.IsDead && !Doppelganger.baitReported && !Doppelganger.baitWasCleaned)
+            if (Doppelganger.doppelganger == PlayerControl.LocalPlayer && Doppelganger.doppelganger.Data.IsDead && !Doppelganger.baitReported)
             {
                 Bait.reportDelay -= Time.fixedDeltaTime;
                 DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == Doppelganger.doppelganger.PlayerId)?.FirstOrDefault();

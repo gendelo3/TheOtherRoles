@@ -193,7 +193,7 @@ namespace TheEpicRoles {
 
         public static CustomOption cleanerSpawnRate;
         public static CustomOption cleanerCooldown;
-        
+
         public static CustomOption warlockSpawnRate;
         public static CustomOption warlockCooldown;
         public static CustomOption warlockRootTime;
@@ -212,6 +212,9 @@ namespace TheEpicRoles {
         public static CustomOption baitHighlightAllVents;
         public static CustomOption baitReportDelay;
         public static CustomOption baitShowKillFlash;
+
+        public static CustomOption doppelgangerSpawnRate;
+        public static CustomOption doppelgangerCanBeGuesser;
 
         public static CustomOption vultureSpawnRate;
         public static CustomOption vultureCooldown;
@@ -484,6 +487,8 @@ namespace TheEpicRoles {
             baitHighlightAllVents = CustomOption.Create(331, "Highlight All Vents If A Vent Is Occupied", "crewmate", false, baitSpawnRate);
             baitReportDelay = CustomOption.Create(332, "Bait Report Delay", "crewmate", 0f, 0f, 10f, 1f, baitSpawnRate);
             baitShowKillFlash = CustomOption.Create(333, "Warn The Killer With A Flash", "crewmate", true, baitSpawnRate);
+            doppelgangerSpawnRate = CustomOption.Create(340, cs(Doppelganger.color, "Doppelganger"), "crewmate", rates, null, true);
+            doppelgangerCanBeGuesser = CustomOption.Create(341, "Doppelganger can be guesser", "crewmate", true, doppelgangerSpawnRate);
 
             mediumSpawnRate = CustomOption.Create(360, cs(Medium.color, "Medium"), "crewmate", rates, null, true);
             mediumCooldown = CustomOption.Create(361, "Medium Questioning Cooldown", "crewmate", 30f, 5f, 120f, 5f, mediumSpawnRate);
@@ -507,13 +512,15 @@ namespace TheEpicRoles {
             //LVK. Setting if the target of a button should be shown
             showButtonTarget = CustomOption.Create(9994, "Show Button Target", "option", true);
 
-            blockedRolePairings.Add((byte)RoleId.Vampire, new [] { (byte)RoleId.Warlock});
-            blockedRolePairings.Add((byte)RoleId.Warlock, new [] { (byte)RoleId.Vampire});
-            blockedRolePairings.Add((byte)RoleId.Spy, new [] { (byte)RoleId.Mini});
-            blockedRolePairings.Add((byte)RoleId.Mini, new [] { (byte)RoleId.Spy});
+            blockedRolePairings.Add((byte)RoleId.Vampire, new[] { (byte)RoleId.Warlock });
+            blockedRolePairings.Add((byte)RoleId.Warlock, new[] { (byte)RoleId.Vampire });
+            blockedRolePairings.Add((byte)RoleId.Spy, new[] { (byte)RoleId.Mini });
+            blockedRolePairings.Add((byte)RoleId.Mini, new[] { (byte)RoleId.Spy });
+            blockedRolePairings.Add((byte)RoleId.Shifter, new[] { (byte)RoleId.Doppelganger });
+            blockedRolePairings.Add((byte)RoleId.Doppelganger, new[] { (byte)RoleId.Shifter });
             blockedRolePairings.Add((byte)RoleId.Vulture, new [] { (byte)RoleId.Cleaner});
             blockedRolePairings.Add((byte)RoleId.Cleaner, new [] { (byte)RoleId.Vulture});
-            
         }
     }
 }
+

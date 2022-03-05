@@ -25,7 +25,9 @@ namespace TheEpicRoles.Patches {
                 || (Spy.spy != null && Spy.spy.PlayerId == player.PlayerId && Spy.hasImpostorVision)
                 || (Jester.jester != null && Jester.jester.PlayerId == player.PlayerId && Jester.hasImpostorVision)) // Impostor, Jackal/Sidekick, Spy or Jester with Impostor vision
                 __result = __instance.MaxLightRadius * PlayerControl.GameOptions.ImpostorLightMod;
-            else if (Lighter.lighter != null && Lighter.lighter.PlayerId == player.PlayerId && Lighter.lighterTimer > 0f) // if player is Lighter and Lighter has his ability active
+            else if ((Lighter.lighter != null && Lighter.lighter.PlayerId == player.PlayerId
+                      || Doppelganger.doppelganger != null && Doppelganger.doppelganger.PlayerId == player.PlayerId && Doppelganger.copiedRole == RoleInfo.lighter)
+                      && Lighter.lighterTimer > 0f) // if player is Lighter and Lighter has his ability active
                 __result = Mathf.Lerp(__instance.MaxLightRadius * Lighter.lighterModeLightsOffVision, __instance.MaxLightRadius * Lighter.lighterModeLightsOnVision, num);
             else if (Trickster.trickster != null && Trickster.lightsOutTimer > 0f) {
                 float lerpValue = 1f;

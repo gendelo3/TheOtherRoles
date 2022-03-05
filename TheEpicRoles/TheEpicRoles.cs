@@ -36,6 +36,7 @@ namespace TheEpicRoles
             Swapper.clearAndReload();
             Lovers.clearAndReload();
             Seer.clearAndReload();
+            Doppelganger.clearAndReload();
             Morphling.clearAndReload();
             Camouflager.clearAndReload();
             Hacker.clearAndReload();
@@ -166,7 +167,7 @@ namespace TheEpicRoles
 
             public static PlayerControl currentTarget;
 
-            public static PlayerControl formerDeputy;  // Needed for keeping handcuffs + shifting
+            public static List<byte> formerDeputies;  // Needed for keeping handcuffs + shifting
             public static PlayerControl formerSheriff;  // When deputy gets promoted...
 
             public static void replaceCurrentSheriff(PlayerControl deputy)
@@ -174,13 +175,13 @@ namespace TheEpicRoles
                 if (!formerSheriff) formerSheriff = sheriff;
                 sheriff = deputy;
                 currentTarget = null;
-                cooldown = CustomOptionHolder.jackalKillCooldown.getFloat();
+                cooldown = CustomOptionHolder.sheriffCooldown.getFloat();
             }
 
             public static void clearAndReload() {
                 sheriff = null;
                 currentTarget = null;
-                formerDeputy = null;
+                formerDeputies = new List<byte>();
                 formerSheriff = null;
                 cooldown = CustomOptionHolder.sheriffCooldown.getFloat();
                 canKillNeutrals = CustomOptionHolder.sheriffCanKillNeutrals.getBool();
@@ -1184,6 +1185,10 @@ namespace TheEpicRoles
             if (niceGuesser != null && niceGuesser.PlayerId == playerId) {
                 remainingShots = remainingShotsNiceGuesser;
                 if (shoot) remainingShotsNiceGuesser = Mathf.Max(0, remainingShotsNiceGuesser - 1);
+            } else if (Doppelganger.doppelganger != null && Doppelganger.doppelganger.PlayerId == playerId)
+            {
+                remainingShots = Doppelganger.guesserRemainingShots;
+                if (shoot) Doppelganger.guesserRemainingShots = Mathf.Max(0, Doppelganger.guesserRemainingShots - 1);
             } else if (shoot) {
                 remainingShotsEvilGuesser = Mathf.Max(0, remainingShotsEvilGuesser - 1);
             }
@@ -1261,6 +1266,87 @@ namespace TheEpicRoles
         }
     }
 
+    public static class Doppelganger
+    {
+        public static PlayerControl doppelganger;
+        public static Color color = new Color32(127, 127, 127, byte.MaxValue);
+        public static PlayerControl copyTarget;
+        public static PlayerControl currentTarget;
+        public static bool hasCopied = false;
+        public static RoleInfo copiedRole = null;
+        public static bool canBeGuesser = true;
+
+        // Parameters needed from other roles. Some don't need to be initialized, as they will be copied too!
+        public static int guesserRemainingShots;
+        public static int engineerRemainingFixes;
+        public static PlayerControl medicShielded;
+        public static PlayerControl medicFutureShielded;
+        public static bool medicUsedShield;
+        public static int securityGuardRemainingScrews;
+        public static bool baitWasCleaned;
+        public static bool baitReported;
+        public static bool timeMasterShieldActive;
+        public static byte swapperPlayerId1 = Byte.MaxValue;
+        public static byte swapperPlayerId2 = Byte.MaxValue;
+        public static Vent securityGuardVentTarget;
+        public static PlayerControl trackerTracked;
+        public static bool trackerUsedTracker = false;
+        public static Arrow trackerArrow = new Arrow(Color.blue);
+        public static List<Arrow> snitchLocalArrows = new List<Arrow>();
+        public static float deputyRemainingHandcuffs;
+
+        private static Sprite buttonSprite;
+        public static Sprite getButtonSprite()
+        {
+            if (buttonSprite) return buttonSprite;
+            buttonSprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.CopyButton.png", 115f);
+            return buttonSprite;
+        }
+
+        public static void clearAndReload()
+        {
+            doppelganger = null;
+            currentTarget = null;
+            copyTarget = null;
+            hasCopied = false;
+            copiedRole = null;
+            canBeGuesser = CustomOptionHolder.doppelgangerCanBeGuesser.getBool();
+            baitWasCleaned = false;
+            baitReported = false;
+            timeMasterShieldActive = false;
+            medicShielded = null;
+            medicFutureShielded = null;
+            medicUsedShield = false;
+            swapperPlayerId1 = Byte.MaxValue;
+            swapperPlayerId2 = Byte.MaxValue;
+            securityGuardVentTarget = null;
+            trackerTracked = null;
+            trackerUsedTracker = false;
+            if (snitchLocalArrows != null)
+            {
+                foreach (Arrow arrow in snitchLocalArrows)
+                    if (arrow?.arrow != null)
+                        UnityEngine.Object.Destroy(arrow.arrow);
+            }
+            snitchLocalArrows = new List<Arrow>();
+            deputyRemainingHandcuffs = 0f;
+        }
+        
+        public static void trackerResetTracked()
+        {
+            currentTarget = trackerTracked = null;
+            trackerUsedTracker = false;
+            if (trackerArrow?.arrow != null) UnityEngine.Object.Destroy(trackerArrow.arrow);
+            trackerArrow = new Arrow(Color.blue);
+            if (trackerArrow.arrow != null) trackerArrow.arrow.SetActive(false);
+        }
+
+        public static bool isRoleAndLocalPlayer(RoleInfo roleInfo)
+        {
+            return doppelganger != null && doppelganger == PlayerControl.LocalPlayer && copiedRole == roleInfo;
+        }
+    }
+
     public static class Vulture {
         public static PlayerControl vulture;
         public static Color color = new Color32(139, 69, 19, byte.MaxValue);
@@ -1271,6 +1357,7 @@ namespace TheEpicRoles
         public static bool triggerVultureWin = false;
         public static bool canUseVents = true;
         public static bool showArrows = true;
+
         private static Sprite buttonSprite;
         public static Sprite getButtonSprite() {
             if (buttonSprite) return buttonSprite;
@@ -1337,7 +1424,6 @@ namespace TheEpicRoles
             oneTimeUse = CustomOptionHolder.mediumOneTimeUse.getBool();
         }
     }
-
     public static class Lawyer {
         public static PlayerControl lawyer;
         public static PlayerControl target;
@@ -1445,7 +1531,6 @@ namespace TheEpicRoles
             witchVoteSavesTargets = CustomOptionHolder.witchVoteSavesTargets.getBool();
         }
     }
-
     public static class Phaser
     {
         public static PlayerControl phaser;

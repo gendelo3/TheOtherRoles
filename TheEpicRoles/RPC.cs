@@ -12,7 +12,7 @@ using UnityEngine;
 using System;
 
 namespace TheEpicRoles {
-    enum RoleId {
+    public enum RoleId {
         Jester,
         Mayor,
         Engineer,
@@ -29,6 +29,7 @@ namespace TheEpicRoles {
         Swapper,
         Lover,
         Seer,
+        Doppelganger,
         Morphling,
         Camouflager,
         Hacker,
@@ -111,6 +112,8 @@ namespace TheEpicRoles {
         LawyerSetTarget,
         LawyerPromotesToPursuer,
         SetBlanked,
+        DoppelgangerCopy,
+        SetFutureDoppelgangerTarget
     }
 
     public static class RPCProcedure {
@@ -203,6 +206,9 @@ namespace TheEpicRoles {
                         break;
                     case RoleId.Seer:
                         Seer.seer = player;
+                        break;
+                    case RoleId.Doppelganger:
+                        Doppelganger.doppelganger = player;
                         break;
                     case RoleId.Morphling:
                         Morphling.morphling = player;
@@ -341,8 +347,16 @@ namespace TheEpicRoles {
             switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
         }
 
-        public static void engineerUsedRepair() {
-            Engineer.remainingFixes--;
+        public static void engineerUsedRepair(byte engineerId) {
+            if (Engineer.engineer != null && Engineer.engineer.PlayerId == engineerId)
+            {
+                Engineer.remainingFixes--;
+            }
+            else
+            {
+                Doppelganger.engineerRemainingFixes--;
+            }
+            
         }
 
         public static void cleanBody(byte playerId) {
@@ -350,13 +364,21 @@ namespace TheEpicRoles {
             for (int i = 0; i < array.Length; i++) {
                 if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == playerId) {
                     UnityEngine.Object.Destroy(array[i].gameObject);
-                }     
+                }
+                if (Bait.bait != null && playerId == Bait.bait.PlayerId) Bait.wasCleaned = true;
+                if (Doppelganger.doppelganger != null && playerId == Doppelganger.doppelganger.PlayerId) Doppelganger.baitWasCleaned = true;
             }
         }
 
-        public static void timeMasterRewindTime() {
+        public static void timeMasterRewindTime(byte masterId) {
             TimeMaster.shieldActive = false; // Shield is no longer active when rewinding
-            if(TimeMaster.timeMaster != null && TimeMaster.timeMaster == PlayerControl.LocalPlayer) {
+            Doppelganger.timeMasterShieldActive = false; // Doesn't hurt to deactivate this one too.
+            
+            /*if(TimeMaster.timeMaster != null && TimeMaster.timeMaster == PlayerControl.LocalPlayer) {
+                resetTimeMasterButton();
+            }*/
+            if (masterId == PlayerControl.LocalPlayer.PlayerId)
+            {
                 resetTimeMasterButton();
             }
             HudManager.Instance.FullScreen.color = new Color(0f, 0.5f, 0.8f, 0.3f);
@@ -365,7 +387,8 @@ namespace TheEpicRoles {
                 if (p == 1f) HudManager.Instance.FullScreen.enabled = false;
             })));
 
-            if (TimeMaster.timeMaster == null || PlayerControl.LocalPlayer == TimeMaster.timeMaster) return; // Time Master himself does not rewind
+            // if (TimeMaster.timeMaster == null || PlayerControl.LocalPlayer == TimeMaster.timeMaster) return; // Time Master himself does not rewind
+            if (masterId == PlayerControl.LocalPlayer.PlayerId) return; // Time Master himself does not rewind
 
             TimeMaster.isRewinding = true;
 
@@ -376,40 +399,122 @@ namespace TheEpicRoles {
             PlayerControl.LocalPlayer.moveable = false;
         }
 
-        public static void timeMasterShield() {
-            TimeMaster.shieldActive = true;
+        public static void timeMasterShield(byte playerId) {
+            bool isDoppelganger = Doppelganger.doppelganger != null && playerId == Doppelganger.doppelganger.PlayerId;
+            if (!isDoppelganger)
+                TimeMaster.shieldActive = true;
+            if (isDoppelganger)
+                Doppelganger.timeMasterShieldActive = true;
             HudManager.Instance.StartCoroutine(Effects.Lerp(TimeMaster.shieldDuration, new Action<float>((p) => {
-                if (p == 1f) TimeMaster.shieldActive = false;
+                if (p == 1f)
+                {
+                    if (!isDoppelganger)
+                        TimeMaster.shieldActive = false;
+                    if (isDoppelganger)
+                        Doppelganger.timeMasterShieldActive = false;
+                }
             })));
         }
 
-        public static void medicSetShielded(byte shieldedId) {
-            Medic.usedShield = true;
-            Medic.shielded = Helpers.playerById(shieldedId);
-            Medic.futureShielded = null;
+        public static void medicSetShielded(byte shieldedId, byte medicId) {
+            if (Medic.medic != null && Medic.medic.PlayerId == medicId)
+            {
+                Medic.usedShield = true;
+                Medic.shielded = Helpers.playerById(shieldedId);
+                Medic.futureShielded = null;
+            } else if (Doppelganger.doppelganger != null && Doppelganger.doppelganger.PlayerId == medicId)
+            {
+                if (Medic.medic != null && shieldedId == Medic.medic.PlayerId) return;
+                Doppelganger.medicUsedShield = true;
+                Doppelganger.medicShielded = Helpers.playerById(shieldedId);
+                Doppelganger.medicFutureShielded = null;
+            }
         }
 
-        public static void shieldedMurderAttempt() {
-            if (Medic.shielded == null || Medic.medic == null) return;
-            
-            bool isShieldedAndShow = Medic.shielded == PlayerControl.LocalPlayer && Medic.showAttemptToShielded;
-            bool isMedicAndShow = Medic.medic == PlayerControl.LocalPlayer && Medic.showAttemptToMedic;
 
-            if ((isShieldedAndShow || isMedicAndShow) && HudManager.Instance?.FullScreen != null) {
-                HudManager.Instance.FullScreen.enabled = true;
-                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) => {
-                    var renderer = HudManager.Instance.FullScreen;
-                    Color c = Palette.ImpostorRed;
-                    if (p < 0.5) {
-                        if (renderer != null)
-                            renderer.color = new Color(c.r, c.g, c.b, Mathf.Clamp01(p * 2 * 0.75f));
-                    } else {
-                        if (renderer != null)
-                            renderer.color = new Color(c.r, c.g, c.b, Mathf.Clamp01((1-p) * 2 * 0.75f));
-                    }
-                    if (p == 1f && renderer != null) renderer.enabled = false;
-                })));
+        public static void shieldedMurderAttempt(byte playerId) {
+            if (PlayerControl.LocalPlayer.PlayerId == playerId && Medic.showAttemptToShielded && HudManager.Instance?.FullScreen != null)
+            {
+
+                if (Medic.shielded == null || Medic.medic == null) return;
+
+                bool isShieldedAndShow = Medic.shielded == PlayerControl.LocalPlayer && Medic.showAttemptToShielded;
+                bool isMedicAndShow = Medic.medic == PlayerControl.LocalPlayer && Medic.showAttemptToMedic;
+
+                if ((isShieldedAndShow || isMedicAndShow) && HudManager.Instance?.FullScreen != null)
+                {
+                    HudManager.Instance.FullScreen.enabled = true;
+                    HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) =>
+                    {
+                        var renderer = HudManager.Instance.FullScreen;
+                        Color c = Palette.ImpostorRed;
+                        if (p < 0.5)
+                        {
+                            if (renderer != null)
+                                renderer.color = new Color(c.r, c.g, c.b, Mathf.Clamp01(p * 2 * 0.75f));
+                        }
+                        else
+                        {
+                            if (renderer != null)
+                                renderer.color = new Color(c.r, c.g, c.b, Mathf.Clamp01((1 - p) * 2 * 0.75f));
+                        }
+                        if (p == 1f && renderer != null) renderer.enabled = false;
+                    })));
+                }
             }
+        }
+
+        public static void doppelgangerCopy(byte targetId)
+        {
+
+            PlayerControl oldDoppelganger = Doppelganger.doppelganger;
+            PlayerControl player = Helpers.playerById(targetId);
+            if (player == null || oldDoppelganger == null) return;
+
+            Doppelganger.copyTarget = null;
+            // Suicide (exile) when impostor or impostor variants
+            if (player.Data.Role.IsImpostor || player == Jackal.jackal || player == Sidekick.sidekick || Jackal.formerJackals.Contains(player) || player == Jester.jester || player == Arsonist.arsonist || player == Vulture.vulture || player == Lawyer.lawyer)
+            {
+                oldDoppelganger.Exiled();
+                return;
+            }
+            Doppelganger.hasCopied = true;
+            // Copy role
+            Doppelganger.copiedRole = RoleInfo.getRoleInfoForPlayer(player).FirstOrDefault();
+            // Dont copy the spy
+            if (Doppelganger.copiedRole == RoleInfo.spy
+                || Doppelganger.copiedRole == RoleInfo.goodGuesser && !Doppelganger.canBeGuesser
+                ) Doppelganger.copiedRole = RoleInfo.crewmate;
+            
+            // For certain roles, copy some of their variables.
+            if (Doppelganger.copiedRole == RoleInfo.goodGuesser)
+                Doppelganger.guesserRemainingShots = Guesser.remainingShots(player.PlayerId);
+            if (Doppelganger.copiedRole == RoleInfo.engineer)
+                    Doppelganger.engineerRemainingFixes = Engineer.remainingFixes;
+            if (Doppelganger.copiedRole == RoleInfo.medic)
+            {
+                Doppelganger.medicShielded = Medic.shielded;
+                Doppelganger.medicFutureShielded = Medic.futureShielded;
+                Doppelganger.medicUsedShield = Medic.usedShield;
+            }
+
+            if (Doppelganger.copiedRole == RoleInfo.securityGuard)  // copy screws
+                Doppelganger.securityGuardRemainingScrews = SecurityGuard.remainingScrews;
+                // Maybe todo: calculate charges on copy...
+            {
+                Doppelganger.trackerTracked = Tracker.tracked;
+                Doppelganger.trackerUsedTracker = Tracker.usedTracker;
+            }
+
+            if (Doppelganger.copiedRole == RoleInfo.deputy || Doppelganger.copiedRole == RoleInfo.sheriff && Sheriff.formerDeputies.Contains(Sheriff.sheriff.PlayerId))
+            {
+                Doppelganger.deputyRemainingHandcuffs = Deputy.remainingHandcuffs;
+                if (RoleInfo.sheriff == Doppelganger.copiedRole) Sheriff.formerDeputies.Add(Doppelganger.doppelganger.PlayerId);
+            }
+
+            // Set cooldown to max
+            if (PlayerControl.LocalPlayer == oldDoppelganger)
+                CustomButton.ResetAllCooldowns();
         }
 
         public static void shifterShift(byte targetId) {
@@ -447,7 +552,7 @@ namespace TheEpicRoles {
             if (Engineer.engineer != null && Engineer.engineer == player)
                 Engineer.engineer = oldShifter;
             if (Sheriff.sheriff != null && Sheriff.sheriff == player) {
-                if (Sheriff.formerDeputy != null && Sheriff.formerDeputy == Sheriff.sheriff) Sheriff.formerDeputy = oldShifter;  // Shifter also shifts info on promoted deputy (to get handcuffs)
+                if (Sheriff.formerDeputies.Contains(Sheriff.sheriff.PlayerId)) Sheriff.formerDeputies.Add(oldShifter.PlayerId);  // Shifter also shifts info on promoted deputy (to get handcuffs)
                 Sheriff.sheriff = oldShifter;
             }
             if (Deputy.deputy != null && Deputy.deputy == player)
@@ -500,10 +605,17 @@ namespace TheEpicRoles {
             }
         }
 
-        public static void swapperSwap(byte playerId1, byte playerId2) {
+        public static void swapperSwap(byte playerId1, byte playerId2, byte swapperId) {
             if (MeetingHud.Instance) {
-                Swapper.playerId1 = playerId1;
-                Swapper.playerId2 = playerId2;
+                if (Swapper.swapper != null && Swapper.swapper.PlayerId == swapperId)
+                {
+                    Swapper.playerId1 = playerId1;
+                    Swapper.playerId2 = playerId2;
+                } else  // must be the Doppelganger swapper
+                {
+                    Doppelganger.swapperPlayerId1 = playerId1;
+                    Doppelganger.swapperPlayerId2 = playerId2;
+                }
             }
         }
 
@@ -546,26 +658,41 @@ namespace TheEpicRoles {
             new Garlic(position);
         }
 
-        public static void trackerUsedTracker(byte targetId) {
-            Tracker.usedTracker = true;
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                if (player.PlayerId == targetId)
-                    Tracker.tracked = player;
+        public static void trackerUsedTracker(byte targetId, byte trackerId) {
+            if (Tracker.tracker != null && Tracker.tracker.PlayerId == trackerId)
+            {
+                Tracker.usedTracker = true;
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    if (player.PlayerId == targetId)
+                        Tracker.tracked = player;
+            } else
+            {
+                Doppelganger.trackerUsedTracker = true;
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    if (player.PlayerId == targetId)
+                        Doppelganger.trackerTracked = player;
+            }
+            
         }
 
-        public static void deputyUsedHandcuffs(byte targetId)
+        public static void deputyUsedHandcuffs(byte targetId, byte deputyId)
         {
-            Deputy.remainingHandcuffs--;
+            if (Doppelganger.doppelganger != null && deputyId == Doppelganger.doppelganger.PlayerId) Doppelganger.deputyRemainingHandcuffs--;
+            else Deputy.remainingHandcuffs--;
             Deputy.handcuffedPlayers.Add(targetId);
         }
 
         public static void deputyPromotes()
         {
-            if (Deputy.deputy != null) {  // Deputy should never be null here, but there appeared to be a race condition during testing, which was removed.
+            // figure out, which doppelganger promotes!
+            if (Deputy.deputy != null && !Deputy.deputy.Data.IsDead) {
                 Sheriff.replaceCurrentSheriff(Deputy.deputy);
-                Sheriff.formerDeputy = Deputy.deputy;
+                Sheriff.formerDeputies.Add(Deputy.deputy.PlayerId);
                 Deputy.deputy = null;
                 // No clear and reload, as we need to keep the number of handcuffs left etc
+            } else { // Doppelganger promotes!
+                Doppelganger.copiedRole = RoleInfo.sheriff;
+                Sheriff.formerDeputies.Add(Doppelganger.doppelganger.PlayerId);
             }
         }
 
@@ -632,6 +759,7 @@ namespace TheEpicRoles {
             if (player == Phaser.phaser) Phaser.clearAndReload();
 
             // Other roles
+            if (player == Doppelganger.doppelganger) Doppelganger.clearAndReload();
             if (player == Jester.jester) Jester.clearAndReload();
             if (player == Arsonist.arsonist) Arsonist.clearAndReload();
             if (Guesser.isGuesser(player.PlayerId)) Guesser.clear(player.PlayerId);
@@ -665,9 +793,23 @@ namespace TheEpicRoles {
             Shifter.futureShift = Helpers.playerById(playerId);
         }
 
-        public static void setFutureShielded(byte playerId) {
-            Medic.futureShielded = Helpers.playerById(playerId);
-            Medic.usedShield = true;
+        public static void setFutureDoppelgangerTarget(byte playerId)
+        {
+            Doppelganger.copyTarget = Helpers.playerById(playerId);
+        }
+
+        public static void setFutureShielded(byte playerId, byte medicId) {
+            
+            if (Medic.medic != null && Medic.medic.PlayerId == medicId)
+            {
+                Medic.futureShielded = Helpers.playerById(playerId);
+                Medic.usedShield = true;
+            } else
+            {
+                if (Medic.medic != null && playerId == Medic.medic.PlayerId) return;
+                Doppelganger.medicFutureShielded = Helpers.playerById(playerId);
+                Doppelganger.medicUsedShield = true;
+            }
         }
 
         public static void setFutureSpelled(byte playerId) {
@@ -695,11 +837,22 @@ namespace TheEpicRoles {
             }
         }
 
-        public static void placeCamera(byte[] buff) {
+        public static void placeCamera(byte[] buff, byte securityGuardId) {
+
+
             var referenceCamera = UnityEngine.Object.FindObjectOfType<SurvCamera>(); 
             if (referenceCamera == null) return; // Mira HQ
 
-            SecurityGuard.remainingScrews -= SecurityGuard.camPrice;
+            if (SecurityGuard.securityGuard != null && SecurityGuard.securityGuard.PlayerId == securityGuardId)
+            {
+                SecurityGuard.remainingScrews -= SecurityGuard.camPrice;
+            }
+            else
+            {
+                Doppelganger.securityGuardRemainingScrews -= SecurityGuard.camPrice;
+            }
+
+
             SecurityGuard.placedCameras++;
 
             Vector3 position = Vector3.zero;
@@ -712,7 +865,7 @@ namespace TheEpicRoles {
             camera.Offset = new Vector3(0f, 0f, camera.Offset.z);
             if (PlayerControl.GameOptions.MapId == 2 || PlayerControl.GameOptions.MapId == 4) camera.transform.localRotation = new Quaternion(0, 0, 1, 1); // Polus and Airship 
 
-            if (PlayerControl.LocalPlayer == SecurityGuard.securityGuard) {
+            if (PlayerControl.LocalPlayer.PlayerId == securityGuardId) {
                 camera.gameObject.SetActive(true);
                 camera.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
             } else {
@@ -721,12 +874,19 @@ namespace TheEpicRoles {
             MapOptions.camerasToAdd.Add(camera);
         }
 
-        public static void sealVent(int ventId) {
+        public static void sealVent(int ventId, byte securityGuardId) {
             Vent vent = ShipStatus.Instance.AllVents.FirstOrDefault((x) => x != null && x.Id == ventId);
             if (vent == null) return;
 
-            SecurityGuard.remainingScrews -= SecurityGuard.ventPrice;
-            if (PlayerControl.LocalPlayer == SecurityGuard.securityGuard) {
+            if (SecurityGuard.securityGuard != null && SecurityGuard.securityGuard.PlayerId == securityGuardId)
+            {
+                SecurityGuard.remainingScrews -= SecurityGuard.ventPrice;
+            } else
+            {
+                Doppelganger.securityGuardRemainingScrews -= SecurityGuard.ventPrice;
+            }
+            
+            if (PlayerControl.LocalPlayer.PlayerId == securityGuardId) {
                 PowerTools.SpriteAnim animator = vent.GetComponent<PowerTools.SpriteAnim>(); 
                 animator?.Stop();
                 vent.EnterVentAnim = vent.ExitVentAnim = null;
@@ -905,22 +1065,25 @@ namespace TheEpicRoles {
                     RPCProcedure.engineerFixLights();
                     break;
                 case (byte)CustomRPC.EngineerUsedRepair:
-                    RPCProcedure.engineerUsedRepair();
+                    RPCProcedure.engineerUsedRepair(reader.ReadByte());
                     break;
                 case (byte)CustomRPC.CleanBody:
                     RPCProcedure.cleanBody(reader.ReadByte());
                     break;
                 case (byte)CustomRPC.TimeMasterRewindTime:
-                    RPCProcedure.timeMasterRewindTime();
+                    RPCProcedure.timeMasterRewindTime(reader.ReadByte());
                     break;
                 case (byte)CustomRPC.TimeMasterShield:
-                    RPCProcedure.timeMasterShield();
+                    RPCProcedure.timeMasterShield(reader.ReadByte());
                     break;
                 case (byte)CustomRPC.MedicSetShielded:
-                    RPCProcedure.medicSetShielded(reader.ReadByte());
+                    RPCProcedure.medicSetShielded(reader.ReadByte(), reader.ReadByte());
                     break;
                 case (byte)CustomRPC.ShieldedMurderAttempt:
-                    RPCProcedure.shieldedMurderAttempt();
+                    RPCProcedure.shieldedMurderAttempt(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.DoppelgangerCopy:
+                    RPCProcedure.doppelgangerCopy(reader.ReadByte());
                     break;
                 case (byte)CustomRPC.ShifterShift:
                     RPCProcedure.shifterShift(reader.ReadByte());
@@ -936,7 +1099,8 @@ namespace TheEpicRoles {
                 case (byte)CustomRPC.SwapperSwap:
                     byte playerId1 = reader.ReadByte();
                     byte playerId2 = reader.ReadByte();
-                    RPCProcedure.swapperSwap(playerId1, playerId2);
+                    byte swapperId = reader.ReadByte();
+                    RPCProcedure.swapperSwap(playerId1, playerId2, swapperId);
                     break;
                 case (byte)CustomRPC.MorphlingMorph:
                     RPCProcedure.morphlingMorph(reader.ReadByte());
@@ -948,10 +1112,11 @@ namespace TheEpicRoles {
                     RPCProcedure.placeGarlic(reader.ReadBytesAndSize());
                     break;
                 case (byte)CustomRPC.TrackerUsedTracker:
-                    RPCProcedure.trackerUsedTracker(reader.ReadByte());
+                    RPCProcedure.trackerUsedTracker(reader.ReadByte(), reader.ReadByte());
+
                     break;               
                 case (byte)CustomRPC.DeputyUsedHandcuffs:
-                    RPCProcedure.deputyUsedHandcuffs(reader.ReadByte());
+                    RPCProcedure.deputyUsedHandcuffs(reader.ReadByte(), reader.ReadByte());
                     break;
                 case (byte)CustomRPC.DeputyPromotes:
                     RPCProcedure.deputyPromotes();
@@ -971,8 +1136,11 @@ namespace TheEpicRoles {
                 case (byte)CustomRPC.SetFutureShifted:
                     RPCProcedure.setFutureShifted(reader.ReadByte());
                     break;
+                case (byte)CustomRPC.SetFutureDoppelgangerTarget:
+                    RPCProcedure.setFutureDoppelgangerTarget(reader.ReadByte());
+                    break;
                 case (byte)CustomRPC.SetFutureShielded:
-                    RPCProcedure.setFutureShielded(reader.ReadByte());
+                    RPCProcedure.setFutureShielded(reader.ReadByte(), reader.ReadByte());
                     break;
                 case (byte)CustomRPC.PlaceJackInTheBox:
                     RPCProcedure.placeJackInTheBox(reader.ReadBytesAndSize());
@@ -981,10 +1149,10 @@ namespace TheEpicRoles {
                     RPCProcedure.lightsOut();
                     break;
                 case (byte)CustomRPC.PlaceCamera:
-                    RPCProcedure.placeCamera(reader.ReadBytesAndSize());
+                    RPCProcedure.placeCamera(reader.ReadBytesAndSize(), reader.ReadByte());
                     break;
                 case (byte)CustomRPC.SealVent:
-                    RPCProcedure.sealVent(reader.ReadPackedInt32());
+                    RPCProcedure.sealVent(reader.ReadPackedInt32(), reader.ReadByte());
                     break;
                 case (byte)CustomRPC.ArsonistWin:
                     RPCProcedure.arsonistWin();

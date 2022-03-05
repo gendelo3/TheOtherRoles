@@ -183,7 +183,8 @@ namespace TheEpicRoles.Patches {
             var statusText = "";
 
             // Deactivate emergency button for Swapper
-            if (Swapper.swapper != null && Swapper.swapper == PlayerControl.LocalPlayer && !Swapper.canCallEmergency) {
+            if ((Swapper.swapper != null && Swapper.swapper == PlayerControl.LocalPlayer
+                || Doppelganger.isRoleAndLocalPlayer(RoleInfo.swapper)) && !Swapper.canCallEmergency) {
                 roleCanCallEmergency = false;
                 statusText = "The Swapper can't start an emergency meeting";
             }
@@ -211,7 +212,8 @@ namespace TheEpicRoles.Patches {
             if (__instance.state == 1) {
                 int localRemaining = PlayerControl.LocalPlayer.RemainingEmergencies;
                 int teamRemaining = Mathf.Max(0, maxNumberOfMeetings - meetingsCount);
-                int remaining = Mathf.Min(localRemaining, (Mayor.mayor != null && Mayor.mayor == PlayerControl.LocalPlayer) ? 1 : teamRemaining);
+                int remaining = Mathf.Min(localRemaining, (Mayor.mayor != null && Mayor.mayor == PlayerControl.LocalPlayer
+                                                           || Doppelganger.isRoleAndLocalPlayer(RoleInfo.mayor)) ? 1 : teamRemaining);
                 __instance.NumberText.text = $"{localRemaining.ToString()} and the ship has {teamRemaining.ToString()}";
                 __instance.ButtonActive = remaining > 0;
                 __instance.ClosedLid.gameObject.SetActive(!__instance.ButtonActive);
@@ -226,7 +228,8 @@ namespace TheEpicRoles.Patches {
     public static class ConsoleCanUsePatch {
         public static bool Prefix(ref float __result, Console __instance, [HarmonyArgument(0)] GameData.PlayerInfo pc, [HarmonyArgument(1)] out bool canUse, [HarmonyArgument(2)] out bool couldUse) {
             canUse = couldUse = false;
-            if (Swapper.swapper != null && Swapper.swapper == PlayerControl.LocalPlayer)
+            if (Swapper.swapper != null && Swapper.swapper == PlayerControl.LocalPlayer
+                || Doppelganger.isRoleAndLocalPlayer(RoleInfo.swapper))
                 return !__instance.TaskTypes.Any(x => x == TaskTypes.FixLights || x == TaskTypes.FixComms);
             if (__instance.AllowImpostor) return true;
             if (!Helpers.hasFakeTasks(pc.Object)) return true;
@@ -239,7 +242,8 @@ namespace TheEpicRoles.Patches {
     class CommsMinigameBeginPatch {
         static void Postfix(TuneRadioMinigame __instance) {
             // Block Swapper from fixing comms. Still looking for a better way to do this, but deleting the task doesn't seem like a viable option since then the camera, admin table, ... work while comms are out
-            if (Swapper.swapper != null && Swapper.swapper == PlayerControl.LocalPlayer) {
+            if (Swapper.swapper != null && Swapper.swapper == PlayerControl.LocalPlayer || Doppelganger.isRoleAndLocalPlayer(RoleInfo.swapper))
+            {
                 __instance.Close();
             }
         }
@@ -249,7 +253,8 @@ namespace TheEpicRoles.Patches {
     class LightsMinigameBeginPatch {
         static void Postfix(SwitchMinigame __instance) {
             // Block Swapper from fixing lights. One could also just delete the PlayerTask, but I wanted to do it the same way as with coms for now.
-            if (Swapper.swapper != null && Swapper.swapper == PlayerControl.LocalPlayer) {
+            if (Swapper.swapper != null && Swapper.swapper == PlayerControl.LocalPlayer || Doppelganger.isRoleAndLocalPlayer(RoleInfo.swapper))
+            {
                 __instance.Close();
             }
         }
@@ -262,7 +267,8 @@ namespace TheEpicRoles.Patches {
         [HarmonyPatch(typeof(VitalsMinigame), nameof(VitalsMinigame.Begin))]
         class VitalsMinigameStartPatch {
             static void Postfix(VitalsMinigame __instance) {
-                if (Hacker.hacker != null && PlayerControl.LocalPlayer == Hacker.hacker) {
+                if (Hacker.hacker != null && PlayerControl.LocalPlayer == Hacker.hacker
+                    || Doppelganger.isRoleAndLocalPlayer(RoleInfo.hacker)) {
                     hackerTexts = new List<TMPro.TextMeshPro>();
                     foreach (VitalsPanel panel in __instance.vitals) {
                         TMPro.TextMeshPro text = UnityEngine.Object.Instantiate(__instance.SabText, panel.transform);
@@ -290,7 +296,9 @@ namespace TheEpicRoles.Patches {
             static void Postfix(VitalsMinigame __instance) {
                 // Hacker show time since death
                 
-                if (Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer && Hacker.hackerTimer > 0) {
+                if ((Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer
+                    || Doppelganger.isRoleAndLocalPlayer(RoleInfo.hacker))
+                    && Hacker.hackerTimer > 0) {
                     for (int k = 0; k < __instance.vitals.Length; k++) {
                         VitalsPanel vitalsPanel = __instance.vitals[k];
                         GameData.PlayerInfo player = GameData.Instance.AllPlayers[k];
@@ -414,7 +422,8 @@ namespace TheEpicRoles.Patches {
             private static Material newMat;
             static void Postfix(CounterArea __instance) {
                 // Hacker display saved colors on the admin panel
-                bool showHackerInfo = Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer && Hacker.hackerTimer > 0;
+                bool showHackerInfo = (Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer
+                                       || Doppelganger.isRoleAndLocalPlayer(RoleInfo.hacker)) && Hacker.hackerTimer > 0;
                 if (players.ContainsKey(__instance.RoomType)) {
                     List<Color> colors = players[__instance.RoomType];
 
@@ -514,6 +523,7 @@ namespace TheEpicRoles.Patches {
         }
     }
 
+
     [HarmonyPatch(typeof(MedScanMinigame), nameof(MedScanMinigame.FixedUpdate))]
     class MedScanMinigameFixedUpdatePatch {
         static void Prefix(MedScanMinigame __instance) {
@@ -525,3 +535,4 @@ namespace TheEpicRoles.Patches {
     }
 
 }
+

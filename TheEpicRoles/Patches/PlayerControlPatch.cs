@@ -61,10 +61,10 @@ namespace TheEpicRoles.Patches {
 
                 bool isMorphedMorphling = target == Morphling.morphling && Morphling.morphTarget != null && Morphling.morphTimer > 0f;
                 bool hasVisibleShield = false;
-                if (Camouflager.camouflageTimer <= 0f && Medic.shielded != null && ((target == Medic.shielded && !isMorphedMorphling) || (isMorphedMorphling && Morphling.morphTarget == Medic.shielded))) {
+                if (Camouflager.camouflageTimer <= 0f && (Medic.shielded != null || Doppelganger.medicShielded != null) && (((target == Medic.shielded || target == Doppelganger.medicShielded) && !isMorphedMorphling) || (isMorphedMorphling && Morphling.morphTarget == Medic.shielded))) {
                     hasVisibleShield = Medic.showShielded == 0 // Everyone
-                        || (Medic.showShielded == 1 && (PlayerControl.LocalPlayer == Medic.shielded || PlayerControl.LocalPlayer == Medic.medic)) // Shielded + Medic
-                        || (Medic.showShielded == 2 && PlayerControl.LocalPlayer == Medic.medic); // Medic only
+                        || (Medic.showShielded == 1 && ((PlayerControl.LocalPlayer == target && (PlayerControl.LocalPlayer == Medic.shielded || PlayerControl.LocalPlayer == Doppelganger.medicShielded)) || PlayerControl.LocalPlayer == Medic.medic && target == Medic.shielded || PlayerControl.LocalPlayer == Doppelganger.doppelganger && target == Doppelganger.medicShielded)) // Shielded + Medic
+                        || (Medic.showShielded == 2 && (PlayerControl.LocalPlayer == Medic.medic && target == Medic.shielded || PlayerControl.LocalPlayer == Doppelganger.doppelganger && target == Doppelganger.medicShielded)); // Medic only
                 }
 
                 if (hasVisibleShield) {
@@ -129,6 +129,18 @@ namespace TheEpicRoles.Patches {
             if (Shifter.futureShift == null) setPlayerOutline(Shifter.currentTarget, Shifter.color);
         }
 
+        static void doppelgangerSetTarget()
+        {
+            if (Doppelganger.doppelganger == null || Doppelganger.doppelganger != PlayerControl.LocalPlayer) return;
+            Doppelganger.currentTarget = setTarget();
+            if (Doppelganger.copiedRole == null && Doppelganger.copyTarget == null) setPlayerOutline(Doppelganger.currentTarget, Doppelganger.color);
+            if (Doppelganger.copiedRole != null)
+            {
+                if (Doppelganger.copiedRole == RoleInfo.medic && !Doppelganger.medicUsedShield || Doppelganger.copiedRole == RoleInfo.sheriff
+                    || Doppelganger.copiedRole == RoleInfo.tracker && Tracker.tracked == null)
+                    setPlayerOutline(Doppelganger.currentTarget, Doppelganger.copiedRole.color);
+            }
+        }
 
         static void morphlingSetTarget() {
             if (Morphling.morphling == null || Morphling.morphling != PlayerControl.LocalPlayer) return;
@@ -152,8 +164,10 @@ namespace TheEpicRoles.Patches {
         public static void deputyCheckPromotion(bool isMeeting=false)
         {
             // If LocalPlayer is Deputy, the Sheriff is disconnected and Deputy promotion is enabled, then trigger promotion
-            if (Deputy.deputy == null || Deputy.deputy != PlayerControl.LocalPlayer) return;
-            if (Deputy.promotesToSheriff == 0 || Deputy.deputy.Data.IsDead == true || Deputy.promotesToSheriff == 2 && !isMeeting) return;
+            if (Deputy.deputy == null || Deputy.deputy != PlayerControl.LocalPlayer) {
+                if (!Doppelganger.isRoleAndLocalPlayer(RoleInfo.deputy) || Deputy.deputy != null && !Deputy.deputy.Data.IsDead) return; // Doppelganger promotes after normal deputy!!
+            }
+            if (Deputy.promotesToSheriff == 0 || PlayerControl.LocalPlayer.Data.IsDead == true || Deputy.promotesToSheriff == 2 && !isMeeting) return;
             if (Sheriff.sheriff == null || Sheriff.sheriff?.Data?.Disconnected == true || Sheriff.sheriff.Data.IsDead)
             {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.DeputyPromotes, Hazel.SendOption.Reliable, -1);
@@ -169,7 +183,11 @@ namespace TheEpicRoles.Patches {
         }
 
         static void detectiveUpdateFootPrints() {
-            if (Detective.detective == null || Detective.detective != PlayerControl.LocalPlayer) return;
+            if (Detective.detective == null || Detective.detective != PlayerControl.LocalPlayer)
+            {
+                if (Doppelganger.doppelganger == null || Doppelganger.doppelganger != PlayerControl.LocalPlayer || Doppelganger.copiedRole != RoleInfo.detective)
+                    return;
+            }
 
             Detective.timer -= Time.fixedDeltaTime;
             if (Detective.timer <= 0f) {
@@ -272,7 +290,8 @@ namespace TheEpicRoles.Patches {
                 foreach (Vent vent in ShipStatus.Instance.AllVents) {
                     try {
                         if (vent?.myRend?.material != null) {
-                            if (Engineer.engineer != null && Engineer.engineer.inVent) {
+                            if (Engineer.engineer != null && Engineer.engineer.inVent ||
+                                Doppelganger.doppelganger != null && Doppelganger.doppelganger.inVent && Doppelganger.copiedRole == RoleInfo.engineer) {
                                 vent.myRend.material.SetFloat("_Outline", 1f);
                                 vent.myRend.material.SetColor("_OutlineColor", Engineer.color);
                             }
@@ -346,21 +365,41 @@ namespace TheEpicRoles.Patches {
 
         static void trackerUpdate() {
             // Handle player tracking
-            if (Tracker.arrow?.arrow != null) {
-                if (Tracker.tracker == null || PlayerControl.LocalPlayer != Tracker.tracker) {
-                    Tracker.arrow.arrow.SetActive(false);
-                    return;
+
+            if (Tracker.arrow?.arrow == null && Doppelganger.trackerArrow?.arrow == null) return;
+
+            if ((Tracker.tracker == null || PlayerControl.LocalPlayer != Tracker.tracker) && (PlayerControl.LocalPlayer != Doppelganger.doppelganger || Doppelganger.copiedRole != RoleInfo.tracker)) {
+                Tracker.arrow.arrow.SetActive(false);
+                return;
+
                 }
 
-                if (Tracker.tracker != null && Tracker.tracked != null && PlayerControl.LocalPlayer == Tracker.tracker && !Tracker.tracker.Data.IsDead) {
+            // To save some lines, determine the arrow and target by the player role. Local player is tracker or doppelganger!
+            Arrow trackerArrow;
+            PlayerControl tracked;
+            if (PlayerControl.LocalPlayer == Tracker.tracker)
+            {
+                trackerArrow = Tracker.arrow;
+                tracked = Tracker.tracked;
+
+            } else
+            {
+                trackerArrow = Doppelganger.trackerArrow;
+                tracked = Doppelganger.trackerTracked;
+            }
+
+            if (tracked != null && !PlayerControl.LocalPlayer.Data.IsDead) {
                     Tracker.timeUntilUpdate -= Time.fixedDeltaTime;
 
-                    if (Tracker.timeUntilUpdate <= 0f) {
+                    if (Tracker.timeUntilUpdate <= 0f)
+                    {
                         bool trackedOnMap = !Tracker.tracked.Data.IsDead;
                         Vector3 position = Tracker.tracked.transform.position;
-                        if (!trackedOnMap) { // Check for dead body
+                        if (!trackedOnMap)
+                        { // Check for dead body
                             DeadBody body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Tracker.tracked.PlayerId);
-                            if (body != null) {
+                            if (body != null)
+                            {
                                 trackedOnMap = true;
                                 position = body.transform.position;
                             }
@@ -369,14 +408,15 @@ namespace TheEpicRoles.Patches {
                         Tracker.arrow.Update(position);
                         Tracker.arrow.arrow.SetActive(trackedOnMap);
                         Tracker.timeUntilUpdate = Tracker.updateIntervall;
-                    } else {
+                    }
+                    else
+                    {
                         Tracker.arrow.Update();
                     }
                 }
-            }
 
-            // Handle corpses tracking
-            if (Tracker.tracker != null && Tracker.tracker == PlayerControl.LocalPlayer && Tracker.corpsesTrackingTimer >= 0f && !Tracker.tracker.Data.IsDead) {
+                // Handle corpses tracking
+                if ((Tracker.tracker != null && Tracker.tracker == PlayerControl.LocalPlayer || Doppelganger.isRoleAndLocalPlayer(RoleInfo.tracker)) && Tracker.corpsesTrackingTimer >= 0f && !PlayerControl.LocalPlayer.Data.IsDead) {
                 bool arrowsCountChanged = Tracker.localArrows.Count != Tracker.deadBodyPositions.Count();
                 int index = 0;
 
@@ -486,7 +526,9 @@ namespace TheEpicRoles.Patches {
         }
 
         public static void securityGuardSetTarget() {
-            if (SecurityGuard.securityGuard == null || SecurityGuard.securityGuard != PlayerControl.LocalPlayer || ShipStatus.Instance == null || ShipStatus.Instance.AllVents == null) return;
+            if ((SecurityGuard.securityGuard == null || SecurityGuard.securityGuard != PlayerControl.LocalPlayer) && (Doppelganger.doppelganger == null ||Doppelganger.copiedRole != RoleInfo.securityGuard || PlayerControl.LocalPlayer != Doppelganger.doppelganger)
+                || (ShipStatus.Instance == null || ShipStatus.Instance.AllVents == null)
+               ) return;
 
             Vent target = null;
             Vector2 truePosition = PlayerControl.LocalPlayer.GetTruePosition();
@@ -500,12 +542,21 @@ namespace TheEpicRoles.Patches {
                     target = vent;
                 }
             }
-            SecurityGuard.ventTarget = target;
+            if (PlayerControl.LocalPlayer == SecurityGuard.securityGuard)
+            {
+                SecurityGuard.ventTarget = target;
+            } else
+            {
+                Doppelganger.securityGuardVentTarget = target;
+            }
+
         }
 
         public static void securityGuardUpdate() {
-            if (SecurityGuard.securityGuard == null || PlayerControl.LocalPlayer != SecurityGuard.securityGuard || SecurityGuard.securityGuard.Data.IsDead) return;
-            var (playerCompleted, _) = TasksHandler.taskInfo(SecurityGuard.securityGuard.Data);
+            if (SecurityGuard.securityGuard == null || PlayerControl.LocalPlayer != SecurityGuard.securityGuard) {
+                if (!Doppelganger.isRoleAndLocalPlayer(RoleInfo.securityGuard) || PlayerControl.LocalPlayer.Data.IsDead) return;
+            }
+            var (playerCompleted, _) = Doppelganger.isRoleAndLocalPlayer(RoleInfo.securityGuard) ? TasksHandler.taskInfo(Doppelganger.doppelganger.Data) : TasksHandler.taskInfo(SecurityGuard.securityGuard.Data);
             if (playerCompleted == SecurityGuard.rechargedTasks) {
                 SecurityGuard.rechargedTasks += SecurityGuard.rechargeTasksNumber;
                 if (SecurityGuard.maxCharges > SecurityGuard.charges) SecurityGuard.charges++;
@@ -525,22 +576,50 @@ namespace TheEpicRoles.Patches {
 
         static void snitchUpdate() {
             if (Snitch.localArrows == null) return;
+            if (Doppelganger.snitchLocalArrows == null) return;
 
             foreach (Arrow arrow in Snitch.localArrows) arrow.arrow.SetActive(false);
+            foreach (Arrow arrow in Doppelganger.snitchLocalArrows) arrow.arrow.SetActive(false);
 
-            if (Snitch.snitch == null || Snitch.snitch.Data.IsDead) return;
-
-            var (playerCompleted, playerTotal) = TasksHandler.taskInfo(Snitch.snitch.Data);
+            if ((Snitch.snitch == null || Snitch.snitch.Data.IsDead) && (Doppelganger.doppelganger == null 
+                                                                         || Doppelganger.copiedRole != RoleInfo.snitch
+                                                                         || Doppelganger.doppelganger.Data.IsDead)) return;
+            int playerCompleted, playerTotal, doppelgangerCompleted;
+            if (Snitch.snitch != null)
+            {
+                (playerCompleted, playerTotal) = TasksHandler.taskInfo(Snitch.snitch.Data);
+            } else
+            {
+                playerCompleted = 0;
+                (doppelgangerCompleted, playerTotal) = TasksHandler.taskInfo(Doppelganger.doppelganger.Data);
+            }
             int numberOfTasks = playerTotal - playerCompleted;
+            int doppelgangerNumberOfTasks = playerTotal - (Doppelganger.doppelganger != null ? TasksHandler.taskInfo(Doppelganger.doppelganger.Data).Item1: 0);
 
-            if (numberOfTasks <= Snitch.taskCountForReveal && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Snitch.includeTeamJackal && (PlayerControl.LocalPlayer == Jackal.jackal || PlayerControl.LocalPlayer == Sidekick.sidekick)))) {
+            // show snitch position to evil roles
+            if (!Snitch.snitch.Data.IsDead && numberOfTasks <= Snitch.taskCountForReveal && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Snitch.includeTeamJackal && (PlayerControl.LocalPlayer == Jackal.jackal || PlayerControl.LocalPlayer == Sidekick.sidekick)))) {
                 if (Snitch.localArrows.Count == 0) Snitch.localArrows.Add(new Arrow(Color.blue));
                 if (Snitch.localArrows.Count != 0 && Snitch.localArrows[0] != null) {
                     Snitch.localArrows[0].arrow.SetActive(true);
                     Snitch.localArrows[0].Update(Snitch.snitch.transform.position);
                 }
             }
-            else if (PlayerControl.LocalPlayer == Snitch.snitch && numberOfTasks == 0) {
+            if (!Doppelganger.doppelganger.Data.IsDead && doppelgangerNumberOfTasks <= Snitch.taskCountForReveal && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Snitch.includeTeamJackal && (PlayerControl.LocalPlayer == Jackal.jackal || PlayerControl.LocalPlayer == Sidekick.sidekick))))
+            {
+                if (Doppelganger.snitchLocalArrows.Count == 0) Doppelganger.snitchLocalArrows.Add(new Arrow(Color.blue));
+                if (Doppelganger.snitchLocalArrows.Count != 0 && Doppelganger.snitchLocalArrows[0] != null)
+                {
+                    Doppelganger.snitchLocalArrows[0].arrow.SetActive(true);
+                    Doppelganger.snitchLocalArrows[0].Update(Doppelganger.doppelganger.transform.position);
+                }
+            }
+
+            if (PlayerControl.LocalPlayer.Data.IsDead) return;
+
+
+            // snitch show arrows for evil roles
+            else if (PlayerControl.LocalPlayer == Snitch.snitch && numberOfTasks == 0 || Doppelganger.doppelganger == PlayerControl.LocalPlayer && Doppelganger.copiedRole == RoleInfo.snitch && doppelgangerNumberOfTasks == 0)
+            {
                 int arrowIndex = 0;
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls)
                 {
@@ -616,10 +695,11 @@ namespace TheEpicRoles.Patches {
         }
 
         static void baitUpdate() {
-            if (Bait.bait == null || Bait.bait != PlayerControl.LocalPlayer) return;
+            if ((Bait.bait == null || Bait.bait != PlayerControl.LocalPlayer) && (Doppelganger.doppelganger == null || Doppelganger.copiedRole != RoleInfo.bait
+                                                                                  || Doppelganger.doppelganger != PlayerControl.LocalPlayer)) return;
 
             // Bait report
-            if (Bait.bait.Data.IsDead && !Bait.reported) {
+            {
                 Bait.reportDelay -= Time.fixedDeltaTime;
                 DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == Bait.bait.PlayerId)?.FirstOrDefault();
                 if (deadPlayer.killerIfExisting != null && Bait.reportDelay <= 0f) {
@@ -634,8 +714,24 @@ namespace TheEpicRoles.Patches {
                     Bait.reported = true;
                 }
             }
+            if (Doppelganger.doppelganger == PlayerControl.LocalPlayer && Doppelganger.doppelganger.Data.IsDead && !Doppelganger.baitReported && !Doppelganger.baitWasCleaned)
+            {
+                Bait.reportDelay -= Time.fixedDeltaTime;
+                DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == Doppelganger.doppelganger.PlayerId)?.FirstOrDefault();
+                if (deadPlayer.killerIfExisting != null && Bait.reportDelay <= 0f)
+                {
 
-            // Bait Vents
+                    Helpers.handleKillOnBodyReport(); // Manually call Vampire handling, since the CmdReportDeadBody Prefix won't be called
+                    RPCProcedure.uncheckedCmdReportDeadBody(deadPlayer.killerIfExisting.PlayerId, Doppelganger.doppelganger.PlayerId);
+
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UncheckedCmdReportDeadBody, Hazel.SendOption.Reliable, -1);
+                    writer.Write(deadPlayer.killerIfExisting.PlayerId);
+                    writer.Write(Doppelganger.doppelganger.PlayerId);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    Doppelganger.baitReported = true;
+                }
+            }
+                    // Bait Vents
             if (ShipStatus.Instance?.AllVents != null) {
                 var ventsWithPlayers = new List<int>();
                 foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
@@ -686,7 +782,7 @@ namespace TheEpicRoles.Patches {
         }
 
         public static void mediumSetTarget() {
-            if (Medium.medium == null || Medium.medium != PlayerControl.LocalPlayer || Medium.medium.Data.IsDead || Medium.deadBodies == null || ShipStatus.Instance?.AllVents == null) return;
+            if (Medium.medium != PlayerControl.LocalPlayer && !Doppelganger.isRoleAndLocalPlayer(RoleInfo.medium) || PlayerControl.LocalPlayer.Data.IsDead || Medium.deadBodies == null || ShipStatus.Instance?.AllVents == null) return;
 
             DeadPlayer target = null;
             Vector2 truePosition = PlayerControl.LocalPlayer.GetTruePosition();
@@ -745,7 +841,9 @@ namespace TheEpicRoles.Patches {
         }
 
         public static void hackerUpdate() {
-            if (Hacker.hacker == null || PlayerControl.LocalPlayer != Hacker.hacker || Hacker.hacker.Data.IsDead) return;
+            if (Hacker.hacker == null || PlayerControl.LocalPlayer != Hacker.hacker || PlayerControl.LocalPlayer.Data.IsDead) {
+                if (!Doppelganger.isRoleAndLocalPlayer(RoleInfo.hacker)) return;
+            }
             var (playerCompleted, _) = TasksHandler.taskInfo(Hacker.hacker.Data);
             if (playerCompleted == Hacker.rechargedTasks) {
                 Hacker.rechargedTasks += Hacker.rechargeTasksNumber;
@@ -851,6 +949,8 @@ namespace TheEpicRoles.Patches {
                 pursuerSetTarget();
                 // Witch
                 witchSetTarget();
+                // Doppelganger
+                doppelgangerSetTarget();
                 hackerUpdate();
                 // Phaser
                 phaserSetTarget();
@@ -885,6 +985,11 @@ namespace TheEpicRoles.Patches {
             // Medic or Detective report
             bool isMedicReport = Medic.medic != null && Medic.medic == PlayerControl.LocalPlayer && __instance.PlayerId == Medic.medic.PlayerId;
             bool isDetectiveReport = Detective.detective != null && Detective.detective == PlayerControl.LocalPlayer && __instance.PlayerId == Detective.detective.PlayerId;
+            // Handle Doppelganger reports:
+            isMedicReport = isMedicReport || (Doppelganger.isRoleAndLocalPlayer(RoleInfo.medic) && __instance.PlayerId == Doppelganger.doppelganger.PlayerId);
+
+            isDetectiveReport = isDetectiveReport || (Doppelganger.isRoleAndLocalPlayer(RoleInfo.detective) && __instance.PlayerId == Doppelganger.doppelganger.PlayerId);
+
             if (isMedicReport || isDetectiveReport)
             {
                 DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == target?.PlayerId)?.FirstOrDefault();
@@ -999,7 +1104,9 @@ namespace TheEpicRoles.Patches {
             }
 
             // Seer show flash and add dead player position
-            if (Seer.seer != null && PlayerControl.LocalPlayer == Seer.seer && !Seer.seer.Data.IsDead && Seer.seer != target && Seer.mode <= 1) {
+            if ((Seer.seer != null && PlayerControl.LocalPlayer == Seer.seer && !Seer.seer.Data.IsDead && Seer.seer != target
+                 || Doppelganger.isRoleAndLocalPlayer(RoleInfo.seer) && !Doppelganger.doppelganger.Data.IsDead
+                     && Doppelganger.doppelganger != target) && Seer.mode <= 1) {
                 HudManager.Instance.FullScreen.enabled = true;
                 HudManager.Instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) => {
                     var renderer = HudManager.Instance.FullScreen;
@@ -1040,7 +1147,9 @@ namespace TheEpicRoles.Patches {
             }
 
             // Show flash on bait kill to the killer if enabled
-            if (Bait.bait != null && target == Bait.bait && Bait.showKillFlash && __instance == PlayerControl.LocalPlayer) {
+            if ((Bait.bait != null && target == Bait.bait || Doppelganger.doppelganger != null && Doppelganger.copiedRole == RoleInfo.bait && target == Doppelganger.doppelganger) 
+                && PlayerControl.LocalPlayer == deadPlayer.killerIfExisting
+                && Bait.showKillFlash && __instance == PlayerControl.LocalPlayer) {
                 HudManager.Instance.FullScreen.enabled = true;
                 HudManager.Instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) => {
                     var renderer = HudManager.Instance.FullScreen;

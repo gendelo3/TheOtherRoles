@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using static TheEpicRoles.TheEpicRoles;
 using TheEpicRoles.Objects;
+using TheEpicRoles.Patches;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -45,6 +46,8 @@ namespace TheEpicRoles {
         public static CustomButton pursuerButton;
         public static CustomButton witchSpellButton;
         public static CustomButton phaserCurseButton;
+        public static CustomButton jumperButton;
+        public static CustomButton readyButton;
 
         public static Dictionary<byte, List<CustomButton>> deputyHandcuffedButtons = null;
 
@@ -54,6 +57,7 @@ namespace TheEpicRoles {
         public static TMPro.TMP_Text pursuerButtonBlanksText;
         public static TMPro.TMP_Text hackerAdminTableChargesText;
         public static TMPro.TMP_Text hackerVitalsChargesText;
+        public static TMPro.TMP_Text jumperChargesText;
 
         public static void setCustomButtonCooldowns() {
             engineerRepairButton.MaxTimer = 0f;
@@ -90,6 +94,8 @@ namespace TheEpicRoles {
             trackerTrackCorpsesButton.MaxTimer = Tracker.corpsesTrackingCooldown;
             witchSpellButton.MaxTimer = Witch.cooldown;
             phaserCurseButton.MaxTimer = Phaser.markCooldown;
+            jumperButton.MaxTimer = Jumper.jumperJumpTime;
+            readyButton.MaxTimer = 3f;
 
             timeMasterShieldButton.EffectDuration = TimeMaster.shieldDuration;
             hackerButton.EffectDuration = Hacker.duration;
@@ -112,12 +118,16 @@ namespace TheEpicRoles {
         public static void showTargetNameOnButton(PlayerControl target, CustomButton button, string defaultText) {
             if (CustomOptionHolder.showButtonTarget.getBool()) { // Should the button show the target name option
                 var text = "";
-                if (target == null) text = defaultText; // Set text to defaultText if no target
+                if (Camouflager.camouflageTimer >= 0.1f) text = defaultText; // set text to default if camo is on
+                else if (ShipStatusPatch.lightsOut <= PlayerControl.GameOptions.CrewLightMod) text = defaultText; // set to default if lights are out
+                else if (Morphling.morphling != null && Morphling.morphTarget != null && target == Morphling.morphling && Morphling.morphTimer > 0) text = Morphling.morphTarget.Data.PlayerName;  // set to morphed player
+                else if (target == null) text = defaultText; // Set text to defaultText if no target
                 else text = target.Data.PlayerName; // Set text to playername
                 button.actionButton.OverrideText(text);
                 button.showButtonText = true;
             }
         }
+
         public static void resetTimeMasterButton() {
             timeMasterShieldButton.Timer = timeMasterShieldButton.MaxTimer;
             timeMasterShieldButton.isEffectActive = false;
@@ -1434,8 +1444,11 @@ namespace TheEpicRoles {
                         phaserCurseButton.Timer = Phaser.phaseCooldown;
                     }
                     else if (Phaser.curseVictim != null && Phaser.curseVictimTarget == null) {
-                        PlayerControl.LocalPlayer.transform.position = new Vector3(-100f, 100f, 0f);
-                        PlayerControl.LocalPlayer.transform.position = Phaser.currentTarget.transform.position;
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetPosition, Hazel.SendOption.Reliable, -1);
+                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                        writer.Write(Phaser.currentTarget.transform.position.x);
+                        writer.Write(Phaser.currentTarget.transform.position.y);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
                         MurderAttemptResult murder = Helpers.checkMuderAttemptAndKill(Phaser.phaser, Phaser.currentTarget, showAnimation: true);
                         if (murder == MurderAttemptResult.SuppressKill) return;
 
@@ -1461,6 +1474,84 @@ namespace TheEpicRoles {
                 new Vector3(-1.8f, -0.06f, 0),
                 __instance,
                 KeyCode.F
+            );
+
+            // Jumper Jump
+            jumperButton = new CustomButton(
+                () => {
+                    if (Jumper.jumpLocation == Vector3.zero) { //set location
+                        Jumper.jumpLocation = PlayerControl.LocalPlayer.transform.localPosition;
+                        jumperButton.Sprite = Jumper.getJumpButtonSprite();
+                        Jumper.jumperCharges = Jumper.jumperChargesOnPlace;
+                    } else if (Jumper.jumperCharges >= 1f) { //teleport to location if you have one
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetPosition, Hazel.SendOption.Reliable, -1);
+                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                        writer.Write(Jumper.jumpLocation.x);
+                        writer.Write(Jumper.jumpLocation.y);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+
+                        PlayerControl.LocalPlayer.transform.position = Jumper.jumpLocation;
+
+                        Jumper.jumperCharges -= 1f;
+                    }
+                    if (Jumper.jumperCharges > 0) jumperButton.Timer = jumperButton.MaxTimer;
+                },
+                () => { return (Jumper.jumper != null && Jumper.jumper == PlayerControl.LocalPlayer || Doppelganger.isRoleAndLocalPlayer(RoleInfo.jumper)) && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => {
+                    if (jumperChargesText != null) jumperChargesText.text = $"{Jumper.jumperCharges}";
+                    return (Jumper.jumpLocation == Vector3.zero || Jumper.jumperCharges >= 1f) && PlayerControl.LocalPlayer.CanMove;
+                },
+                () => {
+                    Jumper.jumperCharges += Jumper.jumperChargesGainOnMeeting;
+                    if (Jumper.jumperCharges > Jumper.jumperMaxCharges) Jumper.jumperCharges = Jumper.jumperMaxCharges;
+                    if (Jumper.jumperCharges > 0) jumperButton.Timer = jumperButton.MaxTimer;
+                },
+                Jumper.getJumpMarkButtonSprite(),
+                new Vector3(-1.8f, -0.06f, 0),
+                __instance,
+                KeyCode.F
+            );
+            // Jumper Charges counter
+            jumperChargesText = GameObject.Instantiate(jumperButton.actionButton.cooldownTimerText, jumperButton.actionButton.cooldownTimerText.transform.parent);
+            jumperChargesText.text = "";
+            jumperChargesText.enableWordWrapping = false;
+            jumperChargesText.transform.localScale = Vector3.one * 0.5f;
+            jumperChargesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+
+            readyButton = new CustomButton(
+                () => {
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetReadyStatus, Hazel.SendOption.Reliable, -1);
+                    writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                    if (readyButton.buttonText == "Not Ready") {       
+                        readyButton.Sprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.ReadyButton.png", 115f);
+                        readyButton.buttonText = "Ready";
+                        readyButton.actionButton.buttonLabelText.outlineColor = Color.green;
+                        writer.Write(byte.MaxValue);
+                        if (AmongUsClient.Instance.AmHost)
+                            RPCProcedure.setReadyStatus(PlayerControl.LocalPlayer.PlayerId, byte.MaxValue);
+                    }
+                    else {
+                        readyButton.Sprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.NotReadyButton.png", 115f);
+                        readyButton.buttonText = "Not Ready"; 
+                        readyButton.actionButton.buttonLabelText.outlineColor = Color.red;
+                        writer.Write(byte.MinValue);
+                        if (AmongUsClient.Instance.AmHost)
+                            RPCProcedure.setReadyStatus(PlayerControl.LocalPlayer.PlayerId, byte.MinValue);
+                    }            
+                    readyButton.Timer = 3f;
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                },
+                () => { return AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started; },
+                () => { return true; },
+                () => { },
+                Helpers.loadSpriteFromResources("TheEpicRoles.Resources.NotReadyButton.png", 115f),
+                new Vector3(-1f, 0, 0),
+                __instance,
+                KeyCode.LeftControl,
+                false,
+                "Not Ready",
+                true
+
             );
 
             // Set the default (or settings from the previous game) timers/durations when spawning the buttons

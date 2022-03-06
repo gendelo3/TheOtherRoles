@@ -132,9 +132,11 @@ namespace TheEpicRoles.Patches {
             } else if (Pursuer.pursuer != null && Pursuer.pursuer == PlayerControl.LocalPlayer) {
                 setPlayerNameColor(Pursuer.pursuer, Pursuer.color);
 
-            } else if (Doppelganger.doppelganger != null && Doppelganger.doppelganger == PlayerControl.LocalPlayer)
+            } else if (Doppelganger.doppelganger != null && Doppelganger.doppelganger == PlayerControl.LocalPlayer) {
                 setPlayerNameColor(Doppelganger.doppelganger, Doppelganger.color);
-
+            } else if (Jumper.jumper != null && Jumper.jumper == PlayerControl.LocalPlayer) {
+                setPlayerNameColor(Jumper.jumper, Jumper.color);
+            }
 
             // No else if here, as a Lover of team Jackal needs the colors
             if (Sidekick.sidekick != null && Sidekick.sidekick == PlayerControl.LocalPlayer) {
@@ -279,8 +281,12 @@ namespace TheEpicRoles.Patches {
 
         static void Postfix(HudManager __instance)
         {
-            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
-
+            // Update Lobby Buttons in Lobby and return
+            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) {
+                CustomButton.LobbyHudUpdate();
+                return;
+            }            
+            CustomButton.LobbyHudUpdate(); // Remove Lobby Buttons in Game
             CustomButton.HudUpdate();
             resetNameTagsAndColors();
             setNameColors();

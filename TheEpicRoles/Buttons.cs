@@ -130,6 +130,7 @@ namespace TheEpicRoles {
             timeMasterShieldButton.Timer = timeMasterShieldButton.MaxTimer;
             timeMasterShieldButton.isEffectActive = false;
             timeMasterShieldButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
+            SoundEffectsManager.stop("timemasterShield");
         }
 
         private static void addReplacementHandcuffedButton(CustomButton button, Vector3? positionOffset = null, Func<bool> couldUse = null)
@@ -209,6 +210,8 @@ namespace TheEpicRoles {
                     AmongUsClient.Instance.FinishRpcImmediately(usedRepairWriter);
                     RPCProcedure.engineerUsedRepair();
 
+                    SoundEffectsManager.play("engineerRepair");
+
                     foreach (PlayerTask task in PlayerControl.LocalPlayer.myTasks) {
                         if (task.TaskType == TaskTypes.FixLights) {
                             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.EngineerFixLights, Hazel.SendOption.Reliable, -1);
@@ -265,6 +268,7 @@ namespace TheEpicRoles {
                                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                                     RPCProcedure.cleanBody(playerInfo.PlayerId);
                                     janitorCleanButton.Timer = janitorCleanButton.MaxTimer;
+                                    SoundEffectsManager.play("cleanerClean");
 
                                     break;
                                 }
@@ -334,6 +338,8 @@ namespace TheEpicRoles {
                     RPCProcedure.deputyUsedHandcuffs(targetId);
                     Deputy.currentTarget = null;
                     deputyHandcuffButton.Timer = deputyHandcuffButton.MaxTimer;
+
+                    SoundEffectsManager.play("deputyHandcuff");
                 },
                 () => { return (Deputy.deputy != null && Deputy.deputy == PlayerControl.LocalPlayer || Sheriff.sheriff != null && Sheriff.sheriff == PlayerControl.LocalPlayer && Sheriff.sheriff == Sheriff.formerDeputy && Deputy.keepsHandcuffsOnPromotion) && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
@@ -360,6 +366,7 @@ namespace TheEpicRoles {
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.TimeMasterShield, Hazel.SendOption.Reliable, -1);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.timeMasterShield();
+                    SoundEffectsManager.play("timemasterShield");
                 },
                 () => { return TimeMaster.timeMaster != null && TimeMaster.timeMaster == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return PlayerControl.LocalPlayer.CanMove; },
@@ -374,7 +381,11 @@ namespace TheEpicRoles {
                 KeyCode.F, 
                 true,
                 TimeMaster.shieldDuration,
-                () => { timeMasterShieldButton.Timer = timeMasterShieldButton.MaxTimer; }
+                () => {
+                    timeMasterShieldButton.Timer = timeMasterShieldButton.MaxTimer;
+                    SoundEffectsManager.stop("timemasterShield");
+
+                }
             );
 
             // Medic Shield
@@ -389,6 +400,7 @@ namespace TheEpicRoles {
                         RPCProcedure.setFutureShielded(Medic.currentTarget.PlayerId);
                     else
                         RPCProcedure.medicSetShielded(Medic.currentTarget.PlayerId);
+                    SoundEffectsManager.play("medicShield");
                 },
                 () => { return Medic.medic != null && Medic.medic == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
@@ -409,6 +421,7 @@ namespace TheEpicRoles {
                     writer.Write(Shifter.currentTarget.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.setFutureShifted(Shifter.currentTarget.PlayerId);
+                    SoundEffectsManager.play("shifterShift");
                 },
                 () => { return Shifter.shifter != null && Shifter.shifter == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
@@ -431,10 +444,12 @@ namespace TheEpicRoles {
                         RPCProcedure.morphlingMorph(Morphling.sampledTarget.PlayerId);
                         Morphling.sampledTarget = null;
                         morphlingButton.EffectDuration = Morphling.duration;
+                        SoundEffectsManager.play("morphlingMorph");
                     } else if (Morphling.currentTarget != null) {
                         Morphling.sampledTarget = Morphling.currentTarget;
                         morphlingButton.Sprite = Morphling.getMorphSprite();
                         morphlingButton.EffectDuration = 1f;
+                        SoundEffectsManager.play("morphlingSample");
                     }
                 },
                 () => { return Morphling.morphling != null && Morphling.morphling == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
@@ -458,6 +473,7 @@ namespace TheEpicRoles {
                     if (Morphling.sampledTarget == null) {
                         morphlingButton.Timer = morphlingButton.MaxTimer;
                         morphlingButton.Sprite = Morphling.getSampleSprite();
+                        SoundEffectsManager.play("morphlingMorph");
                     }
                 }
             );
@@ -468,6 +484,7 @@ namespace TheEpicRoles {
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CamouflagerCamouflage, Hazel.SendOption.Reliable, -1);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.camouflagerCamouflage();
+                    SoundEffectsManager.play("morphlingMorph");
                 },
                 () => { return Camouflager.camouflager != null && Camouflager.camouflager == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return PlayerControl.LocalPlayer.CanMove; },
@@ -482,13 +499,17 @@ namespace TheEpicRoles {
                 KeyCode.F,
                 true,
                 Camouflager.duration,
-                () => { camouflagerButton.Timer = camouflagerButton.MaxTimer; }
+                () => {
+                    camouflagerButton.Timer = camouflagerButton.MaxTimer;
+                    SoundEffectsManager.play("morphlingMorph");
+                }
             );
 
             // Hacker button
             hackerButton = new CustomButton(
                 () => {
                     Hacker.hackerTimer = Hacker.duration;
+                    SoundEffectsManager.play("hackerHack");
                 },
                 () => { return Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return true; },
@@ -618,6 +639,7 @@ namespace TheEpicRoles {
                     writer.Write(Tracker.currentTarget.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.trackerUsedTracker(Tracker.currentTarget.PlayerId);
+                    SoundEffectsManager.play("trackerTrackPlayer");
                 },
                 () => { return Tracker.tracker != null && Tracker.tracker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
@@ -631,7 +653,10 @@ namespace TheEpicRoles {
             );
 
             trackerTrackCorpsesButton = new CustomButton(
-                () => { Tracker.corpsesTrackingTimer = Tracker.corpsesTrackingDuration; },
+                () => {
+                    Tracker.corpsesTrackingTimer = Tracker.corpsesTrackingDuration;
+                    SoundEffectsManager.play("trackerTrackCorpses");
+                },
                 () => { return Tracker.tracker != null && Tracker.tracker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Tracker.canTrackCorpses; },
                 () => { return PlayerControl.LocalPlayer.CanMove; },
                 () => {
@@ -684,6 +709,7 @@ namespace TheEpicRoles {
                                     RPCProcedure.vampireSetBitten(byte.MaxValue, byte.MaxValue);
                                 }
                             })));
+                            SoundEffectsManager.play("vampireBite");
 
                             vampireKillButton.HasEffect = true; // Trigger effect on this click
                         }
@@ -735,7 +761,8 @@ namespace TheEpicRoles {
                     MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceGarlic, Hazel.SendOption.Reliable);
                     writer.WriteBytesAndSize(buff);
                     writer.EndMessage();
-                    RPCProcedure.placeGarlic(buff); 
+                    RPCProcedure.placeGarlic(buff);
+                    SoundEffectsManager.play("garlic");
                 },
                 () => { return !Vampire.localPlacedGarlic && !PlayerControl.LocalPlayer.Data.IsDead && Vampire.garlicsActive; },
                 () => { return PlayerControl.LocalPlayer.CanMove && !Vampire.localPlacedGarlic; },
@@ -808,6 +835,7 @@ namespace TheEpicRoles {
             lighterButton = new CustomButton(
                 () => {
                     Lighter.lighterTimer = Lighter.duration;
+                    SoundEffectsManager.play("lighterLight");
                 },
                 () => { return Lighter.lighter != null && Lighter.lighter == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return PlayerControl.LocalPlayer.CanMove; },
@@ -822,7 +850,10 @@ namespace TheEpicRoles {
                 KeyCode.F,
                 true,
                 Lighter.duration,
-                () => { lighterButton.Timer = lighterButton.MaxTimer; }
+                () => {
+                    lighterButton.Timer = lighterButton.MaxTimer;
+                    SoundEffectsManager.play("lighterLight");
+                }
             );
 
             // Eraser erase button
@@ -835,6 +866,7 @@ namespace TheEpicRoles {
                     writer.Write(Eraser.currentTarget.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.setFutureErased(Eraser.currentTarget.PlayerId);
+                    SoundEffectsManager.play("eraserErase");
                 },
                 () => { return Eraser.eraser != null && Eraser.eraser == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
@@ -859,7 +891,8 @@ namespace TheEpicRoles {
                     MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceJackInTheBox, Hazel.SendOption.Reliable);
                     writer.WriteBytesAndSize(buff);
                     writer.EndMessage();
-                    RPCProcedure.placeJackInTheBox(buff); 
+                    RPCProcedure.placeJackInTheBox(buff);
+                    SoundEffectsManager.play("tricksterPlaceBox");
                 },
                 () => { return Trickster.trickster != null && Trickster.trickster == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !JackInTheBox.hasJackInTheBoxLimitReached(); },
                 () => { return PlayerControl.LocalPlayer.CanMove && !JackInTheBox.hasJackInTheBoxLimitReached(); },
@@ -874,7 +907,8 @@ namespace TheEpicRoles {
                 () => {
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.LightsOut, Hazel.SendOption.Reliable, -1);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.lightsOut(); 
+                    RPCProcedure.lightsOut();
+                    SoundEffectsManager.play("lighterLight");
                 },
                 () => { return Trickster.trickster != null && Trickster.trickster == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && JackInTheBox.hasJackInTheBoxLimitReached() && JackInTheBox.boxesConvertedToVents; },
                 () => { return PlayerControl.LocalPlayer.CanMove && JackInTheBox.hasJackInTheBoxLimitReached() && JackInTheBox.boxesConvertedToVents; },
@@ -889,7 +923,10 @@ namespace TheEpicRoles {
                 KeyCode.F,
                 true,
                 Trickster.lightsOutDuration,
-                () => { lightsOutButton.Timer = lightsOutButton.MaxTimer; }
+                () => {
+                    lightsOutButton.Timer = lightsOutButton.MaxTimer;
+                    SoundEffectsManager.play("lighterLight");
+                }
             );
 
             // Cleaner Clean
@@ -913,6 +950,7 @@ namespace TheEpicRoles {
                                     RPCProcedure.cleanBody(playerInfo.PlayerId);
 
                                     Cleaner.cleaner.killTimer = cleanerCleanButton.Timer = cleanerCleanButton.MaxTimer;
+                                    SoundEffectsManager.play("cleanerClean");
                                     break;
                                 }
                             }
@@ -937,6 +975,7 @@ namespace TheEpicRoles {
                         Warlock.curseVictim = Warlock.currentTarget;
                         warlockCurseButton.Sprite = Warlock.getCurseKillButtonSprite();
                         warlockCurseButton.Timer = 1f;
+                        SoundEffectsManager.play("warlockCurse");
                     } else if (Warlock.curseVictim != null && Warlock.curseVictimTarget != null) {
                         MurderAttemptResult murder = Helpers.checkMuderAttemptAndKill(Warlock.warlock, Warlock.curseVictimTarget, showAnimation: false);
                         if (murder == MurderAttemptResult.SuppressKill) return; 
@@ -996,6 +1035,7 @@ namespace TheEpicRoles {
                         writer.EndMessage();
                         RPCProcedure.placeCamera(buff); 
                     }
+                    SoundEffectsManager.play("securityGuardPlaceCam");  // Same sound used for both types (cam or vent)!
                     securityGuardButton.Timer = securityGuardButton.MaxTimer;
                 },
                 () => { return SecurityGuard.securityGuard != null && SecurityGuard.securityGuard == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && SecurityGuard.remainingScrews >= Mathf.Min(SecurityGuard.ventPrice, SecurityGuard.camPrice); },
@@ -1097,7 +1137,8 @@ namespace TheEpicRoles {
                         arsonistButton.HasEffect = false;
                     } else if (Arsonist.currentTarget != null) {
                         Arsonist.douseTarget = Arsonist.currentTarget;
-                        arsonistButton.HasEffect = true;              
+                        arsonistButton.HasEffect = true;
+                        SoundEffectsManager.play("arsonistDouse");
                     }
                 },
                 () => { return Arsonist.arsonist != null && Arsonist.arsonist == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
@@ -1158,6 +1199,7 @@ namespace TheEpicRoles {
 
                                     Vulture.cooldown = vultureEatButton.Timer = vultureEatButton.MaxTimer;
                                     Vulture.eatenBodies++;
+                                    SoundEffectsManager.play("vultureEat");
                                     break;
                                 }
                             }
@@ -1186,6 +1228,7 @@ namespace TheEpicRoles {
                     if (Medium.target != null) {
                         Medium.soulTarget = Medium.target;
                         mediumButton.HasEffect = true;
+                        SoundEffectsManager.play("mediumAsk");
                     }
                 },
                 () => { return Medium.medium != null && Medium.medium == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
@@ -1258,6 +1301,7 @@ namespace TheEpicRoles {
 
                         Medium.souls.Remove(target);
                     }
+                    SoundEffectsManager.stop("mediumAsk");
                 }
             );
 
@@ -1275,6 +1319,7 @@ namespace TheEpicRoles {
 
                         Pursuer.blanks++;
                         pursuerButton.Timer = pursuerButton.MaxTimer;
+                        SoundEffectsManager.play("pursuerBlank");
                     }
 
                 },
@@ -1306,6 +1351,7 @@ namespace TheEpicRoles {
                 () => {
                     if (Witch.currentTarget != null) {
                         Witch.spellCastingTarget = Witch.currentTarget;
+                        SoundEffectsManager.play("witchSpell");
                     }
                 },
                 () => { return Witch.witch != null && Witch.witch == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
@@ -1360,6 +1406,8 @@ namespace TheEpicRoles {
                         Phaser.curseVictim = Phaser.currentTarget;
                         phaserCurseButton.Sprite = Phaser.getCurseKillButtonSprite();
                         phaserCurseButton.Timer = Phaser.phaseCooldown;
+
+                        SoundEffectsManager.play("warlockCurse");
                     }
                     else if (Phaser.curseVictim != null && Phaser.curseVictimTarget == null) {
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetPosition, Hazel.SendOption.Reliable, -1);
@@ -1376,6 +1424,7 @@ namespace TheEpicRoles {
                         phaserCurseButton.Sprite = Phaser.getCurseButtonSprite();
                         Phaser.phaser.killTimer = phaserCurseButton.Timer = phaserCurseButton.MaxTimer;
 
+                        SoundEffectsManager.play("jumper");
                     }
                 },
                 () => { return Phaser.phaser != null && Phaser.phaser == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
@@ -1401,6 +1450,9 @@ namespace TheEpicRoles {
                         Jumper.jumpLocation = PlayerControl.LocalPlayer.transform.localPosition;
                         jumperButton.Sprite = Jumper.getJumpButtonSprite();
                         Jumper.jumperCharges = Jumper.jumperChargesOnPlace;
+
+                        SoundEffectsManager.play("warlockCurse");
+
                     } else if (Jumper.jumperCharges >= 1f) { //teleport to location if you have one
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetPosition, Hazel.SendOption.Reliable, -1);
                         writer.Write(PlayerControl.LocalPlayer.PlayerId);
@@ -1411,6 +1463,8 @@ namespace TheEpicRoles {
                         PlayerControl.LocalPlayer.transform.position = Jumper.jumpLocation;
 
                         Jumper.jumperCharges -= 1f;
+
+                        SoundEffectsManager.play("jumper");
                     }
                     if (Jumper.jumperCharges > 0) jumperButton.Timer = jumperButton.MaxTimer;
                 },

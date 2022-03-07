@@ -115,6 +115,10 @@ namespace TheEpicRoles {
         
         SetPosition,
 
+        // Sound Functionality
+        PlaySoundAtPosition,
+        PlaySoundGlobal,
+
         // Ready Status
         SetReadyStatus,
         SetReadyNames,
@@ -848,6 +852,23 @@ namespace TheEpicRoles {
             if (value > 0) Pursuer.blankedList.Add(target);
         }
 
+        public static void playSoundAtPosition(string sound, float x, float y) {
+            float maxRange = 4;
+            float volume = 1f;
+            if (!PlayerControl.LocalPlayer.Data.IsDead) {
+                var pos = PlayerControl.LocalPlayer.transform.position;
+                float dist = (float)Math.Sqrt((x - pos.x) * (x - pos.x) + (y - pos.y) * (y - pos.y));
+                if (dist > maxRange) return;
+                volume *= maxRange - dist;
+            }
+            SoundEffectsManager.play(sound, volume);
+        }
+
+        public static void playSoundGlobal(string sound) {
+            SoundEffectsManager.play(sound);
+        }
+
+
         public static void setPosition(byte playerId, float x, float y) {
             PlayerControl target = Helpers.playerById(playerId);
             target.transform.localPosition = new Vector3(x, y, 0);
@@ -1068,6 +1089,15 @@ namespace TheEpicRoles {
                     break;
                 case (byte)CustomRPC.SetFutureSpelled:
                     RPCProcedure.setFutureSpelled(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.PlaySoundAtPosition:
+                    string sound = reader.ReadString();
+                    Single x = reader.ReadSingle();
+                    Single y = reader.ReadSingle();
+                    RPCProcedure.playSoundAtPosition(sound, x, y);
+                    break;
+                case (byte)CustomRPC.PlaySoundGlobal:
+                    RPCProcedure.playSoundGlobal(reader.ReadString());
                     break;
                 case (byte)CustomRPC.SetPosition:
                     RPCProcedure.setPosition(reader.ReadByte(), reader.ReadSingle(), reader.ReadSingle());

@@ -762,7 +762,15 @@ namespace TheEpicRoles {
                     writer.WriteBytesAndSize(buff);
                     writer.EndMessage();
                     RPCProcedure.placeGarlic(buff);
-                    SoundEffectsManager.play("garlic");
+
+                    // Play Garlic sound
+                    writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaySoundAtPosition, Hazel.SendOption.Reliable);
+                    writer.Write("garlic");
+                    writer.Write((Single)pos.x);
+                    writer.Write((Single)pos.y);
+                    writer.EndMessage();
+                    RPCProcedure.playSoundAtPosition("garlic", pos.x, pos.y);
+
                 },
                 () => { return !Vampire.localPlacedGarlic && !PlayerControl.LocalPlayer.Data.IsDead && Vampire.garlicsActive; },
                 () => { return PlayerControl.LocalPlayer.CanMove && !Vampire.localPlacedGarlic; },

@@ -36,3 +36,5 @@
 |mediumAsk| |[ghost_sounds.wav](https://freesound.org/people/fishwithfeathers/sounds/177768/ )| CC0 1.0|
 |pursuerBlank | | [gun load.wav](https://freesound.org/people/Shelby_Wideman/sounds/178141/ )| CC0 1.0 |
 |witchSpell | | [witch's laugh](https://freesound.org/people/Yogoorth/sounds/589144/ ) | CC0 1.0 |
+|jumperJump| | [beast whoosh.wav](https://freesound.org/people/martian/sounds/403973/ ) | CC0 1.0 | 
+| phaser Jump | same as jumperJump |-|-|

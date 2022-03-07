@@ -1425,7 +1425,7 @@ namespace TheEpicRoles {
                         phaserCurseButton.Sprite = Phaser.getCurseButtonSprite();
                         Phaser.phaser.killTimer = phaserCurseButton.Timer = phaserCurseButton.MaxTimer;
 
-                        SoundEffectsManager.play("jumper");
+                        SoundEffectsManager.play("jumperJump");
                     }
                 },
                 () => { return Phaser.phaser != null && Phaser.phaser == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
@@ -1465,7 +1465,7 @@ namespace TheEpicRoles {
 
                         Jumper.jumperCharges -= 1f;
 
-                        SoundEffectsManager.play("jumper");
+                        SoundEffectsManager.play("jumperJump");
                     }
                     if (Jumper.jumperCharges > 0) jumperButton.Timer = jumperButton.MaxTimer;
                 },

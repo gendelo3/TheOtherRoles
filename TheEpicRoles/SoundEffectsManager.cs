@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.Networking;
 
 namespace TheEpicRoles
 {
@@ -14,9 +15,11 @@ namespace TheEpicRoles
         
     {
         private static Dictionary<string, AudioClip> soundEffects;
+        private static bool loaded = false;
 
-        public static void Load()
+        public static void Load(bool reload=true)
         {
+            if (loaded && !reload) return;
             soundEffects = new Dictionary<string, AudioClip>();
             Assembly assembly = Assembly.GetExecutingAssembly();
             string[] resourceNames = assembly.GetManifestResourceNames();
@@ -27,12 +30,13 @@ namespace TheEpicRoles
                     soundEffects.Add(resourceName, Helpers.loadAudioClipFromResources(resourceName));
                 }
             }
+            loaded = true;
         }
 
         public static AudioClip get(string path)
         {
             // Convenience: As as SoundEffects are stored in the same folder, allow using just the name as well
-            if (!path.Contains(".")) path = "TheEpicRoles.Resources.SoundEffects." + path + ".raw";
+            if (!path.Contains(".") && !soundEffects.ContainsKey(path)) path = "TheEpicRoles.Resources.SoundEffects." + path + ".raw";
             AudioClip returnValue;
             return soundEffects.TryGetValue(path, out returnValue) ? returnValue : null;
         }
@@ -41,8 +45,6 @@ namespace TheEpicRoles
         public static void play(string path, float volume=0.8f)
         {
             AudioClip clipToPlay = get(path);
-            // if (false) clipToPlay = get("exampleClip"); for april fools?
-
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(clipToPlay, false, volume);
         }
 

@@ -112,7 +112,7 @@ namespace TheEpicRoles {
             return null;
 
             /* Usage example:
-            AudioClip exampleClip = Helpers.loadAudioClipFromResources("TheOtherRoles.Resources.exampleClip.raw");
+            AudioClip exampleClip = Helpers.loadAudioClipFromResources("TheEpicRoles.Resources.exampleClip.raw");
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(exampleClip, false, 0.8f);
             */
         }

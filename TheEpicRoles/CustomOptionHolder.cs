@@ -523,7 +523,7 @@ namespace TheEpicRoles {
             //LVK. First Kill Shield on or off
             firstKillShield = CustomOption.Create(9043, cs(new Color(0, 1, 217f / 255f, 1f), "Shield The First Killed\nPlayer From Last Game"), "option", true);
             //Monschtalein. toggle lobby mode
-            toggleLobbyMode = CustomOption.Create(7000, cs(new Color(0, 1, 217f / 255f, 1f), "Ignore undready players"), "option", new string[] { "No", "Yes" }, null, false);
+            toggleLobbyMode = CustomOption.Create(7000, cs(new Color(0, 1, 217f / 255f, 1f), "Ignore Unready Players"), "option", new string[] { "No", "Yes" }, null, false);
 
             dynamicMap = CustomOption.Create(8, cs(new Color(0, 1, 217f / 255f, 1f), "Play On A Random Map"), "map", false, null, true);
             dynamicMapEnableSkeld = CustomOption.Create(501, cs(new Color(0, 1, 217f / 255f, 1f), "Enable Skeld Rotation"), "map", true, dynamicMap, false);

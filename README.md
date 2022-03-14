@@ -123,7 +123,7 @@ Our goal is to make this mod more epic and to add a bunch of new features, roles
   
 # Credits & Resources
 | Name | Description | Idea | Code | Link |
-| --- | --- | :---: |
+| --- | --- | :---: | :---: | :---: |
 | Eisbison | The Other Roles |  | x | [GitHub](https://github.com/Eisbison/TheOtherRoles) |
 | BepInEx | Used to hook game methods |  | x | [GitHub](https://github.com/BepInEx) |
 | Woodi-dev | Lovers | x |  | [GitHub](https://github.com/Woodi-dev/Among-Us-Love-Couple-Mod) |

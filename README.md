@@ -126,7 +126,7 @@ Our goal is to make this mod more epic and to add a bunch of new features, roles
 | --- | --- | :---: |
 | The Other Roles | Core Mod | [GitHub](https://github.com/Eisbison/TheOtherRoles) |
 | BepInEx | Used to hook game methods | [GitHub](https://github.com/BepInEx) |
-| Dhalucard | Jackal & Sidekick | [Twitch6](https://www.twitch.tv/dhalucard) |
+| Dhalucard | Jackal & Sidekick | [Twitch](https://www.twitch.tv/dhalucard) |
 | Woodi-dev | Lovers | [GitHub](https://github.com/Woodi-dev/Among-Us-Love-Couple-Mod) |
 | Maartii | Jester | [GitHub](https://github.com/Maartii/Jester)  |
 | NotHunter101 | Engineer & Medic | [GitHub](https://github.com/NotHunter101/ExtraRolesAmongUs)  |

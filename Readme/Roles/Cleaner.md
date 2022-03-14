@@ -13,7 +13,7 @@ The Cleaner has the extra ability to clean dead bodys and remove them entirely f
 ## Buttons
 | Clean Button |
 | :------------: |
-| <img width="100" height="100" src="../TheEpicRoles/Resources/CleanButton.png"/> |
+| <img width="100" height="100" src="../../TheEpicRoles/Resources/CleanButton.png"/> |
 
 ## Options
 | Name | Default | Description |

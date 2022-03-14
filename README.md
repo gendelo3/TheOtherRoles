@@ -57,6 +57,32 @@ View [full changelog](/Readme/Changelog.md)
 2. Enable `winhttp.dll` via the proton winecfg (https://docs.bepinex.dev/articles/advanced/steam_interop.html#open-winecfg-for-the-target-game).
 3. Launch the game via Steam.
 </details>
+
+# Roles
+| Impostors | Crewmates | Neutral | Secondary |
+|----------|-------------|-----------------|----------------|
+| [Evil Mini](#mini) | [Nice Mini](#mini) | [Arsonist](#arsonist) | [Lover](#lovers) |
+| [Evil Guesser](#guesser) | [Nice Guesser](#guesser) | [Jester](#jester) |  |
+| [Bounty Hunter](#bounty-hunter) | [Detective](#detective) | [Jackal](#jackal) |  |
+| [Camouflager](#camouflager) | [Engineer](#engineer) | [Sidekick](#sidekick) |  |
+| [Cleaner](#cleaner) | [Hacker](#hacker) | [Vulture](#vulture) |  |
+| [Eraser](#eraser) | [Lighter](#lighter) | [Lawyer](#lawyer) |  |
+| [Godfather (Mafia)](#mafia) | [Mayor](#mayor) |  |  |
+| [Mafioso (Mafia)](#mafia) | [Medic](#medic) |  |  |
+| [Janitor (Mafia)](#mafia)  | [Security Guard](#security-guard) |  |  |
+| [Morphling](#morphling) | [Seer](#seer) |  |  |
+| [Trickster](#trickster) | [Sheriff](#sheriff) 
+| [Vampire](#vampire) | [Deputy](#deputy) |  |
+| [Warlock](#warlock) | [Shifter](#shifter) |  |  |
+| [Witch](#witch) | [Snitch](#snitch) |  |  |
+| [Phaser](#Phaser) | [Spy](#spy) |  |  |
+|  | [Swapper](#swapper) |  |  |
+|  | [Time Master](#time-master) |  |  |
+|  | [Tracker](#tracker) |  |  |
+|  | [Bait](#bait) |  |
+|  | [Medium](#medium) |  |
+|  | [Jumper](#Jumper) |  |
+
   
 # Credits & Resources
 | Name | Description | Idea | Code | Link |

@@ -13,7 +13,7 @@ The Phaser has the ability to mark a person after a certain amount of time. Afte
 ## Buttons
 | Mark Button | Phase Button |
 | :------------: | :------------: |
-|<img width="100" height="100" src="../TheEpicRoles/Resources/PhaseButton.png"/>|<img width="100" height="100" src="../TheEpicRoles/Resources/PhaseKillButton.png"/>|
+|<img width="100" height="100" src="../../TheEpicRoles/Resources/PhaseButton.png"/>|<img width="100" height="100" src="../../TheEpicRoles/Resources/PhaseKillButton.png"/>|
 
 ## Options
 | Name | Default | Description |

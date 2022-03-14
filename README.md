@@ -94,8 +94,8 @@ Our goal is to make this mod more epic and to add a bunch of new features, roles
 </details>
 
 # Installation
-## Windows Auto Installation/Updating Using The Mod Manager
-1. Download and install the newest [release](https://github.com/MatuxGG/ModManager/releases/latest)
+## Windows Auto Installation/Updating Using Mod Manager
+1. Download and install the newest [release](https://github.com/MatuxGG/ModManager/releases/latest) of Mod Manager.
 2. Navigate in the main menu to "Mod -> General" and hit the download button behind The Epic Roles.
 3. After finishing the download process you can hit the play button to start the game.
 4. Optionally you create a desktop shortcut by pressing the save button right next to the play button.
@@ -105,7 +105,7 @@ Our goal is to make this mod more epic and to add a bunch of new features, roles
 <details>
   <summary>Click to show Windows Manual Installation</summary>  
   
-1. Download newest [release](https://github.com/LaicosVK/TheEpicRoles/releases/latest)
+1. Download newest [release](https://github.com/LaicosVK/TheEpicRoles/releases/latest).
 2. Navigate to your Among Us installtion folder.
 3. Optionally (recommended) copy your entire game folder and continue the last steps in this copy of Among Us.
 4. Drag or extract all files and folders from the zip into your Among Us installation folder.
@@ -114,12 +114,11 @@ Our goal is to make this mod more epic and to add a bunch of new features, roles
 
 ## Linux Manual Installation
 <details>
-  <summary>Click to show Linux Manual Installation</summary>  
-  
+  <summary>Click to show Linux Manual Installation</summary>    
    
 1. Follow Windows Manual Installation until step 4.
-2. Enable `winhttp.dll` via the proton winecfg (https://docs.bepinex.dev/articles/advanced/steam_interop.html#open-winecfg-for-the-target-game)
-3. Launch the game via Steam
+2. Enable `winhttp.dll` via the proton winecfg (https://docs.bepinex.dev/articles/advanced/steam_interop.html#open-winecfg-for-the-target-game).
+3. Launch the game via Steam.
 </details>
   
 # Credits & Resources

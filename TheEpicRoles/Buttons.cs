@@ -1252,12 +1252,12 @@ namespace TheEpicRoles {
                                 else if (Medium.target.player == Sheriff.sheriff) // sheriff
                                     answer = $"Dang it! I thought i was onto something!";
                                 else if (Medium.target.player == Warlock.warlock) // warlock
-                                    answer = $"Wait... that should have hit someone else, not myself!";
+                                    answer = $"Wait... that should have hit someone else, not me!";
                                 else if (Medium.target.player == Shifter.shifter) // shifter
-                                    answer = $"I just wantet another profession...";
+                                    answer = $"I just wanted another profession...";
                             }
                             else if (Medium.target.player == Lawyer.lawyer && Lawyer.target == Medium.target.killerIfExisting) // lawyer not snitching
-                                answer = $"You will never catch him! He will kill you all!";
+                                answer = $"You will never catch them! They will kill you all!";
                             else
                                 answer = $"I think it was the {RoleInfo.GetRolesString(Medium.target.killerIfExisting, false)}!";
                             break;

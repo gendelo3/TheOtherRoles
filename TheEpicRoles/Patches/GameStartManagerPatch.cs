@@ -49,7 +49,7 @@ namespace TheEpicRoles.Patches {
         }
 
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameJoined))]
-        public class AmongUsClientOnGameJoinedtPatch {
+        public class AmongUsClientOnGameJoinedPatch {
             public static void Prefix() {
                 // Clear ready status list on game join
                 RPCProcedure.readyStatus.Clear();
@@ -60,6 +60,10 @@ namespace TheEpicRoles.Patches {
         [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
         public class GameStartManagerStartPatch {
             public static void Postfix(GameStartManager __instance) {
+                if (PlayerControl.GameOptions.MaxPlayers > 15) {
+                    PlayerControl.GameOptions.MaxPlayers = 15;
+                    PlayerControl.LocalPlayer.RpcSyncSettings(PlayerControl.GameOptions);
+                }
                 // Trigger version refresh
                 versionSent = false;
                 // Reset lobby countdown timer

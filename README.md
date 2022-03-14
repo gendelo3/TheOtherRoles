@@ -1,4 +1,4 @@
-![The Epic Roles Banner](./Images/TER_banner.png)
+![The Epic Roles Banner](./Readme/Images/TER_banner.png)
 <p align="center">
   <a href="https://github.com/LaicosVK/TheEpicRoles/releases/"><img src="https://badgen.net/github/release/laicosvk/theepicroles"></a> <!--Releases-->
   <a href="https://github.com/LaicosVK/TheEpicRoles/releases/"><img src="https://badgen.net/github/assets-dl/laicosvk/theepicroles"></a> <!--Downloads-->
@@ -13,7 +13,7 @@
 <p align="center">
 This mod is not affiliated with Among Us or Innersloth LLC, and the content contained therein is not endorsed or otherwise sponsored by Innersloth LLC. Portions of the materials contained herein are property of Innersloth LLC. © Innersloth LLC.</p>
 
-[![Discord](./Images/TER_discord.png)](https://discord.gg/WjegsxEuAD)
+[![Discord](./Readme/Images/TER_discord.png)](https://discord.gg/WjegsxEuAD)
 
 # Information
 **The Epic Roles** is a remodded version of the mod [The Other Roles](https://github.com/Eisbison/TheOtherRoles) for [Among Us](https://store.steampowered.com/app/945360/Among_Us).

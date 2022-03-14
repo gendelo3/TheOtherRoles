@@ -23,25 +23,53 @@ Our goal is to make this mod more epic and to add a bunch of new features, roles
 # Releases
 | Among Us Version| Mod Version | Link |
 |----------|-------------|-----------------|
-| 2022.2.24s| v1.0.3| [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.3/TheEpicRoles.zip)
-| 2021.12.15s| v1.0.2| [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.2/TheEpicRoles.zip)
-| 2021.12.15s| v1.0.1| [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.1/TheEpicRoles.zip)
+| 2022.2.24 | v1.1.0 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.1.0/TheEpicRoles.zip) |
+| 2022.2.24 | v1.0.3 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.3/TheEpicRoles.zip) |
+| 2021.12.15 | v1.0.2 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.2/TheEpicRoles.zip) |
+| 2021.12.15 | v1.0.1 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.1/TheEpicRoles.zip) |
 
 # Changelog
 <details>
-  <summary>Click to show the Changelog</summary>
+  <summary>Click to show the Changelog</summary>  
+
+<details>
+  <summary>1.1.0</summary>
+
+  ## 1.1.0
+  New:
+  - Role: Jumper
+  - Random spawnpoints option
+  - Ready or not ready function in lobby
+  - First kill shield option
+  - Split game options into categories
+  - The Epic Hats support
+  - Medium questions/answers reworked
+  - Existence of Deputy now prevents game end if Deputy can promote to Sheriff 
+
+  Bugfixes:
+  - First kill now teleports the killer on dead body
+  - Phaser teleports now even on short distance
+  - Buttons hide the targets name in tasks, while lights out and while camouflage
+  - Sidebar display improvements
+  ---
+</details>
 
 <details>
   <summary>1.0.3</summary>
+
+  ## 1.0.3
   - Targetable buttons can now show your current target (if setting is turned on)<br/>
   - Setting if the second Mayor vote should be shown<br/>
   - Setting to turn off camera shake<br/>
   - Lobbysidebar looks now better<br/>
   - Fixed a bug where games were not finished properly on official servers
+  ---
 </details>
-  
+
 <details>
   <summary>1.0.2</summary>
+
+  ## 1.0.2
   - Phaser Role<br/>
   - Sheriff stops impostor win<br/>
   - Trickster box count option<br/>
@@ -52,54 +80,53 @@ Our goal is to make this mod more epic and to add a bunch of new features, roles
   - Shifter passes on his role option<br/>
   - New colors<br/>
   - Jester can be client<br/>
+  ---
 </details>
-  
+
 <details>
   <summary>1.0.1</summary>
+
+  ## 1.0.1
   - First Release
-</details>
+  ---
+</details>  
   
 </details>
 
 # Installation
-## Windows Auto Installation/Updating Using The LaicosVK ModInstaller
-1. Download and execute the newest [release](https://github.com/LaicosVK/AULVKM/releases/latest)
-2. At the bottom enter the path to your Among Us installtion directory if it was not detected.
-3. Start The Epic Roles and have fun :>
+## Windows Auto Installation/Updating Using The Mod Manager
+1. Download and install the newest [release](https://github.com/MatuxGG/ModManager/releases/latest)
+2. Navigate in the main menu to "Mod -> General" and hit the download button behind The Epic Roles.
+3. After finishing the download process you can hit the play button to start the game.
+4. Optionally you create a desktop shortcut by pressing the save button right next to the play button.
+
 
 ## Windows Manual Installation
 <details>
   <summary>Click to show Windows Manual Installation</summary>  
   
-1. Download and unzip the newest [release](https://github.com/LaicosVK/TheEpicRoles/releases/latest)
-2. Find the folder of your game, for Steam players you can right click in Steam, on the game, a menu will appear proposing you to go to the folders.
-3. Make a copy of your game, it's not obligatory but advised, put it where you want.
-4. Drag or extract the files from the zip into your game, at the `.exe` level.
-5. Run the game (the first launch might take a while)
+1. Download newest [release](https://github.com/LaicosVK/TheEpicRoles/releases/latest)
+2. Navigate to your Among Us installtion folder.
+3. Optionally (recommended) copy your entire game folder and continue the last steps in this copy of Among Us.
+4. Drag or extract all files and folders from the zip into your Among Us installation folder.
+5. Run the game. (First launch might take a while)
 </details>
 
 ## Linux Manual Installation
 <details>
   <summary>Click to show Linux Manual Installation</summary>  
   
-1. Install Among Us via Steam
-2. Download newest [release](https://github.com/LaicosVK/TheEpicRoles/releases/latest) and extract it to ~/.steam/steam/steamapps/common/Among Us
-3. Enable `winhttp.dll` via the proton winecfg (https://docs.bepinex.dev/articles/advanced/steam_interop.html#open-winecfg-for-the-target-game)
-4. Launch the game via Steam
+   
+1. Follow Windows Manual Installation until step 4.
+2. Enable `winhttp.dll` via the proton winecfg (https://docs.bepinex.dev/articles/advanced/steam_interop.html#open-winecfg-for-the-target-game)
+3. Launch the game via Steam
 </details>
   
 # Credits & Resources
 [The Other Roles](https://github.com/Eisbison/TheOtherRoles) - Original Mod
 
 # Credits & Resources of The Other Roles
-[OxygenFilter](https://github.com/NuclearPowered/Reactor.OxygenFilter) - For all the version v2.3.0 to v2.6.1, we were using the OxygenFilter for automatic deobfuscation\
-[Reactor](https://github.com/NuclearPowered/Reactor) - The framework used for all version before v2.0.0\
 [BepInEx](https://github.com/BepInEx) - Used to hook game functions\
-[Essentials](https://github.com/DorCoMaNdO/Reactor-Essentials) - Custom game options by **DorCoMaNdO**:
-- Before v1.6: We used the default Essentials release
-- v1.6-v1.8: We slightly changed the default Essentials. The changes can be found on this [branch](https://github.com/Eisbison/Reactor-Essentials/tree/feature/TheOtherRoles-Adaption) of our fork.
-- v2.0.0 and later: As we're not using Reactor anymore, we are using our own implementation, inspired by the one from **DorCoMaNdO**
-
 [Jackal and Sidekick](https://www.twitch.tv/dhalucard) - Original idea for the Jackal and Sidekick comes from **Dhalucard**\
 [Among-Us-Love-Couple-Mod](https://github.com/Woodi-dev/Among-Us-Love-Couple-Mod) - Idea for the Lovers role comes from **Woodi-dev**\
 [Jester](https://github.com/Maartii/Jester) - Idea for the Jester role comes from **Maartii**\

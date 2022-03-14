@@ -55,6 +55,7 @@ namespace TheEpicRoles {
         Pursuer,
         Witch,
         Phaser,
+        Jumper,
         Crewmate,
         Impostor
     }
@@ -111,9 +112,21 @@ namespace TheEpicRoles {
         LawyerSetTarget,
         LawyerPromotesToPursuer,
         SetBlanked,
+
+        SetPosition,
+        SetFirstKill,
+        SetGuardianShield,
+
+        // Ready Status
+        SetReadyStatus,
+        SetReadyNames,
+
     }
 
     public static class RPCProcedure {
+
+        // Store ready status of all players
+        public static List<byte> readyStatus = new List<byte>();
 
         // Main Controls
 
@@ -124,6 +137,7 @@ namespace TheEpicRoles {
             clearAndReloadRoles();
             clearGameHistory();
             setCustomButtonCooldowns();
+            readyStatus.Clear();
         }
 
         public static void ShareOptions(int numberOfOptions, MessageReader reader) {            
@@ -282,6 +296,9 @@ namespace TheEpicRoles {
                     case RoleId.Phaser:
                         Phaser.phaser = player;
                         break;
+                    case RoleId.Jumper:
+                        Jumper.jumper = player;
+                        break;
                     }
                 }
         }
@@ -313,6 +330,7 @@ namespace TheEpicRoles {
         public static void uncheckedMurderPlayer(byte sourceId, byte targetId, byte showAnimation) {
             PlayerControl source = Helpers.playerById(sourceId);
             PlayerControl target = Helpers.playerById(targetId);
+            if (source == target) source.protectedByGuardian = false;
             if (source != null && target != null) {
                 if (showAnimation == 0) KillAnimationCoPerformKillPatch.hideNextAnimation = true;
                 source.MurderPlayer(target);
@@ -338,7 +356,7 @@ namespace TheEpicRoles {
 
         public static void engineerFixLights() {
             SwitchSystem switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
-            switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
+            switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;     
         }
 
         public static void engineerUsedRepair() {
@@ -483,15 +501,16 @@ namespace TheEpicRoles {
                 if (Bait.bait.Data.IsDead) Bait.reported = true; }
             if (Medium.medium != null && Medium.medium == player)
                 Medium.medium = oldShifter;
-            if (Phaser.phaser != null && Phaser.phaser == player)
-                Phaser.phaser = oldShifter;
+            if (Jumper.jumper != null && Jumper.jumper == player)
+                Jumper.jumper = oldShifter;
+
+            if (CustomOptionHolder.shifterShiftsSelf.getBool())
+                Shifter.shifter = player;
 
             // Set cooldowns to max for both players
             if (PlayerControl.LocalPlayer == oldShifter || PlayerControl.LocalPlayer == player) {
                 CustomButton.ResetAllCooldowns();
             }
-            if (CustomOptionHolder.shifterShiftsSelf.getBool())
-                Shifter.shifter = player;
         }
         public static void shifterKilledDueBadShift()
         {
@@ -616,6 +635,7 @@ namespace TheEpicRoles {
             if (player == SecurityGuard.securityGuard) SecurityGuard.clearAndReload();
             if (player == Bait.bait) Bait.clearAndReload();
             if (player == Medium.medium) Medium.clearAndReload();
+            if (player == Jumper.jumper) Jumper.clearAndReload();
 
             // Impostor roles
             if (player == Morphling.morphling) Morphling.clearAndReload();
@@ -638,7 +658,7 @@ namespace TheEpicRoles {
             if (!ignoreLovers && (player == Lovers.lover1 || player == Lovers.lover2)) { // The whole Lover couple is being erased
                 Lovers.clearAndReload(); 
             }
-            if (player == Jackal.jackal) { // Promote Sidekick and hence override the the Jackal or erase Jackal
+            if (player == Jackal.jackal) { // Promote Sidekick and hence override the Jackal or erase Jackal
                 if (Sidekick.promotesToJackal && Sidekick.sidekick != null && !Sidekick.sidekick.Data.IsDead) {
                     RPCProcedure.sidekickPromotes();
                 } else {
@@ -827,7 +847,49 @@ namespace TheEpicRoles {
             PlayerControl target = Helpers.playerById(playerId);
             if (target == null) return;
             Pursuer.blankedList.RemoveAll(x => x.PlayerId == playerId);
-            if (value > 0) Pursuer.blankedList.Add(target);            
+            if (value > 0) Pursuer.blankedList.Add(target);
+        }
+
+        public static void setPosition(byte playerId, float x, float y) {
+            PlayerControl target = Helpers.playerById(playerId);
+            target.transform.localPosition = new Vector3(x, y, 0);
+            target.transform.position = new Vector3(x, y, 0);
+        }
+
+        public static void setFirstKill(byte playerId) {
+            GameStartManagerPatch.guardianShield = Helpers.playerById(playerId).Data.PlayerName;
+        }
+
+        public static void setGuardianShield(byte playerId) {
+            Helpers.playerById(playerId).protectedByGuardian = true;
+        }
+
+        // Sets the ready status in readystatus list if reciever is lobby host
+        // and sends the ready status to all current players in lobby
+        public static void setReadyStatus(byte playerId, byte status) {
+            if (AmongUsClient.Instance.AmHost) {
+                if (status == byte.MaxValue && !readyStatus.Contains(playerId)) {
+                    readyStatus.Add(playerId);
+                }
+                else if (status == byte.MinValue && readyStatus.Contains(playerId)) {
+                    readyStatus.Remove(playerId);
+                }
+                MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetReadyNames, Hazel.SendOption.Reliable);
+                writer.WriteBytesAndSize(readyStatus.ToArray());
+                writer.EndMessage();
+                RPCProcedure.setReadyNames(readyStatus.ToArray());
+            }
+        }
+
+        // Set the player name color for all players recieved by the host
+        public static void setReadyNames(byte[] playerIds) {
+            readyStatus = playerIds.ToList();
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                player.nameText.color = Color.white;
+                if (readyStatus.Contains(player.PlayerId)) {
+                    player.nameText.color = Color.green;
+                }
+            }
         }
     }   
 
@@ -1015,6 +1077,21 @@ namespace TheEpicRoles {
                     break;
                 case (byte)CustomRPC.SetFutureSpelled:
                     RPCProcedure.setFutureSpelled(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.SetPosition:
+                    RPCProcedure.setPosition(reader.ReadByte(), reader.ReadSingle(), reader.ReadSingle());
+                    break;
+                case (byte)CustomRPC.SetFirstKill:
+                    RPCProcedure.setFirstKill(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.SetGuardianShield:
+                    RPCProcedure.setGuardianShield(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.SetReadyStatus:
+                    RPCProcedure.setReadyStatus(reader.ReadByte(), reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.SetReadyNames:
+                    RPCProcedure.setReadyNames(reader.ReadBytesAndSize());
                     break;
             }
         }

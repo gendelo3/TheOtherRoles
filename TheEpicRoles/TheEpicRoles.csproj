@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <Version>1.0.3</Version>
+        <Version>1.1.0</Version>
         <Description>TheEpicRoles</Description>
         <Authors>LaicosVK</Authors>
     </PropertyGroup>
@@ -14,7 +14,7 @@
     <ItemGroup>
         <EmbeddedResource Include="Resources\CustomHats\*.png" />
         <EmbeddedResource Include="Resources\*.png" />
-        <EmbeddedResource Include="Resources\TricksterAnimation\*.png" />
+        <EmbeddedResource Include="Resources\TricksterAnimation\*.png" /> 
     </ItemGroup>
 
     <ItemGroup>

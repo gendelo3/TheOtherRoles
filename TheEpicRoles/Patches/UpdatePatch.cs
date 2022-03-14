@@ -131,6 +131,8 @@ namespace TheEpicRoles.Patches {
                 setPlayerNameColor(Lawyer.lawyer, Lawyer.color);
             } else if (Pursuer.pursuer != null && Pursuer.pursuer == PlayerControl.LocalPlayer) {
                 setPlayerNameColor(Pursuer.pursuer, Pursuer.color);
+            } else if (Jumper.jumper != null && Jumper.jumper == PlayerControl.LocalPlayer) {
+                setPlayerNameColor(Jumper.jumper, Jumper.color);
             }
 
             // No else if here, as a Lover of team Jackal needs the colors
@@ -242,6 +244,7 @@ namespace TheEpicRoles.Patches {
                 Morphling.morphling.nameText.text += suffix;
         }
 
+
         static void updateImpostorKillButton(HudManager __instance) {
             if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor || MeetingHud.Instance) return;
             bool enabled = true;
@@ -254,6 +257,18 @@ namespace TheEpicRoles.Patches {
             
             if (enabled) __instance.KillButton.Show();
             else __instance.KillButton.Hide();
+
+            if (CustomOptionHolder.showButtonTarget.getBool()) { // Should the button show the target name option
+                var defaultText = "KILL";
+                var text = "";
+                var target = __instance.KillButton.currentTarget;
+                if (Camouflager.camouflageTimer >= 0.1f) text = defaultText; // set text to default if camo is on
+                else if (ShipStatusPatch.lightsOut <= PlayerControl.GameOptions.CrewLightMod) text = defaultText; // set to default if lights are out
+                else if (Morphling.morphling != null && Morphling.morphTarget != null && target == Morphling.morphling && Morphling.morphTimer > 0) text = Morphling.morphTarget.Data.PlayerName;  // set to morphed player
+                else if (target == null) text = defaultText; // Set text to defaultText if no target
+                else text = target.Data.PlayerName; // Set text to playername
+                __instance.KillButton.buttonLabelText.text = text;
+            }
 
             if (Deputy.handcuffedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Deputy.handcuffedKnows[PlayerControl.LocalPlayer.PlayerId] > 0) __instance.KillButton.Hide();
         }
@@ -272,8 +287,12 @@ namespace TheEpicRoles.Patches {
 
         static void Postfix(HudManager __instance)
         {
-            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
-
+            // Update Lobby Buttons in Lobby and return
+            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) {
+                CustomButton.LobbyHudUpdate();
+                return;
+            }            
+            CustomButton.LobbyHudUpdate(); // Remove Lobby Buttons in Game
             CustomButton.HudUpdate();
             resetNameTagsAndColors();
             setNameColors();

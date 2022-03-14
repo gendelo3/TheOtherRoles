@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,8 +10,10 @@ using System.Linq;
 using static TheEpicRoles.TheEpicRoles;
 using TheEpicRoles.Modules;
 using TheEpicRoles.Objects;
+using TheEpicRoles.Patches;
 using HarmonyLib;
 using Hazel;
+
 
 namespace TheEpicRoles {
 
@@ -333,7 +336,7 @@ namespace TheEpicRoles {
 
             // Block impostor not fully grown mini kill
             else if (Mini.mini != null && target == Mini.mini && !Mini.isGrownUp()) {
-                return MurderAttemptResult.SuppressKill;
+            return MurderAttemptResult.SuppressKill;
             }
 
             // Block Time Master with time shield kill
@@ -345,6 +348,15 @@ namespace TheEpicRoles {
                 }
                 return MurderAttemptResult.SuppressKill;
             }
+
+            if (GameStartManagerPatch.guardianShield == "") {
+                GameStartManagerPatch.guardianShield = target.Data.PlayerName;
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.SetFirstKill, Hazel.SendOption.Reliable, -1);
+                writer.Write(target.PlayerId);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                RPCProcedure.setFirstKill(target.PlayerId);
+            }
+
             return MurderAttemptResult.PerformKill;
         }
 

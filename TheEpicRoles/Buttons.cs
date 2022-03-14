@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using static TheEpicRoles.TheEpicRoles;
 using TheEpicRoles.Objects;
+using TheEpicRoles.Patches;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -44,6 +45,9 @@ namespace TheEpicRoles {
         public static CustomButton pursuerButton;
         public static CustomButton witchSpellButton;
         public static CustomButton phaserCurseButton;
+        public static CustomButton jumperButton;
+        public static CustomButton readyButton;
+        public static CustomButton guardianShield;
 
         public static Dictionary<byte, List<CustomButton>> deputyHandcuffedButtons = null;
 
@@ -53,6 +57,7 @@ namespace TheEpicRoles {
         public static TMPro.TMP_Text pursuerButtonBlanksText;
         public static TMPro.TMP_Text hackerAdminTableChargesText;
         public static TMPro.TMP_Text hackerVitalsChargesText;
+        public static TMPro.TMP_Text jumperChargesText;
 
         public static void setCustomButtonCooldowns() {
             engineerRepairButton.MaxTimer = 0f;
@@ -88,6 +93,9 @@ namespace TheEpicRoles {
             trackerTrackCorpsesButton.MaxTimer = Tracker.corpsesTrackingCooldown;
             witchSpellButton.MaxTimer = Witch.cooldown;
             phaserCurseButton.MaxTimer = Phaser.markCooldown;
+            jumperButton.MaxTimer = Jumper.jumperJumpTime;
+            readyButton.MaxTimer = 3f;
+            guardianShield.MaxTimer = 0f;
 
             timeMasterShieldButton.EffectDuration = TimeMaster.shieldDuration;
             hackerButton.EffectDuration = Hacker.duration;
@@ -109,13 +117,19 @@ namespace TheEpicRoles {
 
         public static void showTargetNameOnButton(PlayerControl target, CustomButton button, string defaultText) {
             if (CustomOptionHolder.showButtonTarget.getBool()) { // Should the button show the target name option
-                var text = "";
-                if (target == null) text = defaultText; // Set text to defaultText if no target
-                else text = target.Data.PlayerName; // Set text to playername
+                var text = defaultText;
+                if (PlayerControl.LocalPlayer.CanMove){
+                    if (Camouflager.camouflageTimer >= 0.1f) text = defaultText; // set text to default if camo is on
+                    else if (ShipStatusPatch.lightsOut <= PlayerControl.GameOptions.CrewLightMod) text = defaultText; // set to default if lights are out
+                    else if (Morphling.morphling != null && Morphling.morphTarget != null && target == Morphling.morphling && Morphling.morphTimer > 0) text = Morphling.morphTarget.Data.PlayerName;  // set to morphed player
+                    else if (target == null) text = defaultText; // Set text to defaultText if no target
+                    else text = target.Data.PlayerName; // Set text to playername
+                }
                 button.actionButton.OverrideText(text);
                 button.showButtonText = true;
             }
         }
+
         public static void resetTimeMasterButton() {
             timeMasterShieldButton.Timer = timeMasterShieldButton.MaxTimer;
             timeMasterShieldButton.isEffectActive = false;
@@ -1200,21 +1214,59 @@ namespace TheEpicRoles {
                 Medium.duration,
                 () => {
                     mediumButton.Timer = mediumButton.MaxTimer;
-                    if (Medium.target == null || Medium.target.player == null) return;
-                    string msg = "";
+                    if (Medium.target == null || Medium.target.player == null) {
+                        DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Your Ouija Board is unable to connect! Make sure it's connected to the soulnet and your spiritwall is correctly configured.");
+                        return; }
+                    string question = "";
+                    string answer = "";
 
                     int randomNumber = Medium.target.killerIfExisting?.PlayerId == Mini.mini?.PlayerId ? TheEpicRoles.rnd.Next(3) : TheEpicRoles.rnd.Next(4);
                     string typeOfColor = Helpers.isLighterColor(Medium.target.killerIfExisting.Data.DefaultOutfit.ColorId) ? "lighter" : "darker";
                     float timeSinceDeath = ((float)(Medium.meetingStartTime - Medium.target.timeOfDeath).TotalMilliseconds);
-                    string name = " (" + Medium.target.player.Data.PlayerName + ")";
+                    string name = Medium.target.player.Data.PlayerName;
 
+                    switch (randomNumber) {
+                        case 0: // What was the dead persons role?
+                            question = $"{name}, what profession did you follow?";
+                            answer = $"I once was the {RoleInfo.GetRolesString(Medium.target.player, false)}!";
+                            break;
+                        
+                        case 1: // Killer Color type
+                            question = $"{name}, how did your killer look like?";
+                            if (Medium.target.player == Lawyer.lawyer && Lawyer.target == Medium.target.killerIfExisting) // lawyer not snitching
+                                answer = $"I wont tell you!";
+                            else
+                                answer = $"I think it was a {typeOfColor} person!";
+                            break;
+                        
+                        case 2: // Kill time
+                            question = $"{name}, when did you pass away?";
+                            answer = $"I was murdered {Math.Round(timeSinceDeath / 1000)} seconds before the last meeting!";
+                            break;
 
-                    if (randomNumber == 0) msg = "What is your role? My role is " + RoleInfo.GetRolesString(Medium.target.player, false) + name;
-                    else if (randomNumber == 1) msg = "What is your killer`s color type? My killer is a " + typeOfColor + " color" + name;
-                    else if (randomNumber == 2) msg = "When did you die? I have died " + Math.Round(timeSinceDeath / 1000) + "s before meeting started" + name;
-                    else msg = "What is your killer`s role? My killer is " + RoleInfo.GetRolesString(Medium.target.killerIfExisting, false) + name; //exlude mini 
+                        default: // Killer role
+                            question = $"{name}, who has murdered you?";
+                            if (Medium.target.killerIfExisting == Medium.target.player) {
+                                if (Medium.target.player == Lovers.lover1 || Medium.target.player == Lovers.lover2) // lover
+                                    answer = $"I couldn't take it being all alone! We will be together forever!";
+                                else if (Medium.target.player == Sheriff.sheriff) // sheriff
+                                    answer = $"Dang it! I thought i was onto something!";
+                                else if (Medium.target.player == Warlock.warlock) // warlock
+                                    answer = $"Wait... that should have hit someone else, not me!";
+                                else if (Medium.target.player == Shifter.shifter) // shifter
+                                    answer = $"I just wanted another profession...";
+                            }
+                            else if (Medium.target.player == Lawyer.lawyer && Lawyer.target == Medium.target.killerIfExisting) // lawyer not snitching
+                                answer = $"You will never catch them! They will kill you all!";
+                            else
+                                answer = $"I think it was the {RoleInfo.GetRolesString(Medium.target.killerIfExisting, false)}!";
+                            break;
+                    }
 
-                    DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"{msg}");
+                    DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, question);
+                    PlayerControl.LocalPlayer.Data.IsDead = true;
+                    DestroyableSingleton<HudManager>.Instance.Chat.AddChat(Medium.target.player, answer);
+                    PlayerControl.LocalPlayer.Data.IsDead = false;
 
                     // Remove soul
                     if (Medium.oneTimeUse) {
@@ -1352,9 +1404,13 @@ namespace TheEpicRoles {
                         phaserCurseButton.Timer = Phaser.phaseCooldown;
                     }
                     else if (Phaser.curseVictim != null && Phaser.curseVictimTarget == null) {
-                        PlayerControl.LocalPlayer.transform.position = new Vector3(-100f, 100f, 0f);
-                        PlayerControl.LocalPlayer.transform.position = Phaser.currentTarget.transform.position;
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetPosition, Hazel.SendOption.Reliable, -1);
+                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                        writer.Write(Phaser.currentTarget.transform.position.x);
+                        writer.Write(Phaser.currentTarget.transform.position.y);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
                         MurderAttemptResult murder = Helpers.checkMuderAttemptAndKill(Phaser.phaser, Phaser.currentTarget, showAnimation: true);
+                        Phaser.phaser.transform.position = Phaser.currentTarget.transform.position;
                         if (murder == MurderAttemptResult.SuppressKill) return;
 
 
@@ -1379,6 +1435,95 @@ namespace TheEpicRoles {
                 new Vector3(-1.8f, -0.06f, 0),
                 __instance,
                 KeyCode.F
+            );
+
+            // Jumper Jump
+            jumperButton = new CustomButton(
+                () => {
+                    if (Jumper.jumpLocation == Vector3.zero) { //set location
+                        Jumper.jumpLocation = PlayerControl.LocalPlayer.transform.localPosition;
+                        jumperButton.Sprite = Jumper.getJumpButtonSprite();
+                        Jumper.jumperCharges = Jumper.jumperChargesOnPlace;
+                    } else if (Jumper.jumperCharges >= 1f) { //teleport to location if you have one
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetPosition, Hazel.SendOption.Reliable, -1);
+                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                        writer.Write(Jumper.jumpLocation.x);
+                        writer.Write(Jumper.jumpLocation.y);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+
+                        PlayerControl.LocalPlayer.transform.position = Jumper.jumpLocation;
+
+                        Jumper.jumperCharges -= 1f;
+                    }
+                    if (Jumper.jumperCharges > 0) jumperButton.Timer = jumperButton.MaxTimer;
+                },
+                () => { return Jumper.jumper != null && Jumper.jumper == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => {
+                    if (jumperChargesText != null) jumperChargesText.text = $"{Jumper.jumperCharges}";
+                    return (Jumper.jumpLocation == Vector3.zero || Jumper.jumperCharges >= 1f) && PlayerControl.LocalPlayer.CanMove;
+                },
+                () => {
+                    Jumper.jumperCharges += Jumper.jumperChargesGainOnMeeting;
+                    if (Jumper.jumperCharges > Jumper.jumperMaxCharges) Jumper.jumperCharges = Jumper.jumperMaxCharges;
+                    if (Jumper.jumperCharges > 0) jumperButton.Timer = jumperButton.MaxTimer;
+                },
+                Jumper.getJumpMarkButtonSprite(),
+                new Vector3(-1.8f, -0.06f, 0),
+                __instance,
+                KeyCode.F
+            );
+            // Jumper Charges counter
+            jumperChargesText = GameObject.Instantiate(jumperButton.actionButton.cooldownTimerText, jumperButton.actionButton.cooldownTimerText.transform.parent);
+            jumperChargesText.text = "";
+            jumperChargesText.enableWordWrapping = false;
+            jumperChargesText.transform.localScale = Vector3.one * 0.5f;
+            jumperChargesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+
+            readyButton = new CustomButton(
+                () => {
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetReadyStatus, Hazel.SendOption.Reliable, -1);
+                    writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                    if (readyButton.buttonText == "Not Ready") {       
+                        readyButton.Sprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.ReadyButton.png", 115f);
+                        readyButton.buttonText = "Ready";
+                        readyButton.actionButton.buttonLabelText.outlineColor = Color.green;
+                        writer.Write(byte.MaxValue);
+                        if (AmongUsClient.Instance.AmHost)
+                            RPCProcedure.setReadyStatus(PlayerControl.LocalPlayer.PlayerId, byte.MaxValue);
+                    }
+                    else {
+                        readyButton.Sprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.NotReadyButton.png", 115f);
+                        readyButton.buttonText = "Not Ready"; 
+                        readyButton.actionButton.buttonLabelText.outlineColor = Color.red;
+                        writer.Write(byte.MinValue);
+                        if (AmongUsClient.Instance.AmHost)
+                            RPCProcedure.setReadyStatus(PlayerControl.LocalPlayer.PlayerId, byte.MinValue);
+                    }            
+                    readyButton.Timer = 3f;
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                },
+                () => { return AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started && AmongUsClient.Instance.GameMode != GameModes.FreePlay; },
+                () => { return true; },
+                () => { },
+                Helpers.loadSpriteFromResources("TheEpicRoles.Resources.NotReadyButton.png", 115f),
+                new Vector3(-1f, 0, 0),
+                __instance,
+                KeyCode.LeftControl,
+                false,
+                "Not Ready",
+                true
+            );
+
+            // GuardianShield
+            guardianShield = new CustomButton(
+                () => { },
+                () => { return (PlayerControl.LocalPlayer.protectedByGuardian || PlayerControl.LocalPlayer.protectedByGuardianThisRound) && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return true; },
+                () => { },
+                Helpers.loadSpriteFromResources("TheEpicRoles.Resources.GuardianShield.png", 115f),
+                new Vector3(0.4f, 2.9f, 0),
+                __instance,
+                null
             );
 
             // Set the default (or settings from the previous game) timers/durations when spawning the buttons

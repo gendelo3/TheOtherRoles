@@ -20,7 +20,8 @@ namespace TheEpicRoles {
     public class TheEpicRolesPlugin : BasePlugin
     {
         public const string Id = "me.laicosvk.theepicroles";
-        public const string VersionString = "1.0.3";
+        public const string VersionString = "1.1.0";
+        public static uint firstKill = 0;
 
         public static System.Version Version = System.Version.Parse(VersionString);
 
@@ -29,7 +30,7 @@ namespace TheEpicRoles {
         public Harmony Harmony { get; } = new Harmony(Id);
         public static TheEpicRolesPlugin Instance;
 
-        public static int optionsPage = 1;
+        public static int optionsPage = 2;
 
         public static ConfigEntry<bool> DebugMode { get; private set; }
         public static ConfigEntry<bool> StreamerMode { get; set; }
@@ -61,7 +62,7 @@ namespace TheEpicRoles {
 
         public override void Load() {
             Logger = Log;
-            DebugMode = Config.Bind("Custom", "Enable Debug Mode", false);
+            DebugMode = Config.Bind("Custom", "Enable Debug Mode", true);
             StreamerMode = Config.Bind("Custom", "Enable Streamer Mode", false);
             GhostsSeeTasks = Config.Bind("Custom", "Ghosts See Remaining Tasks", true);
             GhostsSeeRoles = Config.Bind("Custom", "Ghosts See Roles", true);

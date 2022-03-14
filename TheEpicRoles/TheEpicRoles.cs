@@ -61,6 +61,7 @@ namespace TheEpicRoles
             Pursuer.clearAndReload();
             Witch.clearAndReload();
             Phaser.clearAndReload();
+            Jumper.clearAndReload();
         }
 
         public static class Jester {
@@ -729,8 +730,7 @@ namespace TheEpicRoles
             resetTracked();
             timeUntilUpdate = 0f;
             updateIntervall = CustomOptionHolder.trackerUpdateIntervall.getFloat();
-            if (updateIntervall == 0f) {
-                updateIntervall = 0.01f; }
+            if (updateIntervall == 0f) updateIntervall = 0.01f;
             resetTargetAfterMeeting = CustomOptionHolder.trackerResetTargetAfterMeeting.getBool();
             if (localArrows != null) {
                 foreach (Arrow arrow in localArrows)
@@ -1212,7 +1212,7 @@ namespace TheEpicRoles
         public static bool showArrow = true;
         public static float bountyKillCooldown = 0f;
         public static float punishmentTime = 15f;
-        public static float arrowUpdateIntervall = 10f;
+        public static float arrowUpdateIntervall = 5f;
 
         public static float arrowUpdateTimer = 0f;
         public static float bountyUpdateTimer = 0f;
@@ -1239,6 +1239,7 @@ namespace TheEpicRoles
             punishmentTime = CustomOptionHolder.bountyHunterPunishmentTime.getFloat();
             showArrow = CustomOptionHolder.bountyHunterShowArrow.getBool();
             arrowUpdateIntervall = CustomOptionHolder.bountyHunterArrowUpdateIntervall.getFloat();
+            if (arrowUpdateIntervall == 0f) arrowUpdateIntervall = 0.01f;
         }
     }
 
@@ -1461,15 +1462,13 @@ namespace TheEpicRoles
         private static Sprite curseButtonSprite;
         private static Sprite curseKillButtonSprite;
 
-        public static Sprite getCurseButtonSprite()
-        {
+        public static Sprite getCurseButtonSprite() {
             if (curseButtonSprite) return curseButtonSprite;
             curseButtonSprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.PhaseButton.png", 115f);
             return curseButtonSprite;
         }
 
-        public static Sprite getCurseKillButtonSprite()
-        {
+        public static Sprite getCurseKillButtonSprite() {
             if (curseKillButtonSprite) return curseKillButtonSprite;
             curseKillButtonSprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.PhaseKillButton.png", 115f);
             return curseKillButtonSprite;
@@ -1496,4 +1495,40 @@ namespace TheEpicRoles
         }
     }
 
+    public static class Jumper {
+        public static PlayerControl jumper;
+        public static Color color = new Color32(204, 155, 20, byte.MaxValue); // mint
+
+        public static float jumperJumpTime = 30f;
+        public static float jumperChargesOnPlace = 1f;
+        public static float jumperChargesGainOnMeeting = 2f;
+        public static float jumperMaxCharges = 3f;
+        public static float jumperCharges = 0f;
+
+        public static Vector3 jumpLocation;
+
+        private static Sprite jumpMarkButtonSprite;
+        private static Sprite jumpButtonSprite;
+
+        public static Sprite getJumpMarkButtonSprite() {
+            if (jumpMarkButtonSprite) return jumpMarkButtonSprite;
+            jumpMarkButtonSprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.JumperButton.png", 115f);
+            return jumpMarkButtonSprite;
+        }
+
+        public static Sprite getJumpButtonSprite() {
+            if (jumpButtonSprite) return jumpButtonSprite;
+            jumpButtonSprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.JumperJumpButton.png", 115f);
+            return jumpButtonSprite;
+        }
+        public static void clearAndReload() {
+            jumpLocation = Vector3.zero;
+            jumper = null;
+            jumperCharges = 0f;
+            jumperJumpTime = CustomOptionHolder.jumperJumpTime.getFloat();
+            jumperChargesOnPlace = CustomOptionHolder.jumperChargesOnPlace.getFloat();
+            jumperChargesGainOnMeeting = CustomOptionHolder.jumperChargesGainOnMeeting.getFloat();
+            jumperMaxCharges = CustomOptionHolder.jumperMaxCharges.getFloat();
+        }
+    }
 }

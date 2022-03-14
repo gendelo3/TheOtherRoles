@@ -1,4 +1,3 @@
-  
 using HarmonyLib;
 using static TheEpicRoles.TheEpicRoles;
 using static TheEpicRoles.GameHistory;
@@ -331,9 +330,19 @@ namespace TheEpicRoles.Patches {
                 var roleSummaryText = new StringBuilder();
                 roleSummaryText.AppendLine("Players and roles at the end of the game:");
                 foreach(var data in AdditionalTempData.playerRoles) {
+                    var playerName = data.PlayerName;
+                    while (playerName.Length < 12) playerName = $"{playerName} ";
+
                     var roles = string.Join(" ", data.Roles.Select(x => Helpers.cs(x.color, x.name)));
-                    var taskInfo = data.TasksTotal > 0 ? $" - <color=#FAD934FF>({data.TasksCompleted}/{data.TasksTotal})</color>" : "";
-                    roleSummaryText.AppendLine($"{data.PlayerName} - {roles}{taskInfo}");
+                    var rolesSingle = string.Join(" ", data.Roles.Select(x => x.name));
+                    while (rolesSingle.Length < 20) {
+                        rolesSingle = $"{rolesSingle} ";
+                        roles = $"{roles} ";
+                    }
+
+                    var taskInfo = data.TasksTotal > 0 ? $"<color=#FAD934FF>({data.TasksCompleted}/{data.TasksTotal})</color>" : "";
+
+                    roleSummaryText.AppendLine($"{playerName} {roles} {taskInfo}");
                 }
                 TMPro.TMP_Text roleSummaryTextMesh = roleSummary.GetComponent<TMPro.TMP_Text>();
                 roleSummaryTextMesh.alignment = TMPro.TextAlignmentOptions.TopLeft;
@@ -557,7 +566,7 @@ namespace TheEpicRoles.Patches {
                             numJackalAlive++;
                             if (lover) jackalLover = true;
                         }
-                        if (Sheriff.sheriff != null && Sheriff.sheriff.PlayerId == playerInfo.PlayerId) {
+                        if ((Sheriff.sheriff != null && Sheriff.sheriff.PlayerId == playerInfo.PlayerId) || (Deputy.deputy != null && Deputy.deputy.PlayerId == playerInfo.PlayerId && CustomOptionHolder.deputyGetsPromoted.getSelection() != 0)) {
                             numSheriffAlive++;
                         }
                     }

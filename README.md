@@ -1,4 +1,4 @@
-![eisbison banner](./Images/TOR_logo.png)
+![The Epic Roles Banner](./Images/TER_logo.png)
 <p align="center">
   <a href="https://github.com/LaicosVK/TheEpicRoles/releases/"><img src="https://badgen.net/github/release/laicosvk/theepicroles"></a> <!--Releases-->
   <a href="https://github.com/LaicosVK/TheEpicRoles/releases/"><img src="https://badgen.net/github/assets-dl/laicosvk/theepicroles"></a> <!--Downloads-->
@@ -20,7 +20,7 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
 
 Our goal is to make this mod more epic and to add a bunch of new features, roles and quality of life features to it.
 
-# Releases
+# Download
 | Among Us Version| Mod Version | Link |
 |----------|-------------|-----------------|
 | 2022.2.24 | v1.1.0 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.1.0/TheEpicRoles.zip) |

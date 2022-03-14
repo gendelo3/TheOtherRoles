@@ -20,15 +20,14 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
 
 Our goal is to make this mod more epic and to add a bunch of new features, roles and quality of life features to it.
 
-# Download
+# Download & Changelog
 | Among Us Version | Mod Version | Link | Changelog |
-| --- | --- | --- | --- |
+| --- | :---: | :---: | :---: |
 | 2022.2.24 | v1.1.0 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.1.0/TheEpicRoles.zip) | [Changelog](/Readme/Changelog.md#110) |
 | 2022.2.24 | v1.0.3 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.3/TheEpicRoles.zip) | [Changelog](/Readme/Changelog.md#103) |
 | 2021.12.15 | v1.0.2 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.2/TheEpicRoles.zip) | [Changelog](/Readme/Changelog.md#102) |
 | 2021.12.15 | v1.0.1 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.1/TheEpicRoles.zip) | [Changelog](/Readme/Changelog.md#101) |
 
-# Changelog
 View [full changelog](/Readme/Changelog.md)
 
 # Installation

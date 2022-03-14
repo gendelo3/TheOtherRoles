@@ -11,7 +11,7 @@ namespace TheEpicRoles.Patches {
     public static class CredentialsPatch {
         public static string terColor               = "#00ffd9";
         public static string torColor               = "#fcce03";
-        public static string fullCredentials        = $"<size=130%><color={terColor}>TheEpicRoles</color></size> <size=50%>v{TheEpicRolesPlugin.Version.ToString()}\nRemodded by <color={terColor}>LaicosVK</color>, <color={terColor}>Nova</color> & <color={terColor}>DasMonschta</color>\nGraphics by <color={terColor}>moep424</color></size>";
+        public static string fullCredentials        = $"<size=130%><color={terColor}>The Epic Roles</color></size> <size=50%>v{TheEpicRolesPlugin.Version.ToString()}\nRemodded by <color={terColor}>LaicosVK</color>, <color={terColor}>Nova</color> & <color={terColor}>DasMonschta</color>\nGraphics by <color={terColor}>moep424</color></size>";
         public static string mainMenuCredentials    = $"Remodded by <color={terColor}>LaicosVK</color>, <color={terColor}>Nova</color> & <color={terColor}>DasMonschta</color>\nGraphics by <color={terColor}>moep424</color>";
         public static string torCredentials         = $"<size=40%><color={torColor}>Original Mod by github.com/Eisbison/TheOtherRoles</color></size>";
 
@@ -54,7 +54,7 @@ namespace TheEpicRoles.Patches {
                 __instance.text.alignment = TMPro.TextAlignmentOptions.TopRight;
                 __instance.text.SetOutlineThickness(0);
                 if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) {
-                    __instance.text.text = $"<size=130%><color={terColor}>TheEpicRoles</color></size> <size=50%>v{TheEpicRolesPlugin.Version.ToString()}</size>\n" + __instance.text.text;
+                    __instance.text.text = $"<size=130%><color={terColor}>The Epic Roles</color></size> <size=50%>v{TheEpicRolesPlugin.Version.ToString()}</size>\n" + __instance.text.text;
                     if (PlayerControl.LocalPlayer.Data.IsDead || (!(PlayerControl.LocalPlayer == null) && (PlayerControl.LocalPlayer == Lovers.lover1 || PlayerControl.LocalPlayer == Lovers.lover2))) {
                         __instance.transform.localPosition = new Vector3(3.45f, __instance.transform.localPosition.y, __instance.transform.localPosition.z);
                     } else {

@@ -21,77 +21,15 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
 Our goal is to make this mod more epic and to add a bunch of new features, roles and quality of life features to it.
 
 # Download
-| Among Us Version | Mod Version | Link |
-| --- | --- | --- |
-| 2022.2.24 | v1.1.0 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.1.0/TheEpicRoles.zip) |
-| 2022.2.24 | v1.0.3 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.3/TheEpicRoles.zip) |
-| 2021.12.15 | v1.0.2 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.2/TheEpicRoles.zip) |
-| 2021.12.15 | v1.0.1 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.1/TheEpicRoles.zip) |
+| Among Us Version | Mod Version | Link | Changelog |
+| --- | --- | --- | --- |
+| 2022.2.24 | v1.1.0 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.1.0/TheEpicRoles.zip) | [Changelog](/Readme/Changelog.md#110) |
+| 2022.2.24 | v1.0.3 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.3/TheEpicRoles.zip) | [Changelog](/Readme/Changelog.md#103) |
+| 2021.12.15 | v1.0.2 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.2/TheEpicRoles.zip) | [Changelog](/Readme/Changelog.md#102) |
+| 2021.12.15 | v1.0.1 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.1/TheEpicRoles.zip) | [Changelog](/Readme/Changelog.md#101) |
 
 # Changelog
-<details>
-  <summary>Click to show the Changelog</summary>  
-
-<details>
-  <summary>1.1.0</summary>
-
-  ## 1.1.0
-  New:
-  - Role: Jumper
-  - Random spawnpoints option
-  - Ready or not ready function in lobby
-  - First kill shield option
-  - Split game options into categories
-  - The Epic Hats support
-  - Medium questions/answers reworked
-  - Existence of Deputy now prevents game end if Deputy can promote to Sheriff 
-
-  Bugfixes:
-  - First kill now teleports the killer on dead body
-  - Phaser teleports now even on short distance
-  - Buttons hide the targets name in tasks, while lights out and while camouflage
-  - Sidebar display improvements
-  ---
-</details>
-
-<details>
-  <summary>1.0.3</summary>
-
-  ## 1.0.3
-  - Targetable buttons can now show your current target (if setting is turned on)<br/>
-  - Setting if the second Mayor vote should be shown<br/>
-  - Setting to turn off camera shake<br/>
-  - Lobbysidebar looks now better<br/>
-  - Fixed a bug where games were not finished properly on official servers
-  ---
-</details>
-
-<details>
-  <summary>1.0.2</summary>
-
-  ## 1.0.2
-  - Phaser Role<br/>
-  - Sheriff stops impostor win<br/>
-  - Trickster box count option<br/>
-  - Lover win count option<br/>
-  - Crewmate roles option: Auto<br/>
-  - Replaced some texts and graphics<br/>
-  - Evil mini guessable option<br/>
-  - Shifter passes on his role option<br/>
-  - New colors<br/>
-  - Jester can be client<br/>
-  ---
-</details>
-
-<details>
-  <summary>1.0.1</summary>
-
-  ## 1.0.1
-  - First Release
-  ---
-</details>  
-  
-</details>
+View [full changelog](/Readme/Changelog.md)
 
 # Installation
 ## Windows Auto Installation/Updating Using Mod Manager

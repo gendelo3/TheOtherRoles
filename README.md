@@ -21,8 +21,8 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
 Our goal is to make this mod more epic and to add a bunch of new features, roles and quality of life features to it.
 
 # Download
-| Among Us Version| Mod Version | Link |
-|----------|-------------|-----------------|
+| Among Us Version | Mod Version | Link |
+| --- | --- | --- |
 | 2022.2.24 | v1.1.0 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.1.0/TheEpicRoles.zip) |
 | 2022.2.24 | v1.0.3 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.3/TheEpicRoles.zip) |
 | 2021.12.15 | v1.0.2 | [Download](https://github.com/LaicosVK/TheEpicRoles/releases/download/v1.0.2/TheEpicRoles.zip) |
@@ -122,17 +122,16 @@ Our goal is to make this mod more epic and to add a bunch of new features, roles
 </details>
   
 # Credits & Resources
-[The Other Roles](https://github.com/Eisbison/TheOtherRoles) - Original Mod
-
-# Credits & Resources of The Other Roles
-[BepInEx](https://github.com/BepInEx) - Used to hook game functions\
-[Jackal and Sidekick](https://www.twitch.tv/dhalucard) - Original idea for the Jackal and Sidekick comes from **Dhalucard**\
-[Among-Us-Love-Couple-Mod](https://github.com/Woodi-dev/Among-Us-Love-Couple-Mod) - Idea for the Lovers role comes from **Woodi-dev**\
-[Jester](https://github.com/Maartii/Jester) - Idea for the Jester role comes from **Maartii**\
-[ExtraRolesAmongUs](https://github.com/NotHunter101/ExtraRolesAmongUs) - Idea for the Engineer and Medic role comes from **NotHunter101**. Also some code snippets come of the implementation were used.\
-[Among-Us-Sheriff-Mod](https://github.com/Woodi-dev/Among-Us-Sheriff-Mod) - Idea for the Sheriff role comes from **Woodi-dev**\
-[TooManyRolesMods](https://github.com/Hardel-DW/TooManyRolesMods) - Idea for the Detective and Time Master roles comes from **Hardel-DW**. Also some code snippets of the implementation were used.\
-[TownOfUs](https://github.com/slushiegoose/Town-Of-Us) - Idea for the Swapper, Shifter, Arsonist and a similar Mayor role come from **Slushiegoose**\
-[Ottomated](https://twitter.com/ottomated_) - Idea for the Morphling, Snitch and Camouflager role come from **Ottomated**\
-[Crowded-Mod](https://github.com/CrowdedMods/CrowdedMod) - Our implementation for 10+ player lobbies is inspired by the one from the **Crowded Mod Team**\
-[Goose-Goose-Duck](https://store.steampowered.com/app/1568590/Goose_Goose_Duck) - Idea for the Vulture role come from **Slushygoose**
+| Name | Description | Link |
+| --- | --- | :---: |
+| The Other Roles | Core Mod | [GitHub](https://github.com/Eisbison/TheOtherRoles) |
+| BepInEx | Used to hook game methods | [GitHub](https://github.com/BepInEx) |
+| Dhalucard | Jackal & Sidekick | [Twitch6](https://www.twitch.tv/dhalucard) |
+| Woodi-dev | Lovers | [GitHub](https://github.com/Woodi-dev/Among-Us-Love-Couple-Mod) |
+| Maartii | Jester | [GitHub](https://github.com/Maartii/Jester)  |
+| NotHunter101 | Engineer & Medic | [GitHub](https://github.com/NotHunter101/ExtraRolesAmongUs)  |
+| Woodi-dev | Sheriff | [GitHub](https://github.com/Woodi-dev/Among-Us-Sheriff-Mod) |
+| Hardel-DW | Detective & Time Master | [GitHub](https://github.com/Hardel-DW/TooManyRolesMods) |
+| Slushiegoose | Swapper, Shifter, Arsonis & Mayor | [GitHub](https://github.com/slushiegoose/Town-Of-Us) |
+| Ottomated | Morphling, Snitch and Camouflager | [Twitter](https://twitter.com/ottomated_)  |
+| Slushiegoose | Vulture | [Steam](https://store.steampowered.com/app/1568590/Goose_Goose_Duck) |

@@ -35,42 +35,38 @@ Our goal is to make this mod more epic and to add a bunch of new features, roles
 Is there always someone who dies first in nearly every game? Yes? We implemented a smart solution to fix this annoying problem.
 </p>
 <p align="justify">
-The player who died first in the previous game gets the First Kill Shield in the upcoming game. This shield blocks the first kill attempt on the shielded player and resets the kill cooldown of the attacker. After that the shield brakes and the player can be killed like normal.
+The player who died first in the previous game gets the First Kill Shield in the upcoming game. This shield blocks the first kill attempt on the shielded player and resets the kill cooldown of the attacker. After that the shield breaks and the player can be killed like normal.
 </p>
 <p align="justify">
-The shielded player knows if the First Kill Shield is active, but they dom't get notified when it brakes.
+The shielded player knows if the First Kill Shield is active, but they dom't get notified when it breaks.
 </p>
-<br clear="left"/>
+<br clear="all"/>
 
 ## Ready Status
 
 ## Better UI
 ### Cursor
-<img align="left" height="60" src="/TheEpicRoles/Resources/Cursor.png"/>
+<img align="left" height="50" src="/TheEpicRoles/Resources/Cursor.png"/>
 <p align="justify">
 Can't find the cursor? Especially on Polus the default cursor was always hard to see. We changed it, so you can focus on more important things like killing crewmates! :-)
 </p>
-<br clear="left"/>
+<br clear="all"/>
 
 ### Mod Option Categories
-<img align="left" height="60" src="/TheEpicRoles/Resources/Cursor.png"/>
+<img align="right" height="90" src="/Readme/Images/option_categories.png"/>
 <p align="justify">
-Can't find the cursor? Especially on Polus the default cursor was always hard to see. We changed it, so you can focus on more important things like killing crewmates! :-)
+It was always hard work for the host to change the settings. With our change the host can now switch super fast between 4 main mod categories.
 </p>
-<br clear="left"/>
+<br clear="all"/>
 
 ### Screen Shake
-<img align="left" height="60" src="/TheEpicRoles/Resources/Cursor.png"/>
+<img align="left" height="90" src="/Readme/Images/dropship.png"/>
 <p align="justify">
-Got sick of the dropship shaking like crazy? We too! :P
+Got sick of the dropship shaking like crazy? We too! That's why we added an option to remove the Screen Shake effect entirely out of the game. No unwanted puking anymore! If someone liked the shaking (strange people :D), then it can be reenabled in the settings.
 </p>
-<p align="justify">
-We added an option to remove the Screen Shake effect entirely out of the game. No unwanted puking anymore! 
-</p>
-<br clear="left"/>
+<br clear="all"/>
 
 ## Planty Of Room For Your Ideas
-
 
 # Download & Changelog
 | Among Us Version | Mod Version | Link | Changelog |

@@ -94,7 +94,7 @@ View [full changelog](/Readme/Changelog.md)
 | NotHunter101 | Engineer & Medic | x | x | [GitHub](https://github.com/NotHunter101/ExtraRolesAmongUs)  |
 | Woodi-dev | Sheriff | x |  | [GitHub](https://github.com/Woodi-dev/Among-Us-Sheriff-Mod) |
 | Hardel-DW | Detective & Time Master | x | x | [GitHub](https://github.com/Hardel-DW/TooManyRolesMods) |
-| Slushiegoose | Swapper, Shifter, Arsonis & Mayor | x |  | [GitHub](https://github.com/slushiegoose/Town-Of-Us) |
+| Slushiegoose | Swapper, Shifter, Arsonist & Mayor | x |  | [GitHub](https://github.com/slushiegoose/Town-Of-Us) |
 | Ottomated | Morphling, Snitch and Camouflager | x |  | [Twitter](https://twitter.com/ottomated_)  |
 | Slushiegoose | Vulture | x |  | [Steam](https://store.steampowered.com/app/1568590/Goose_Goose_Duck) |
 | Dhalucard | Jackal & Sidekick | x |  | [Twitch](https://www.twitch.tv/dhalucard) |

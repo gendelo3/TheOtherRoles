@@ -45,6 +45,29 @@ The shielded player knows if the First Kill Shield is active, but they dom't get
 ## Ready Status
 
 ## Better UI
+### Cursor
+<img align="left" height="60" src="/TheEpicRoles/Resources/Cursor.png"/>
+<p align="justify">
+Can't find the cursor? Especially on Polus the default cursor was always hard to see. We changed it, so you can focus on more important things like killing crewmates! :-)
+</p>
+<br clear="left"/>
+
+### Mod Option Categories
+<img align="left" height="60" src="/TheEpicRoles/Resources/Cursor.png"/>
+<p align="justify">
+Can't find the cursor? Especially on Polus the default cursor was always hard to see. We changed it, so you can focus on more important things like killing crewmates! :-)
+</p>
+<br clear="left"/>
+
+### Screen Shake
+<img align="left" height="60" src="/TheEpicRoles/Resources/Cursor.png"/>
+<p align="justify">
+Got sick of the dropship shaking like crazy? We too! :P
+</p>
+<p align="justify">
+We added an option to remove the Screen Shake effect entirely out of the game. No unwanted puking anymore! 
+</p>
+<br clear="left"/>
 
 ## Planty Of Room For Your Ideas
 

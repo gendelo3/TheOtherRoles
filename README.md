@@ -1,3 +1,8 @@
+
+```diff
+- We are currently working on this readme. For more information join our discord.
+```
+
 ![The Epic Roles Banner](./Readme/Images/TER_banner.png)
 <p align="center">
   <a href="https://github.com/LaicosVK/TheEpicRoles/releases/"><img src="https://badgen.net/github/release/laicosvk/theepicroles"></a> <!--Releases-->

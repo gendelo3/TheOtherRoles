@@ -1,5 +1,5 @@
 [:arrow_backward: back to overview](https://github.com/laicosvk/theepicroles "back to overview")
-<img align="right" height="250" src="#"/>
+<img align="right" height="100" src="Bounty_Hunter.png"/>
 
 # Bounty Hunter (Impostor)
 Hunt the bounties

@@ -49,7 +49,7 @@ The player who died first in the previous game gets the First Kill Shield in the
 The shielded player knows if the First Kill Shield is active, but they don't get notified when it breaks.
 
 ## Ready Status
-<img align="left" height="155" src="/Readme/Images/dropship_ready.png"/>
+<img align="left" height="170" src="/Readme/Images/dropship_ready.png"/>
 
 With this feature you will never leave someone behind on earth, because smoking, feeding the turtle or dreaming of a beautiful and tasty meat shank was more important than exploring far away places.
 

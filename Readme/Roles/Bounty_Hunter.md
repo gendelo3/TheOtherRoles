@@ -1,7 +1,7 @@
 [:arrow_backward: back to overview](https://github.com/laicosvk/theepicroles "back to overview")
-<img align="right" height="250" src="#"/>
 
 # Bounty Hunter (Impostor)
+<img align="right" height="150" src="Phaser.png"/>
 Hunt the bounties
 
 The Bounty Hunter gets bounties (the bounty player doesn't get notified) to kill.
@@ -9,6 +9,7 @@ The target of the Bounty Hunter changes after every meeting and after a preselec
 If the Bounty Hunter kills their target, their kill cooldown will be a lot less than usual.
 Otherwise killing a player that's not their current target will increase the kill cooldown.
 Depending on the options, there'll be an arrow pointing towards the current target.
+<br clear="all"/>
 
 ## Notes
 - The target won't be an Impostor, a Spy or the Bounty Hunter's Lover.

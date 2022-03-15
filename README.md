@@ -61,12 +61,12 @@ View [full changelog](/Readme/Changelog.md)
 # Roles
 | Impostors | Crewmates | Neutral | Secondary |
 |----------|-------------|-----------------|----------------|
-| [Evil Mini](#mini) | [Nice Mini](#mini) | [Arsonist](#arsonist) | [Lover](#lovers) |
+| [Evil Mini](#mini) | [Nice Mini](#mini) | [Arsonist](/Readme/Roles/Arsonist.md) | [Lover](#lovers) |
 | [Evil Guesser](#guesser) | [Nice Guesser](#guesser) | [Jester](#jester) |  |
-| [Bounty Hunter](#bounty-hunter) | [Detective](#detective) | [Jackal](#jackal) |  |
-| [Camouflager](#camouflager) | [Engineer](#engineer) | [Sidekick](#sidekick) |  |
-| [Cleaner](#cleaner) | [Hacker](#hacker) | [Vulture](#vulture) |  |
-| [Eraser](#eraser) | [Lighter](#lighter) | [Lawyer](#lawyer) |  |
+| [Bounty Hunter](/Readme/Roles/Bounty Hunter.md) | [Detective](#detective) | [Jackal](#jackal) |  |
+| [Camouflager](/Readme/Roles/Camouflager.md) | [Engineer](#engineer) | [Sidekick](#sidekick) |  |
+| [Cleaner](/Readme/Roles/Cleaner.md) | [Hacker](#hacker) | [Vulture](#vulture) |  |
+| [Eraser](/Readme/Roles/Eraser.md) | [Lighter](#lighter) | [Lawyer](#lawyer) |  |
 | [Godfather (Mafia)](#mafia) | [Mayor](#mayor) |  |  |
 | [Mafioso (Mafia)](#mafia) | [Medic](#medic) |  |  |
 | [Janitor (Mafia)](#mafia)  | [Security Guard](#security-guard) |  |  |
@@ -75,7 +75,7 @@ View [full changelog](/Readme/Changelog.md)
 | [Vampire](#vampire) | [Deputy](#deputy) |  |
 | [Warlock](#warlock) | [Shifter](#shifter) |  |  |
 | [Witch](#witch) | [Snitch](#snitch) |  |  |
-| [Phaser](#Phaser) | [Spy](#spy) |  |  |
+| [Phaser](/Readme/Roles/Phaser.md) | [Spy](#spy) |  |  |
 |  | [Swapper](#swapper) |  |  |
 |  | [Time Master](#time-master) |  |  |
 |  | [Tracker](#tracker) |  |  |

@@ -15,10 +15,34 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
 
 [![Discord](./Readme/Images/TER_discord.png)](https://discord.gg/WjegsxEuAD)
 
-# Information
+# What Makes Us Different?
 **The Epic Roles** is a remodded version of the mod [The Other Roles](https://github.com/Eisbison/TheOtherRoles) for [Among Us](https://store.steampowered.com/app/945360/Among_Us).
 
 Our goal is to make this mod more epic and to add a bunch of new features, roles and quality of life features to it.
+
+## Additional Roles
+- Phaser (Imposotor)
+- Jumper (Crewmate)
+
+## First Kill Shield
+<img align="left" height="160" src="/TheEpicRoles/Resources/GuardianShield.png"/>
+<p align="justify">
+Is there always someone who dies first in nearly every game? Yes? We implemented a smart solution to fix this annoying problem.
+</p>
+<p align="justify">
+The player who died first in the previous game gets the First Kill Shield in the upcoming game. This shield blocks the first kill attempt on the shielded player and resets the kill cooldown of the attacker. After that the shield brakes and the player can be killed like normal.
+</p>
+<p align="justify">
+The shielded player knows if the First Kill Shield is active, but they dom't get notified when it brakes.
+</p>
+<br clear="left"/>
+
+## Ready Status
+
+## Better UI
+
+## Planty Of Room For Your Ideas
+
 
 # Download & Changelog
 | Among Us Version | Mod Version | Link | Changelog |
@@ -59,29 +83,30 @@ View [full changelog](/Readme/Changelog.md)
 </details>
 
 # Roles
+We are currently working on this list. If you need more information now, then visit [this page](https://github.com/Eisbison/TheOtherRoles#the-other-roles).
 | Impostors | Crewmates | Neutral | Secondary |
 |----------|-------------|-----------------|----------------|
-| [Evil Mini](#mini) | [Nice Mini](#mini) | [Arsonist](/Readme/Roles/Arsonist.md) | [Lover](#lovers) |
-| [Evil Guesser](#guesser) | [Nice Guesser](#guesser) | [Jester](#jester) |  |
-| [Bounty Hunter](/Readme/Roles/Bounty_Hunter.md) | [Detective](#detective) | [Jackal](#jackal) |  |
-| [Camouflager](/Readme/Roles/Camouflager.md) | [Engineer](#engineer) | [Sidekick](#sidekick) |  |
-| [Cleaner](/Readme/Roles/Cleaner.md) | [Hacker](#hacker) | [Vulture](#vulture) |  |
-| [Eraser](/Readme/Roles/Eraser.md) | [Lighter](#lighter) | [Lawyer](#lawyer) |  |
-| [Godfather (Mafia)](#mafia) | [Mayor](#mayor) |  |  |
-| [Mafioso (Mafia)](#mafia) | [Medic](#medic) |  |  |
-| [Janitor (Mafia)](#mafia)  | [Security Guard](#security-guard) |  |  |
-| [Morphling](#morphling) | [Seer](#seer) |  |  |
-| [Trickster](#trickster) | [Sheriff](#sheriff) 
-| [Vampire](#vampire) | [Deputy](#deputy) |  |
-| [Warlock](#warlock) | [Shifter](#shifter) |  |  |
-| [Witch](#witch) | [Snitch](#snitch) |  |  |
-| [Phaser](/Readme/Roles/Phaser.md) | [Spy](#spy) |  |  |
-|  | [Swapper](#swapper) |  |  |
-|  | [Time Master](#time-master) |  |  |
-|  | [Tracker](#tracker) |  |  |
-|  | [Bait](#bait) |  |
-|  | [Medium](#medium) |  |
-|  | [Jumper](#Jumper) |  |
+| Evil Mini | Nice Mini | [Arsonist](/Readme/Roles/Arsonist.md) | Lover |
+| Evil Guesser | [Nice Guesser](#guesser) | Jester |  |
+| [Bounty Hunter](/Readme/Roles/Bounty_Hunter.md) | Detective | Jackal |  |
+| [Camouflager](/Readme/Roles/Camouflager.md) | Engineer | Sidekick |  |
+| [Cleaner](/Readme/Roles/Cleaner.md) | Hacker | Vulture |  |
+| [Eraser](/Readme/Roles/Eraser.md) | Lighter | Lawyer |  |
+| Godfather (Mafia) | Mayor |  |  |
+| Mafioso (Mafia) | Medic |  |  |
+| Janitor (Mafia) | Security Guard |  |  |
+| Morphling | Seer |  |  |
+| Trickster | Sheriff |  |  | 
+| Vampire | Deputy |  |
+| Warlock | Shifter |  |  |
+| Witch | Snitch) |  |  |
+| [Phaser](/Readme/Roles/Phaser.md) | Spy |  |  |
+|  | Swapper |  |  |
+|  | Time Master |  |  |
+|  | Tracker |  |  |
+|  | Bait |  |
+|  | Medium |  |
+|  | Jumper |  |
 
   
 # Credits & Resources

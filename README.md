@@ -29,7 +29,7 @@ Our goal is to make this mod more epic and to add a bunch of new features, roles
 
 <img align="left" width="100" height="100" src="/TheEpicRoles/Resources/PhaseKillButton.png"/>
 
-### Phaser (Imposotor)
+### Phaser (Impostor)
 The Phaser is faster than light! They can mark a player to jump on and kill.
 <br clear="all"/>
 
@@ -46,7 +46,7 @@ Is there always someone who dies first in nearly every game? Yes? We implemented
 
 The player who died first in the previous game gets the First Kill Shield in the upcoming game. This shield blocks the first kill attempt on the shielded player and resets the kill cooldown of the attacker. After that the shield breaks and the player can be killed like normal.
 
-The shielded player knows if the First Kill Shield is active, but they dom't get notified when it breaks.
+The shielded player knows if the First Kill Shield is active, but they don't get notified when it breaks.
 
 ## Ready Status
 <img align="left" height="150" src="/Readme/Images/dropship_ready.png"/>

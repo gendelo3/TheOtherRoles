@@ -63,7 +63,7 @@ View [full changelog](/Readme/Changelog.md)
 |----------|-------------|-----------------|----------------|
 | [Evil Mini](#mini) | [Nice Mini](#mini) | [Arsonist](/Readme/Roles/Arsonist.md) | [Lover](#lovers) |
 | [Evil Guesser](#guesser) | [Nice Guesser](#guesser) | [Jester](#jester) |  |
-| [Bounty Hunter](/Readme/Roles/BountyU+0020Hunter.md) | [Detective](#detective) | [Jackal](#jackal) |  |
+| [Bounty Hunter](/Readme/Roles/Bounty_Hunter.md) | [Detective](#detective) | [Jackal](#jackal) |  |
 | [Camouflager](/Readme/Roles/Camouflager.md) | [Engineer](#engineer) | [Sidekick](#sidekick) |  |
 | [Cleaner](/Readme/Roles/Cleaner.md) | [Hacker](#hacker) | [Vulture](#vulture) |  |
 | [Eraser](/Readme/Roles/Eraser.md) | [Lighter](#lighter) | [Lawyer](#lawyer) |  |

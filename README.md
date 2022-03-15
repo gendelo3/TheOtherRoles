@@ -79,8 +79,6 @@ It was always hard work for the host to change the settings. With our change the
 Got sick of the dropship shaking like crazy? We too! That's why we added an option to remove the Screen Shake effect entirely out of the game. No unwanted puking anymore! If someone liked the shaking (strange people :D), then it can be reenabled in the settings.
 <br clear="all"/>
 
-## Planty Of Room For Your Ideas
-
 # Download & Changelog
 | Among Us Version | Mod Version | Link | Changelog |
 | --- | :---: | :---: | :---: |

@@ -26,44 +26,57 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
 Our goal is to make this mod more epic and to add a bunch of new features, roles and quality of life features to it.
 
 ## Additional Roles
-- Phaser (Imposotor)
-- Jumper (Crewmate)
+
+<img align="left" width="100" height="100" src="/TheEpicRoles/Resources/PhaseKillButton.png"/>
+
+### Phaser (Imposotor)
+The Phaser is faster than light! They can mark a player to jump on and kill.
+<br clear="all"/>
+
+<img align="left" width="100" height="100" src="/TheEpicRoles/Resources/JumperJumpButton.png"/>
+
+### Jumper (Crewmate)
+The Jumper is the counterpart to the phaser. They can mark a location and jump to it later.
+<br clear="all"/>
 
 ## First Kill Shield
-<img align="left" height="160" src="/TheEpicRoles/Resources/GuardianShield.png"/>
-<p align="justify">
+<img align="right" height="160" src="/TheEpicRoles/Resources/GuardianShield.png"/>
+
 Is there always someone who dies first in nearly every game? Yes? We implemented a smart solution to fix this annoying problem.
-</p>
-<p align="justify">
+
 The player who died first in the previous game gets the First Kill Shield in the upcoming game. This shield blocks the first kill attempt on the shielded player and resets the kill cooldown of the attacker. After that the shield breaks and the player can be killed like normal.
-</p>
-<p align="justify">
+
 The shielded player knows if the First Kill Shield is active, but they dom't get notified when it breaks.
-</p>
-<br clear="all"/>
 
 ## Ready Status
+<img align="left" height="150" src="/Readme/Images/dropship_ready.png"/>
+
+With this feature you will never leave someone behind on earth, because smoking, feeding the turtle or dreaming of a beautiful and tasty meat shank was more important than exploring far away places.
+
+By default the lobby host can't start the game while not everyone is ready. This can be changed in the mod options by the host.
+
+Game on!
+<br clear="all"/>
 
 ## Better UI
+
+<img align="right" height="90" src="/TheEpicRoles/Resources/Cursor.png"/>
+
 ### Cursor
-<img align="left" height="50" src="/TheEpicRoles/Resources/Cursor.png"/>
-<p align="justify">
 Can't find the cursor? Especially on Polus the default cursor was always hard to see. We changed it, so you can focus on more important things like killing crewmates! :-)
-</p>
 <br clear="all"/>
+
+<img align="right" height="120" src="/Readme/Images/option_categories.png"/>
 
 ### Mod Option Categories
-<img align="right" height="90" src="/Readme/Images/option_categories.png"/>
-<p align="justify">
+  
 It was always hard work for the host to change the settings. With our change the host can now switch super fast between 4 main mod categories.
-</p>
 <br clear="all"/>
 
+<img align="right" height="115" src="/Readme/Images/dropship.png"/>
+
 ### Screen Shake
-<img align="left" height="90" src="/Readme/Images/dropship.png"/>
-<p align="justify">
 Got sick of the dropship shaking like crazy? We too! That's why we added an option to remove the Screen Shake effect entirely out of the game. No unwanted puking anymore! If someone liked the shaking (strange people :D), then it can be reenabled in the settings.
-</p>
 <br clear="all"/>
 
 ## Planty Of Room For Your Ideas
@@ -136,7 +149,7 @@ We are currently working on this list. If you need more information now, then vi
 # Credits & Resources
 | Name | Description | Idea | Code | Link |
 | --- | --- | :---: | :---: | :---: |
-| Eisbison | The Other Roles |  | x | [GitHub](https://github.com/Eisbison/TheOtherRoles) |
+| Eisbison | The Other Roles | x | x | [GitHub](https://github.com/Eisbison/TheOtherRoles) |
 | BepInEx | Used to hook game methods |  | x | [GitHub](https://github.com/BepInEx) |
 | Woodi-dev | Lovers | x |  | [GitHub](https://github.com/Woodi-dev/Among-Us-Love-Couple-Mod) |
 | Maartii | Jester | x |  | [GitHub](https://github.com/Maartii/Jester)  |

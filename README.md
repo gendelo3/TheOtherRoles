@@ -1,8 +1,3 @@
-
-```diff
-- We are currently working on this readme. For more information join our discord.
-```
-
 ![The Epic Roles Banner](./Readme/Images/TER_banner.png)
 <p align="center">
   <a href="https://github.com/LaicosVK/TheEpicRoles/releases/"><img src="https://badgen.net/github/release/laicosvk/theepicroles"></a> <!--Releases-->
@@ -122,27 +117,27 @@ View [full changelog](/Readme/Changelog.md)
 We are currently working on this list. If you need more information now, then visit [this page](https://github.com/Eisbison/TheOtherRoles#the-other-roles).
 | Impostors | Crewmates | Neutral | Secondary |
 |----------|-------------|-----------------|----------------|
-| [Evil Mini](/Readme/Roles/Mini.md)  | [Nice Mini](/Readme/Roles/Mini.md) | [Arsonist](/Readme/Roles/Arsonist.md) | Lover |
-| Evil Guesser | [Nice Guesser](#guesser) | Jester |  |
-| [Bounty Hunter](/Readme/Roles/Bounty_Hunter.md) | [Detective](/Readme/Roles/Detective.md)  | Jackal |  |
-| [Camouflager](/Readme/Roles/Camouflager.md) | [Engineer](/Readme/Roles/Engineer.md)  | Sidekick |  |
-| [Cleaner](/Readme/Roles/Cleaner.md) | Hacker | Vulture |  |
-| [Eraser](/Readme/Roles/Eraser.md) | Lighter | Lawyer |  |
-| Godfather (Mafia) | Mayor |  |  |
-| Mafioso (Mafia) | Medic |  |  |
-| Janitor (Mafia) | Security Guard |  |  |
-| Morphling | Seer |  |  |
-| Trickster | Sheriff |  |  | 
-| Vampire | [Deputy](/Readme/Roles/Deputy.md)  |  |
-| Warlock | Shifter |  |  |
-| Witch | Snitch) |  |  |
-| [Phaser](/Readme/Roles/Phaser.md) | Spy |  |  |
-|  | Swapper |  |  |
-|  | Time Master |  |  |
-|  | Tracker |  |  |
+| [Evil Mini](/Readme/Roles/Mini.md) | [Nice Mini](/Readme/Roles/Mini.md) | [Arsonist](/Readme/Roles/Arsonist.md) | [Lover](/Readme/Roles/Lover.md) |
+| [Evil Guesser](/Readme/Roles/Guesser.md) | [Nice Guesser](/Readme/Roles/Guesser.md) | [Jester](/Readme/Roles/Jester.md) |  |
+| [Bounty Hunter](/Readme/Roles/Bounty_Hunter.md) | [Detective](/Readme/Roles/Detective.md)  | [Jackal](/Readme/Roles/Jackal.md) |  |
+| [Camouflager](/Readme/Roles/Camouflager.md) | [Engineer](/Readme/Roles/Engineer.md)  | [Sidekick](/Readme/Roles/Sidekick.md) |  |
+| [Cleaner](/Readme/Roles/Cleaner.md) | [Hacker](/Readme/Roles/Hacker.md) | [Vulture](/Readme/Roles/Vulture.md) |  |
+| [Eraser](/Readme/Roles/Eraser.md) | [Lighter](/Readme/Roles/Lighter.md) | [Lawyer](/Readme/Roles/Lawyer.md) |  |
+| [Godfahter (Mafia)](/Readme/Roles/Mafia.md) | [Mayor](/Readme/Roles/Mayor.md) |  |  |
+| [Mafioso (Mafia)](/Readme/Roles/Mafia.md) | [Medic](/Readme/Roles/Medic.md) |  |  |
+| [Janitor (Mafia)](/Readme/Roles/Mafia.md) | [Security Guard](/Readme/Roles/Security_Guard.md) |  |  |
+| [Morphling](/Readme/Roles/Morphling.md) | [Seer](/Readme/Roles/Seer.md) |  |  |
+| [Trickster](/Readme/Roles/Trickster.md)  | [Sheriff](/Readme/Roles/Sheriff.md) |  |  | 
+| [Vampire](/Readme/Roles/Vampire.md)  | [Deputy](/Readme/Roles/Deputy.md)  |  |
+| [Warlock](/Readme/Roles/Warlock.md)  | [Shifter](/Readme/Roles/Shifter.md) |  |  |
+| [Witch](/Readme/Roles/Witch.md)  | [Snitch](/Readme/Roles/Snitch.md) |  |  |
+| [Phaser](/Readme/Roles/Phaser.md) | [Spy](/Readme/Roles/Spy.md) |  |  |
+|  | [Swapper](/Readme/Roles/Swapper.md) |  |  |
+|  | [Time Master](/Readme/Roles/Time_Master.md) |  |  |
+|  | [Tracker](/Readme/Roles/Tracker.md) |  |  |
 |  | [Bait](/Readme/Roles/Bait.md)  |  |
-|  | Medium |  |
-|  | Jumper |  |
+|  | [Medium](/Readme/Roles/Medium.md) |  |
+|  | [Jumper](/Readme/Roles/Jumper.md) |  |
 
   
 # Credits & Resources

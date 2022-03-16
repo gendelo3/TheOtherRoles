@@ -7,16 +7,16 @@ The Mini can be a Crewmate (67% chance) or an Impostor (33% chance).
 The Mini's character is smaller and hence visible to everyone in the game.
 The Mini cannot be killed until it turns 18 years old, however it can be voted out.
 
-<img align="right" height="250" src="#"/>
+<img align="right" height="100" src="Good_Mini.png"/>
 
-## Good Mini(Crewmate)
+## Good Mini (Crewmate)
 
 - The Crewmate Mini aims to play out the strength its invincibility in the early game.
 - If it gets thrown out of the ship before it turns 18, everyone loses. So think twice before you vote out a Mini.
 
-<img align="right" height="250" src="#"/>
+<img align="right" height="100" src="Bad_Mini.png"/>
 
-## Evil Mini(Impostor)
+## Evil Mini (Impostor)
 
 - While growing up the kill cooldown is doubled. When it's fully grown up its kill cooldown is 2/3 of the default one.
 - If it gets thrown out of the ship, everything is fine.

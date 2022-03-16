@@ -114,7 +114,6 @@ View [full changelog](/Readme/Changelog.md)
 </details>
 
 # Roles
-We are currently working on this list. If you need more information now, then visit [this page](https://github.com/Eisbison/TheOtherRoles#the-other-roles).
 | Impostors | Crewmates | Neutral | Secondary |
 |----------|-------------|-----------------|----------------|
 | [Evil Mini](/Readme/Roles/Mini.md) | [Nice Mini](/Readme/Roles/Mini.md) | [Arsonist](/Readme/Roles/Arsonist.md) | [Lover](/Readme/Roles/Lover.md) |

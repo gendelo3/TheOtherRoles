@@ -114,6 +114,9 @@ namespace TheOtherRoles {
 
                     ShareOptionSelections();// Share all selections
                 }
+           } else if (id == 0 && AmongUsClient.Instance?.AmHost == true && PlayerControl.LocalPlayer) {  // Share the preset switch for random maps, even if the menu isnt open!
+                switchPreset(selection);
+                ShareOptionSelections();// Share all selections
            }
         }
     }

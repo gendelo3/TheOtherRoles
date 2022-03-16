@@ -12,7 +12,7 @@ using static TheOtherRoles.TheOtherRoles;
 namespace TheOtherRoles {
     public class CustomOptionHolder {
         public static string[] rates = new string[]{"0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"};
-        public static string[] presets = new string[]{"Preset 1", "Preset 2", "Preset 3", "Preset 4", "Preset 5"};
+        public static string[] presets = new string[]{"Preset 1", "Preset 2", "Random Preset Skeld", "Random Preset Mira HQ", "Random Preset Polus", "Random Preset Airship" };
 
         public static CustomOption presetSelection;
         public static CustomOption activateRoles;
@@ -237,6 +237,7 @@ namespace TheOtherRoles {
         public static CustomOption dynamicMapEnablePolus;
         public static CustomOption dynamicMapEnableDleks;
         public static CustomOption dynamicMapEnableAirShip;
+        public static CustomOption dynamicMapSeparateSettings;
 
 
         internal static Dictionary<byte, byte[]> blockedRolePairings = new Dictionary<byte, byte[]>();
@@ -478,6 +479,7 @@ namespace TheOtherRoles {
             dynamicMapEnablePolus = CustomOption.Create(503, "Enable Polus Rotation", true, dynamicMap, false);
             dynamicMapEnableAirShip = CustomOption.Create(504, "Enable Airship Rotation", true, dynamicMap, false);
             dynamicMapEnableDleks = CustomOption.Create(505, "Enable dlekS Rotation", false, dynamicMap, false);
+            dynamicMapSeparateSettings = CustomOption.Create(506, "Use Random Map Setting Presets", true, dynamicMap, false);
 
             blockedRolePairings.Add((byte)RoleId.Vampire, new [] { (byte)RoleId.Warlock});
             blockedRolePairings.Add((byte)RoleId.Warlock, new [] { (byte)RoleId.Vampire});

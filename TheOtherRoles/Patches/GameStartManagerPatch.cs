@@ -178,6 +178,10 @@ namespace TheOtherRoles.Patches {
                             possibleMaps.Add(4);
                         byte chosenMapId  = possibleMaps[TheOtherRoles.rnd.Next(possibleMaps.Count)];
 
+                        // Translate chosen map to presets page and use that maps random map preset page
+                        int preset = chosenMapId == 3 ? 0 : (chosenMapId == 4 ? 3 : chosenMapId);   // dleks to skeld (no need for 2 option pages) and Airship-1 for because dlesk was in between
+                        if (CustomOptionHolder.dynamicMapSeparateSettings.getBool()) CustomOptionHolder.presetSelection.updateSelection((int)preset + 2);  // +2 for the 2 standard preset pages
+                        
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.DynamicMapOption, Hazel.SendOption.Reliable, -1);
                         writer.Write(chosenMapId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);

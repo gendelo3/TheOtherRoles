@@ -41,7 +41,7 @@ The Jumper is the counterpart to the phaser. They can mark a location and jump t
 <br clear="all"/>
 
 ## First Kill Shield
-<img align="right" height="160" src="/TheEpicRoles/Resources/GuardianShield.png"/>
+<img align="right" height="160" src="/Readme/Images/GuardianShield_Big.png"/>
 
 Is there always someone who dies first in nearly every game? Yes? We implemented a smart solution to fix this annoying problem.
 

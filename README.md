@@ -122,10 +122,10 @@ View [full changelog](/Readme/Changelog.md)
 We are currently working on this list. If you need more information now, then visit [this page](https://github.com/Eisbison/TheOtherRoles#the-other-roles).
 | Impostors | Crewmates | Neutral | Secondary |
 |----------|-------------|-----------------|----------------|
-| Evil Mini | Nice Mini | [Arsonist](/Readme/Roles/Arsonist.md) | Lover |
+| [Evil Mini](/Readme/Roles/Mini.md)  | [Nice Mini](/Readme/Roles/Mini.md) | [Arsonist](/Readme/Roles/Arsonist.md) | Lover |
 | Evil Guesser | [Nice Guesser](#guesser) | Jester |  |
-| [Bounty Hunter](/Readme/Roles/Bounty_Hunter.md) | Detective | Jackal |  |
-| [Camouflager](/Readme/Roles/Camouflager.md) | Engineer | Sidekick |  |
+| [Bounty Hunter](/Readme/Roles/Bounty_Hunter.md) | [Detective](/Readme/Roles/Detective.md)  | Jackal |  |
+| [Camouflager](/Readme/Roles/Camouflager.md) | [Engineer](/Readme/Roles/Engineer.md)  | Sidekick |  |
 | [Cleaner](/Readme/Roles/Cleaner.md) | Hacker | Vulture |  |
 | [Eraser](/Readme/Roles/Eraser.md) | Lighter | Lawyer |  |
 | Godfather (Mafia) | Mayor |  |  |
@@ -133,14 +133,14 @@ We are currently working on this list. If you need more information now, then vi
 | Janitor (Mafia) | Security Guard |  |  |
 | Morphling | Seer |  |  |
 | Trickster | Sheriff |  |  | 
-| Vampire | Deputy |  |
+| Vampire | [Deputy](/Readme/Roles/Deputy.md)  |  |
 | Warlock | Shifter |  |  |
 | Witch | Snitch) |  |  |
 | [Phaser](/Readme/Roles/Phaser.md) | Spy |  |  |
 |  | Swapper |  |  |
 |  | Time Master |  |  |
 |  | Tracker |  |  |
-|  | Bait |  |
+|  | [Bait](/Readme/Roles/Bait.md)  |  |
 |  | Medium |  |
 |  | Jumper |  |
 

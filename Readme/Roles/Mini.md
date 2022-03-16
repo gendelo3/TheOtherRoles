@@ -1,6 +1,6 @@
 [:arrow_backward: back to overview](https://github.com/laicosvk/theepicroles#roles "back to overview")
-<img align="right" height="100" src="Good_Mini.png"/>
-<img align="right" height="100" src="Bad_Mini.png"/>
+<img align="right" height="100" src="Nice_Mini.png"/>
+<img align="right" height="100" src="Evil_Mini.png"/>
 
 # Mini
 Cute or not?
@@ -9,7 +9,7 @@ The Mini can be a Crewmate (67% chance) or an Impostor (33% chance).
 The Mini's character is smaller and hence visible to everyone in the game.
 The Mini cannot be killed until it turns 18 years old, however it can be voted out.
 
-## Good Mini (Crewmate)
+## Nice Mini (Crewmate)
 
 - The Crewmate Mini aims to play out the strength its invincibility in the early game.
 - If it gets thrown out of the ship before it turns 18, everyone loses. So think twice before you vote out a Mini.

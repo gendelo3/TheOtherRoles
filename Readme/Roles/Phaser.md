@@ -18,5 +18,5 @@ The Phaser has the ability to mark a person after a certain amount of time. Afte
 ## Options
 | Name | Default | Description |
 | --- | :---: | --- |
-| Mark Cooldown | 20 |Initial mark cooldown |
-| Phase Cooldown | 10 |Phase cooldown after marking |
+| Mark Cooldown | 20 | Initial mark cooldown |
+| Phase Cooldown | 10 | Phase cooldown after marking |

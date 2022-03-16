@@ -1,5 +1,5 @@
 [:arrow_backward: back to overview](https://github.com/laicosvk/theepicroles#roles "back to overview")
-<img align="right" height="250" src="Arsonist.png"/>
+<img align="right" height="100" src="Arsonist.png"/>
 
 # Arsonist (Neutral)
 Burn them all!

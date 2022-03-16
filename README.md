@@ -18,7 +18,8 @@
 <p align="center">
 This mod is not affiliated with Among Us or Innersloth LLC, and the content contained therein is not endorsed or otherwise sponsored by Innersloth LLC. Portions of the materials contained herein are property of Innersloth LLC. © Innersloth LLC.</p>
 
-[![Discord](./Readme/Images/TER_discord.png)](https://discord.gg/WjegsxEuAD)
+[![Discord](/Readme/Images/TER_discord.png)](https://discord.gg/WjegsxEuAD)
+![Roles Overwiew](/Readme/Images/overview.png)
 
 # What Makes Us Different?
 **The Epic Roles** is a remodded version of the mod [The Other Roles](https://github.com/Eisbison/TheOtherRoles) for [Among Us](https://store.steampowered.com/app/945360/Among_Us).

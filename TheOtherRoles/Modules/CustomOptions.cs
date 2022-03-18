@@ -144,10 +144,10 @@ namespace TheOtherRoles {
             var torTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
             var torTabHighlight = torTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
             torTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.TabIcon.png", 100f);
-    
+
             gameTab.transform.position += Vector3.left * 0.5f;
             torTab.transform.position += Vector3.right * 0.5f;
-            roleTab.transform.position += Vector3.left * 0.5f;  
+            roleTab.transform.position += Vector3.left * 0.5f;
 
             var tabs = new GameObject[]{gameTab, roleTab, torTab};
             for (int i = 0; i < tabs.Length; i++) {
@@ -163,16 +163,18 @@ namespace TheOtherRoles {
                     gameSettingMenu.RolesSettingsHightlight.enabled = false;
                     torTabHighlight.enabled = false;
                     if (copiedIndex == 0) {
+                        if (CustomOption.options[0].optionBehaviour != null) CustomOption.options[0].optionBehaviour.transform.SetParent(__instance.transform, false);
                         gameSettingMenu.RegularGameSettings.SetActive(true);
-                        gameSettingMenu.GameSettingsHightlight.enabled = true;  
+                        gameSettingMenu.GameSettingsHightlight.enabled = true;
                     } else if (copiedIndex == 1) {
                         gameSettingMenu.RolesSettings.gameObject.SetActive(true);
                         gameSettingMenu.RolesSettingsHightlight.enabled = true;
                     } else if (copiedIndex == 2) {
+                        if (CustomOption.options[0].optionBehaviour != null) CustomOption.options[0].optionBehaviour.transform.SetParent(torMenu.transform, false);
                         torSettings.gameObject.SetActive(true);
                         torTabHighlight.enabled = true;
                     }
-               }));
+                }));
             }
 
             foreach (OptionBehaviour option in torMenu.GetComponentsInChildren<OptionBehaviour>())
@@ -207,6 +209,12 @@ namespace TheOtherRoles {
 
             var longTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumLongTasks").TryCast<NumberOption>();
             if(longTasksOption != null) longTasksOption.ValidRange = new FloatRange(0f, 15f);
+            
+            // Start Menu on TOR tab!
+            var torButton = tabs[2].GetComponentInChildren<PassiveButton>();
+            torButton.OnClick.Invoke();
+            // Extra space in game settings, for preset switch button!
+            gameSettingMenu.Scroller.ContentYBounds.max += 0.8f;
         }
     }
 
@@ -266,7 +274,7 @@ namespace TheOtherRoles {
         public static void Postfix(GameOptionsMenu __instance) {
             if (__instance.Children.Length < 100) return; // TODO: Introduce a cleaner way to seperate the TOR settings from the game settings
 
-            __instance.GetComponentInParent<Scroller>().ContentYBounds.max = -0.5F + __instance.Children.Length * 0.55F; 
+            __instance.GetComponentInParent<Scroller>().ContentYBounds.max = -0.5F + __instance.Children.Length * 0.55F +10F; 
             timer += Time.deltaTime;
             if (timer < 0.1f) return;
             timer = 0f;

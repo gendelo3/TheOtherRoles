@@ -121,6 +121,141 @@ namespace TheOtherRoles {
         }
     }
 
+
+    public class VanillaOption {
+        public static List<VanillaOption> options = new List<VanillaOption>();
+        public static int preset = 0;
+
+        public static int curId = 900;
+
+        public int id;
+        public string name;
+        public System.Object selections;
+
+        public int defaultSelection;
+        public ConfigEntry<int> entry;
+        public int selection;
+        public OptionBehaviour optionBehaviour;
+        public OptionType optionType;
+
+        public enum OptionType {
+            NumberOption,
+            StringOption,
+            ToggleOption,
+            KeyValueOption
+        }
+
+
+        public VanillaOption(int id, string name, System.Object selections, System.Object defaultValue, OptionType optionType) {
+            this.id = id;
+            this.name = name;
+            this.selections = selections;
+            //int index = //Array.IndexOf(selections, defaultValue);
+            //this.defaultSelection = index >= 0 ? index : 0;
+            this.optionType = optionType;
+            selection = 0;
+            if (id != 0) {
+                entry = TheOtherRolesPlugin.Instance.Config.Bind($"Preset{preset}", id.ToString(), defaultSelection);
+                // todo
+                // selection = 
+            }
+            options.Add(this);
+            curId++;
+        }
+
+        public static void switchPreset(int newPreset) {
+            VanillaOption.preset = newPreset;
+            /*foreach (VanillaOption option in VanillaOption.options) {
+                if (option.id == 0) continue;
+
+                option.entry = TheOtherRolesPlugin.Instance.Config.Bind($"Preset{preset}", option.id.ToString(), option.defaultSelection);
+                option.selection = Mathf.Clamp(option.entry.Value, 0, option.selections.Length - 1);
+                if (option.optionBehaviour != null && option.optionBehaviour is StringOption stringOption) {
+                    stringOption.oldValue = stringOption.Value = option.selection;
+                    stringOption.ValueText.text = option.selections[option.selection].ToString();
+                }
+            }*/
+        }
+
+        public void updateSelection(int newSelection) {
+            //selection = Mathf.Clamp((newSelection + selections.Length) % selections.Length, 0, selections.Length - 1);
+            if (optionBehaviour != null && optionBehaviour is StringOption stringOption) {
+                //stringOption.oldValue = stringOption.Value = selection;
+                //stringOption.ValueText.text = selections[selection].ToString();
+                // TODO
+                
+            }
+        }
+
+        public static void Load(OptionBehaviour[] optionBehaviours) {
+            options = new List<VanillaOption>();
+            foreach (var behaviour in optionBehaviours) {
+                string name = "";
+                System.Object selections = null;
+                System.Object defaultValue = null;
+                OptionType currentOptionType = (OptionType)0;
+
+                StringOption stringOption;
+                KeyValueOption keyValueOption;
+                NumberOption numberOption;
+                ToggleOption toggleOption;
+
+                try {
+                    stringOption = behaviour.Cast<StringOption>();
+                    currentOptionType = OptionType.StringOption;
+                    name = stringOption.TitleText.text;
+                    selections = stringOption.Values.Cast<object>().ToArray();
+                    defaultValue = stringOption.Value;
+                } catch {
+                    try {
+                        keyValueOption = behaviour.Cast<KeyValueOption>();
+                        currentOptionType = OptionType.KeyValueOption;
+                        name = keyValueOption.TitleText.text;
+                        selections = keyValueOption.Values; // TODO
+                        defaultValue = keyValueOption.GetInt();
+                    } catch {
+                        try {
+                            numberOption = behaviour.Cast<NumberOption>();
+                            name = numberOption.TitleText.text;
+                            currentOptionType = OptionType.NumberOption;
+                            selections = numberOption.ValidRange;
+                            defaultValue = numberOption.Value;
+                            if (name == "Voting Time") {
+                                numberOption.Value = 105f;
+                                numberOption.ValueText.text = "105s";
+                                TheOtherRolesPlugin.Logger.LogWarning("gotcha");
+                            }
+                        } catch {
+                            try {
+                                toggleOption = behaviour.Cast<ToggleOption>();
+                                currentOptionType = OptionType.ToggleOption;
+                                name = toggleOption.TitleText.text;
+                                selections = new bool[] { false, true };
+                                defaultValue = toggleOption.GetBool();
+                            }
+                            catch {
+                                TheOtherRolesPlugin.Logger.LogWarning("unknown");
+                                TheOtherRolesPlugin.Logger.LogWarning(behaviour.GetType());
+                                TheOtherRolesPlugin.Logger.LogWarning(behaviour.Title);
+                                TheOtherRolesPlugin.Logger.LogWarning(behaviour.name);
+                            }
+                        }
+                    }
+
+                }
+
+                // find out type of option:
+                TheOtherRolesPlugin.Logger.LogWarning("------------------------------");
+                TheOtherRolesPlugin.Logger.LogWarning(name);
+                TheOtherRolesPlugin.Logger.LogWarning(currentOptionType);
+                TheOtherRolesPlugin.Logger.LogWarning(selections);
+                TheOtherRolesPlugin.Logger.LogWarning(defaultValue);
+
+                //new VanillaOption(curId, name, selections, defaultValue, currentOptionType);
+            }
+        }
+    }
+
     [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Start))]
     class GameOptionsMenuStartPatch {
         public static void Postfix(GameOptionsMenu __instance) {
@@ -215,6 +350,18 @@ namespace TheOtherRoles {
             torButton.OnClick.Invoke();
             // Extra space in game settings, for preset switch button!
             gameSettingMenu.Scroller.ContentYBounds.max += 0.8f;
+
+
+            TheOtherRolesPlugin.Logger.LogWarning("Info About Options");
+            foreach (var option in __instance.Children) {
+                try {
+                    TheOtherRolesPlugin.Logger.LogWarning(option.name);
+                    option.transform.localPosition += new Vector3(0, -0.6f, 0);
+                } catch {
+                    TheOtherRolesPlugin.Logger.LogWarning("no name");
+                }
+            }
+            VanillaOption.Load(__instance.Children);
         }
     }
 

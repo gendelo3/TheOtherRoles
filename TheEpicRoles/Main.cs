@@ -62,7 +62,7 @@ namespace TheEpicRoles {
 
         public override void Load() {
             Logger = Log;
-            DebugMode = Config.Bind("Custom", "Enable Debug Mode", true);
+            DebugMode = Config.Bind("Custom", "Enable Debug Mode", false);
             StreamerMode = Config.Bind("Custom", "Enable Streamer Mode", false);
             GhostsSeeTasks = Config.Bind("Custom", "Ghosts See Remaining Tasks", true);
             GhostsSeeRoles = Config.Bind("Custom", "Ghosts See Roles", true);
@@ -132,6 +132,8 @@ namespace TheEpicRoles {
         {
             if (!TheEpicRolesPlugin.DebugMode.Value) return;
 
+            // Removed debugging capabilities to solve exploit using it. Some day it could be implemented in a better, more secure way.
+            /*
             // Spawn dummys
             if (Input.GetKeyDown(KeyCode.F)) {
                 var playerControl = UnityEngine.Object.Instantiate(AmongUsClient.Instance.PlayerPrefab);
@@ -155,6 +157,7 @@ namespace TheEpicRoles {
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.forceEnd();
             }
+            */
         }
 
         public static string RandomString(int length)

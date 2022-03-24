@@ -14,7 +14,7 @@ namespace TheEpicRoles.Objects {
         private static Sprite TraceSprite;
         public static Sprite getTraceSprite() {
             if (TraceSprite) return TraceSprite;
-            TraceSprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.PhaserTrace.png", 225f);
+            TraceSprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.PhaserTraceM.png", 225f);
             return TraceSprite;
         }
 
@@ -38,10 +38,14 @@ namespace TheEpicRoles.Objects {
 
                 Color g = new Color(0, 0, 0);  // Usual display color. could also be Palette.PlayerColors[6] for default grey like camo
                 // if this stays black (0,0,0), it can ofc be removed.
+                float p2 = p * p * p; // slower first, then quicker! https://youtu.be/sIlNIVXpIns
 
-                Color combinedColor = Mathf.Clamp01(p) * g + Mathf.Clamp01(1 - p) * c;
+                Color combinedColor = Mathf.Clamp01(p2) * g + Mathf.Clamp01(1 - p2) * c;
 
                 if (traceRenderer) traceRenderer.color = combinedColor;
+            })));
+            HudManager.Instance.StartCoroutine(Effects.Lerp(duration, new Action<float>((p) => {
+                if (traceRenderer) traceRenderer.color = new Color(traceRenderer.color.r, traceRenderer.color.g, traceRenderer.color.b, Mathf.Clamp01(1-p));
             })));
 
 
@@ -59,7 +63,6 @@ namespace TheEpicRoles.Objects {
                 if (traceCurrent.timeRemaining < 0) {
                     traceCurrent.trace.SetActive(false);
                     UnityEngine.Object.Destroy(traceCurrent.trace);
-                    traces.Remove(traceCurrent);
                 }
             }
         }

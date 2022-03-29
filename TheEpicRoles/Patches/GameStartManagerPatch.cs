@@ -1,4 +1,3 @@
-  
 using HarmonyLib;
 using UnityEngine;
 using System.Reflection;
@@ -29,6 +28,7 @@ namespace TheEpicRoles.Patches {
                     MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetReadyNames, Hazel.SendOption.Reliable);
                     writer.WriteBytesAndSize(RPCProcedure.readyStatus.ToArray());
                     writer.EndMessage();
+                    RPCProcedure.setReadyNames(RPCProcedure.readyStatus.ToArray());
                 }
             }
         }

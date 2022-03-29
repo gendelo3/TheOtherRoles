@@ -1511,18 +1511,18 @@ namespace TheEpicRoles {
                 Helpers.loadSpriteFromResources("TheEpicRoles.Resources.NotReadyButton.png", 115f),
                 new Vector3(-1f, 0, 0),
                 __instance,
-                KeyCode.LeftControl,
+                null,
                 false,
                 "Not Ready",
                 true
             );
 
-            // Jumper Charges counter
+            // Ready Button counter
             readyButtonCount = GameObject.Instantiate(readyButton.actionButton.cooldownTimerText, readyButton.actionButton.cooldownTimerText.transform.parent);
             readyButtonCount.text = "0 / 1";
             readyButtonCount.enableWordWrapping = false;
             readyButtonCount.transform.localScale = Vector3.one * 0.5f;
-            readyButtonCount.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+            readyButtonCount.transform.localPosition += new Vector3(0, 0.6f, 0);
 
             // GuardianShield
             guardianShield = new CustomButton(
@@ -1542,17 +1542,18 @@ namespace TheEpicRoles {
                     GUIUtility.systemCopyBuffer = code;
                     copyButton.Timer = 1f;
                 },
-                () => { return AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started && AmongUsClient.Instance.GameMode != GameModes.FreePlay; },
+                () => { return AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started && AmongUsClient.Instance.GameMode != GameModes.FreePlay && AmongUsClient.Instance.GameMode != GameModes.LocalGame; },
                 () => { return true; },
                 () => { },
-                Helpers.loadSpriteFromResources("TheEpicRoles.Resources.NotReadyButton.png", 115f),
+                Helpers.loadSpriteFromResources("TheEpicRoles.Resources.CopyButton.png", 115f),
                 new Vector3(0f, 1f, 0),
                 __instance,
-                KeyCode.Space,
+                null,
                 false,
                 "Copy Code",
                 true
             );
+            copyButton.actionButton.buttonLabelText.outlineColor = Color.gray;
 
             // Set the default (or settings from the previous game) timers/durations when spawning the buttons
             setCustomButtonCooldowns();

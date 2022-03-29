@@ -63,7 +63,7 @@ namespace TheEpicRoles {
 
         public override void Load() {
             Logger = Log;
-            DeveloperMode = Config.Bind("Custom", "Enable Developer Mode", "false");
+            DeveloperMode = Config.Bind("Custom", "Enable Developer Mode", "0");
             StreamerMode = Config.Bind("Custom", "Enable Streamer Mode", false);
             GhostsSeeTasks = Config.Bind("Custom", "Ghosts See Remaining Tasks", true);
             GhostsSeeRoles = Config.Bind("Custom", "Ghosts See Roles", true);
@@ -86,7 +86,6 @@ namespace TheEpicRoles {
             GameOptionsData.RecommendedImpostors = GameOptionsData.MaxImpostors = Enumerable.Repeat(3, 16).ToArray(); // Max Imp = Recommended Imp = 3
             GameOptionsData.MinPlayers = Enumerable.Repeat(4, 15).ToArray(); // Min Players = 4
 
-            DeveloperMode = Config.Bind("Custom", "Enable Developer Mode", "0");
             Instance = this;
             CustomOptionHolder.Load();
             CustomColors.Load();

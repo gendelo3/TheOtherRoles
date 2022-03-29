@@ -1,5 +1,9 @@
 # Changelog
 
+  ## 1.1.1
+  - Fixed a bug where everybody gets killed due to a hotkey permission.
+  - Fixed bad shift and witch icon placement.
+
   ## 1.1.0
   New:
   - Role: Jumper

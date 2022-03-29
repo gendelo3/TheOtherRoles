@@ -1293,7 +1293,6 @@ namespace TheEpicRoles
         public static Vent securityGuardVentTarget;
         public static PlayerControl trackerTracked;
         public static bool trackerUsedTracker = false;
-        public static Arrow trackerArrow = new Arrow(Color.blue);
         public static List<Arrow> snitchLocalArrows = new List<Arrow>();
         public static float deputyRemainingHandcuffs;
 
@@ -1323,6 +1322,7 @@ namespace TheEpicRoles
             securityGuardVentTarget = null;
             trackerTracked = null;
             trackerUsedTracker = false;
+            trackerResetTracked();
             if (snitchLocalArrows != null)
             {
                 foreach (Arrow arrow in snitchLocalArrows)
@@ -1339,9 +1339,6 @@ namespace TheEpicRoles
         {
             currentTarget = trackerTracked = null;
             trackerUsedTracker = false;
-            if (trackerArrow?.arrow != null) UnityEngine.Object.Destroy(trackerArrow.arrow);
-            trackerArrow = new Arrow(Color.blue);
-            if (trackerArrow.arrow != null) trackerArrow.arrow.SetActive(false);
         }
 
         public static bool isRoleAndLocalPlayer(RoleInfo roleInfo)

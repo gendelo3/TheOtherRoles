@@ -366,57 +366,41 @@ namespace TheEpicRoles.Patches {
         static void trackerUpdate() {
             // Handle player tracking
 
-            if (Tracker.arrow?.arrow == null && Doppelganger.trackerArrow?.arrow == null) return;
+            if (Tracker.arrow?.arrow == null) return;
 
             if ((Tracker.tracker == null || PlayerControl.LocalPlayer != Tracker.tracker) && (PlayerControl.LocalPlayer != Doppelganger.doppelganger || Doppelganger.copiedRole != RoleInfo.tracker)) {
                 Tracker.arrow.arrow.SetActive(false);
                 return;
 
-                }
-
-            // To save some lines, determine the arrow and target by the player role. Local player is tracker or doppelganger!
-            Arrow trackerArrow;
-            PlayerControl tracked;
-            if (PlayerControl.LocalPlayer == Tracker.tracker)
-            {
-                trackerArrow = Tracker.arrow;
-                tracked = Tracker.tracked;
-
-            } else
-            {
-                trackerArrow = Doppelganger.trackerArrow;
-                tracked = Doppelganger.trackerTracked;
             }
 
+            // To save some lines, determine the target by the player role. Local player is tracker or doppelganger!
+            PlayerControl tracked = PlayerControl.LocalPlayer == Tracker.tracker ? Tracker.tracked : Doppelganger.trackerTracked;
+
             if (tracked != null && !PlayerControl.LocalPlayer.Data.IsDead) {
-                    Tracker.timeUntilUpdate -= Time.fixedDeltaTime;
+                Tracker.timeUntilUpdate -= Time.fixedDeltaTime;
 
-                    if (Tracker.timeUntilUpdate <= 0f)
-                    {
-                        bool trackedOnMap = !Tracker.tracked.Data.IsDead;
-                        Vector3 position = Tracker.tracked.transform.position;
-                        if (!trackedOnMap)
-                        { // Check for dead body
-                            DeadBody body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Tracker.tracked.PlayerId);
-                            if (body != null)
-                            {
-                                trackedOnMap = true;
-                                position = body.transform.position;
-                            }
+                if (Tracker.timeUntilUpdate <= 0f) {
+                    bool trackedOnMap = !tracked.Data.IsDead;
+                    Vector3 position = tracked.transform.position;
+                    if (!trackedOnMap) { // Check for dead body
+                        DeadBody body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == tracked.PlayerId);
+                        if (body != null) {
+                            trackedOnMap = true;
+                            position = body.transform.position;
                         }
+                    }
 
-                        Tracker.arrow.Update(position);
-                        Tracker.arrow.arrow.SetActive(trackedOnMap);
-                        Tracker.timeUntilUpdate = Tracker.updateIntervall;
-                    }
-                    else
-                    {
-                        Tracker.arrow.Update();
-                    }
+                    Tracker.arrow.Update(position);
+                    Tracker.arrow.arrow.SetActive(trackedOnMap);
+                    Tracker.timeUntilUpdate = Tracker.updateIntervall;
+                } else {
+                    Tracker.arrow.Update();
                 }
+            }
 
-                // Handle corpses tracking
-                if ((Tracker.tracker != null && Tracker.tracker == PlayerControl.LocalPlayer || Doppelganger.isRoleAndLocalPlayer(RoleInfo.tracker)) && Tracker.corpsesTrackingTimer >= 0f && !PlayerControl.LocalPlayer.Data.IsDead) {
+            // Handle corpses tracking
+            if ((Tracker.tracker != null && Tracker.tracker == PlayerControl.LocalPlayer || Doppelganger.isRoleAndLocalPlayer(RoleInfo.tracker)) && Tracker.corpsesTrackingTimer >= 0f && !PlayerControl.LocalPlayer.Data.IsDead) {
                 bool arrowsCountChanged = Tracker.localArrows.Count != Tracker.deadBodyPositions.Count();
                 int index = 0;
 
@@ -432,7 +416,7 @@ namespace TheEpicRoles.Patches {
                     if (Tracker.localArrows[index] != null) Tracker.localArrows[index].Update(position);
                     index++;
                 }
-            } else if (Tracker.localArrows.Count > 0) { 
+            } else if (Tracker.localArrows.Count > 0) {
                 foreach (Arrow arrow in Tracker.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
                 Tracker.localArrows = new List<Arrow>();
             }

@@ -1296,21 +1296,59 @@ namespace TheEpicRoles {
                 Medium.duration,
                 () => {
                     mediumButton.Timer = mediumButton.MaxTimer;
-                    if (Medium.target == null || Medium.target.player == null) return;
-                    string msg = "";
+                    if (Medium.target == null || Medium.target.player == null) {
+                        DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Your Ouija Board is unable to connect! Make sure it's connected to the soulnet and your spiritwall is correctly configured.");
+                        return; }
+                    string question = "";
+                    string answer = "";
 
                     int randomNumber = Medium.target.killerIfExisting?.PlayerId == Mini.mini?.PlayerId ? TheEpicRoles.rnd.Next(3) : TheEpicRoles.rnd.Next(4);
                     string typeOfColor = Helpers.isLighterColor(Medium.target.killerIfExisting.Data.DefaultOutfit.ColorId) ? "lighter" : "darker";
                     float timeSinceDeath = ((float)(Medium.meetingStartTime - Medium.target.timeOfDeath).TotalMilliseconds);
-                    string name = " (" + Medium.target.player.Data.PlayerName + ")";
+                    string name = Medium.target.player.Data.PlayerName;
 
+                    switch (randomNumber) {
+                        case 0: // What was the dead persons role?
+                            question = $"{name}, what profession did you follow?";
+                            answer = $"I once was the {RoleInfo.GetRolesString(Medium.target.player, false)}!";
+                            break;
+                        
+                        case 1: // Killer Color type
+                            question = $"{name}, how did your killer look like?";
+                            if (Medium.target.player == Lawyer.lawyer && Lawyer.target == Medium.target.killerIfExisting) // lawyer not snitching
+                                answer = $"I wont tell you!";
+                            else
+                                answer = $"I think it was a {typeOfColor} person!";
+                            break;
+                        
+                        case 2: // Kill time
+                            question = $"{name}, when did you pass away?";
+                            answer = $"I was murdered {Math.Round(timeSinceDeath / 1000)} seconds before the last meeting!";
+                            break;
 
-                    if (randomNumber == 0) msg = "What is your role? My role is " + RoleInfo.GetRolesString(Medium.target.player, false) + name;
-                    else if (randomNumber == 1) msg = "What is your killer`s color type? My killer is a " + typeOfColor + " color" + name;
-                    else if (randomNumber == 2) msg = "When did you die? I have died " + Math.Round(timeSinceDeath / 1000) + "s before meeting started" + name;
-                    else msg = "What is your killer`s role? My killer is " + RoleInfo.GetRolesString(Medium.target.killerIfExisting, false) + name; //exlude mini 
+                        default: // Killer role
+                            question = $"{name}, who has murdered you?";
+                            if (Medium.target.killerIfExisting == Medium.target.player) {
+                                if (Medium.target.player == Lovers.lover1 || Medium.target.player == Lovers.lover2) // lover
+                                    answer = $"I couldn't take it being all alone! We will be together forever!";
+                                else if (Medium.target.player == Sheriff.sheriff) // sheriff
+                                    answer = $"Dang it! I thought i was onto something!";
+                                else if (Medium.target.player == Warlock.warlock) // warlock
+                                    answer = $"Wait... that should have hit someone else, not me!";
+                                else if (Medium.target.player == Shifter.shifter) // shifter
+                                    answer = $"I just wanted another profession...";
+                            }
+                            else if (Medium.target.player == Lawyer.lawyer && Lawyer.target == Medium.target.killerIfExisting) // lawyer not snitching
+                                answer = $"You will never catch them! They will kill you all!";
+                            else
+                                answer = $"I think it was the {RoleInfo.GetRolesString(Medium.target.killerIfExisting, false)}!";
+                            break;
+                    }
 
-                    DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"{msg}");
+                    DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, question);
+                    PlayerControl.LocalPlayer.Data.IsDead = true;
+                    DestroyableSingleton<HudManager>.Instance.Chat.AddChat(Medium.target.player, answer);
+                    PlayerControl.LocalPlayer.Data.IsDead = false;
 
                     // Remove soul
                     if (Medium.oneTimeUse) {

@@ -1308,9 +1308,6 @@ namespace TheOtherRoles
         {
             currentTarget = trackerTracked = null;
             trackerUsedTracker = false;
-            if (trackerArrow?.arrow != null) UnityEngine.Object.Destroy(trackerArrow.arrow);
-            trackerArrow = new Arrow(Color.blue);
-            if (trackerArrow.arrow != null) trackerArrow.arrow.SetActive(false);
         }
 
         public static bool isRoleAndLocalPlayer(RoleInfo roleInfo)

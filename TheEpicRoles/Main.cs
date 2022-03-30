@@ -33,7 +33,7 @@ namespace TheEpicRoles {
 
         public static int optionsPage = 2;
 
-        public static ConfigEntry<bool> DeveloperMode { get; private set; }
+        public static ConfigEntry<string> DeveloperMode { get; private set; }
         public static ConfigEntry<bool> StreamerMode { get; set; }
         public static ConfigEntry<bool> GhostsSeeTasks { get; set; }
         public static ConfigEntry<bool> GhostsSeeRoles { get; set; }
@@ -63,7 +63,7 @@ namespace TheEpicRoles {
 
         public override void Load() {
             Logger = Log;
-            DeveloperMode = Config.Bind("Custom", "Enable Developer Mode", false);
+            DeveloperMode = Config.Bind("Custom", "Enable Developer Mode", "false");
             StreamerMode = Config.Bind("Custom", "Enable Streamer Mode", false);
             GhostsSeeTasks = Config.Bind("Custom", "Ghosts See Remaining Tasks", true);
             GhostsSeeRoles = Config.Bind("Custom", "Ghosts See Roles", true);

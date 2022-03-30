@@ -24,6 +24,10 @@
         <Reference Include="$(AmongUs)/BepInEx/unhollowed/*.dll" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="NLayer" Version="1.14.0" />
+    </ItemGroup>
+
     <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
         <Message Text="Second occurrence" />
         <Copy SourceFiles="$(ProjectDir)\bin\$(Configuration)\netstandard2.1\TheEpicRoles.dll" DestinationFolder="$(AmongUsLatest)/BepInEx/plugins/" />

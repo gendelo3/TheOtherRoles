@@ -87,6 +87,17 @@ namespace TheEpicRoles {
             return iCall_LoadImage.Invoke(tex.Pointer, il2cppArray.Pointer, markNonReadable);
         }
 
+        public static AudioClip loadAudioClipFromDisk(string path) {
+            string filePath = Path.GetDirectoryName(Application.dataPath) + @"\Sound\" + path;
+            try {
+                if (File.Exists(path)) {
+                    AudioClip clip = null;
+                    return clip;
+                }
+            } catch { }
+            return null;
+        }
+
         public static AudioClip loadAudioClipFromResources(string path, string clipName = "UNNAMED_TOR_AUDIO_CLIP")
         {
             // must be "raw (headerless) 2-channel signed 32 bit pcm (le) (can e.g. use Audacity® to export)"

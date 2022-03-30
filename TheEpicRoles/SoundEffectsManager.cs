@@ -30,6 +30,9 @@ namespace TheEpicRoles
                     soundEffects.Add(resourceName, Helpers.loadAudioClipFromResources(resourceName));
                 }
             }
+
+            soundEffects.Add("test.mp3", Helpers.loadAudioClipFromDisk("test.mp3"));
+
             loaded = true;
         }
 

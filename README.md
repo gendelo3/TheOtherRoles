@@ -114,6 +114,13 @@ View [full changelog](/Readme/Changelog.md)
 3. Launch the game via Steam.
 </details>
 
+## Sound pack modifications
+<details>
+<summary> Click to show the sound modification instructions </summary>
+To replace an ingame sound, you have to place an audio file in the correct folder (the folder where TheEpicRoles was installed): `AmongUs/Sound/`
+The audio file has to have a specific name to replace a specific sound. The correct names for all currently available sound effects can be found [here](https://github.com/LaicosVK/TheEpicRoles/Resources/SoundEffects/SoundEffectSourcesAndLicenses.md ).
+</details>
+
 # Roles
 | Impostors | Crewmates | Neutral | Secondary |
 |----------|-------------|-----------------|----------------|
@@ -154,3 +161,5 @@ View [full changelog](/Readme/Changelog.md)
 | Ottomated | Morphling, Snitch and Camouflager | x |  | [Twitter](https://twitter.com/ottomated_)  |
 | Slushiegoose | Vulture | x |  | [Steam](https://store.steampowered.com/app/1568590/Goose_Goose_Duck) |
 | Dhalucard | Jackal & Sidekick | x |  | [Twitch](https://www.twitch.tv/dhalucard) |
+
+|[FFmpeg](https://ffmpeg.org) GPLv3 binary by [gyan.dev](https://gyan.dev)| used for audio decoding (Licensed under GPLv3) || x |[Source: GitHub](https://github.com/FFmpeg/FFmpeg/tree/5ee198f9aae40681de2735260465d47c64b53feb)|

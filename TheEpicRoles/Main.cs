@@ -95,6 +95,7 @@ namespace TheEpicRoles {
             if (ToggleCursor.Value) {
                 Helpers.enableCursor("init");
             }
+            Helpers.renderAudioToRaw();  // Render all the files in sound to raw files in the correct folder
         }
         public static Sprite GetModStamp() {
             if (ModStamp) return ModStamp;

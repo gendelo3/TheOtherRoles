@@ -23,6 +23,7 @@ namespace TheEpicRoles
             soundEffects = new Dictionary<string, AudioClip>();
             Assembly assembly = Assembly.GetExecutingAssembly();
             string[] resourceNames = assembly.GetManifestResourceNames();
+            // Load all raw audio clips from the resources in which they come bundled
             foreach (string resourceName in resourceNames)
             {
                 if (resourceName.Contains("TheEpicRoles.Resources.SoundEffects.") && resourceName.Contains(".raw"))
@@ -31,8 +32,16 @@ namespace TheEpicRoles
                 }
             }
 
-            soundEffects.Add("test.mp3", Helpers.loadAudioClipFromDisk("test.mp3"));
-
+            // Load raw audio clips from disk, replacing the ones with the same name
+            string applicationPath = Path.GetDirectoryName(Application.dataPath) + "\\Sound\\raw";
+            foreach (var file in Directory.EnumerateFiles(applicationPath, "*.raw")) {
+                string fileName = Path.GetFileName(file);
+                string resourceName = "TheEpicRoles.Resources.SoundEffects." + fileName;
+                if (soundEffects.ContainsKey(resourceName)) {
+                    int originalLength = soundEffects[resourceName].samples;
+                    soundEffects[resourceName] = Helpers.loadAudioClipFromDisk(fileName, maxLength: originalLength);
+                }
+            }
             loaded = true;
         }
 

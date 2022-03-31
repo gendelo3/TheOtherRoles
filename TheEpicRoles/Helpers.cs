@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Collections;
+using System.Diagnostics;
 using UnhollowerBaseLib;
 using UnityEngine;
 using System.Linq;
@@ -87,14 +88,45 @@ namespace TheEpicRoles {
             return iCall_LoadImage.Invoke(tex.Pointer, il2cppArray.Pointer, markNonReadable);
         }
 
-        public static AudioClip loadAudioClipFromDisk(string path) {
-            string filePath = Path.GetDirectoryName(Application.dataPath) + @"\Sound\" + path;
-            try {
-                if (File.Exists(path)) {
-                    AudioClip clip = null;
-                    return clip;
-                }
-            } catch { }
+        // use ffmpeg batch file to render all files in a folder to raw files in a subfolder
+        public static void renderAudioToRaw() {
+            TheEpicRolesPlugin.Logger.LogMessage("render audio");
+            string applicationPath = Path.GetDirectoryName(Application.dataPath);
+            string batPath = applicationPath + "\\sound.bat";
+
+            Process cmd = new Process();
+            cmd.StartInfo.FileName = batPath;
+            cmd.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            cmd.StartInfo.CreateNoWindow = true;
+            cmd.Start();
+            TheEpicRolesPlugin.Logger.LogMessage("exit render audio");
+        }
+
+        public static AudioClip createAudioClip(byte[] data, string clipName, int maxLength=-1) {
+            int length = data.Length / 4;
+            if (maxLength > 0 && length > maxLength) {
+                length = maxLength;
+            }
+            
+            float[] samples = new float[length]; // 4 bytes per sample
+            int offset;
+            for (int i = 0; i < samples.Length; i++) {
+                offset = i * 4;
+                samples[i] = (float)BitConverter.ToInt32(data, offset) / Int32.MaxValue;
+            }
+            int channels = 2;
+            int sampleRate = 48000;
+            AudioClip audioClip = AudioClip.Create(clipName, samples.Length, channels, sampleRate, false);
+            audioClip.SetData(samples, 0);
+            return audioClip;
+        }
+
+        public static AudioClip loadAudioClipFromDisk(string path, int maxLength) {
+            string filePath = Path.GetDirectoryName(Application.dataPath).Replace('\\', '/') + @"/Sound/raw/" + path;
+            if (File.Exists(filePath)) {
+                byte[] data = File.ReadAllBytes(filePath);
+                return createAudioClip(data, "disk_clip", maxLength);
+            }
             return null;
         }
 
@@ -106,18 +138,7 @@ namespace TheEpicRoles {
                 Stream stream = assembly.GetManifestResourceStream(path);
                 var byteAudio = new byte[stream.Length];
                 _ = stream.Read(byteAudio, 0, (int)stream.Length);
-                float[] samples = new float[byteAudio.Length / 4]; // 4 bytes per sample
-                int offset;
-                for (int i = 0; i < samples.Length; i++)
-                {
-                    offset = i * 4;
-                    samples[i] = (float)BitConverter.ToInt32(byteAudio, offset) / Int32.MaxValue;
-                }
-                int channels = 2;
-                int sampleRate = 48000;
-                AudioClip audioClip = AudioClip.Create(clipName, samples.Length, channels, sampleRate, false);
-                audioClip.SetData(samples, 0);
-                return audioClip;
+                return createAudioClip(byteAudio, clipName);
             } catch {
                 System.Console.WriteLine("Error loading AudioClip from resources: " + path);
             }

@@ -22,8 +22,8 @@
         <Reference Include="$(AmongUs)/BepInEx/core/*.dll" />
         <Reference Include="$(AmongUs)/BepInEx/unhollowed/*.dll" />
     </ItemGroup>
-	
-	<Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+    
+    <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
         <Message Text="Second occurrence" />
         <Copy SourceFiles="$(ProjectDir)\bin\$(Configuration)\netstandard2.1\TheEpicRoles.dll" DestinationFolder="$(AmongUsLatest)/BepInEx/plugins/" />
     </Target>

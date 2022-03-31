@@ -20,7 +20,7 @@
 |vampireKill |combined |[Gore Rend](https://freesound.org/people/magnuswaker/sounds/563491/ ) +  [R15-53-Blood Sucking.wav](https://freesound.org/people/craigsmith/sounds/487070/ ) | CC0 1.0 both|
 |garlic | | [Garlic cloves](https://freesound.org/people/Aemyn/sounds/512453/ )| CC0 1.0 |
 |jackalKill  | (already has a sound) |-|-|
-|sidekickKill  | (already has a sound) |-|-|
+|sidekickKill  | same as warlockCurse |-|-|
 |jackalSidekick  | (already has a sound) |-|-|
 |lighterLight | |[Torch Click 2](https://freesound.org/people/BenjaminNelan/sounds/410360/ ) | CC0 1.0 |
 |eraserErase | | [Pencil Eraser Erasing](https://freesound.org/people/deleted_user_7146007/sounds/383861/ ) | CC0 1.0 |

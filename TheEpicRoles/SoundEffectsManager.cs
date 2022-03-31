@@ -47,7 +47,7 @@ namespace TheEpicRoles
 
         public static AudioClip get(string path)
         {
-            // Convenience: As as SoundEffects are stored in the same folder, allow using just the name as well
+            // Convenience: As all SoundEffects are stored in the same folder, allow using just the name as well
             if (!path.Contains(".") && !soundEffects.ContainsKey(path)) path = "TheEpicRoles.Resources.SoundEffects." + path + ".raw";
             AudioClip returnValue;
             return soundEffects.TryGetValue(path, out returnValue) ? returnValue : null;

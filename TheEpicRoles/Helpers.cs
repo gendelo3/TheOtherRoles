@@ -14,7 +14,7 @@ using TheEpicRoles.Objects;
 using TheEpicRoles.Patches;
 using HarmonyLib;
 using Hazel;
-
+using System.Net;
 
 namespace TheEpicRoles {
 
@@ -88,18 +88,50 @@ namespace TheEpicRoles {
             return iCall_LoadImage.Invoke(tex.Pointer, il2cppArray.Pointer, markNonReadable);
         }
 
-        // use ffmpeg batch file to render all files in a folder to raw files in a subfolder
-        public static void renderAudioToRaw() {
-            TheEpicRolesPlugin.Logger.LogMessage("render audio");
+        // download and extract ffmpeg binary
+        public static void downloadFFmpeg() {
             string applicationPath = Path.GetDirectoryName(Application.dataPath);
+            string zipPath = applicationPath + "\\ffmpeg.zip";
+            string exePath = applicationPath + "\\ffmpeg.exe";
+            if (File.Exists(exePath)) return;  // FFmpeg is already there!
+
+            // Download zip if not already there
+            if (!File.Exists(zipPath)) {
+                string downloadUri = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip";
+                using (var client = new WebClient()) {
+                    client.DownloadFile(downloadUri, zipPath);
+                }
+            }
+            // Extract ffmpeg.exe (works only with windows current windows 10 systems)
+            Process tar = new Process();
+            tar.StartInfo.FileName = "tar";
+            tar.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            tar.StartInfo.CreateNoWindow = true;
+            tar.StartInfo.Arguments = $"-xf \"{zipPath}\" --strip-components=2 *\\ffmpeg.exe";
+            tar.Start();
+        }
+
+        // use ffmpeg batch file to render all files in a folder to raw files in a subfolder
+            public static void renderAudioToRaw() {
+            string applicationPath = Path.GetDirectoryName(Application.dataPath);
+
+            downloadFFmpeg();  // make sure we have ffmpeg...
+
+            // create batch file to run - will execute ffmpeg as needed
+            string command = @" if not exist Sound mkdir Sound
+                                if not exist Sound\raw mkdir Sound\raw
+                                FOR /r . %%a in (Sound\*.*) DO (
+                                ffmpeg.exe -i ""%%a"" -f s32le -ar 48000 -acodec pcm_s32le -y ""%%~pa\raw\%%~na.raw"" 
+                                ) ";
+
             string batPath = applicationPath + "\\sound.bat";
+            File.WriteAllText(batPath, command);
 
             Process cmd = new Process();
             cmd.StartInfo.FileName = batPath;
             cmd.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             cmd.StartInfo.CreateNoWindow = true;
             cmd.Start();
-            TheEpicRolesPlugin.Logger.LogMessage("exit render audio");
         }
 
         public static AudioClip createAudioClip(byte[] data, string clipName, int maxLength=-1) {

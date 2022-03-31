@@ -859,13 +859,13 @@ namespace TheEpicRoles {
         }
 
         public static void playSoundAtPosition(string sound, float x, float y) {
-            float maxRange = 4;
+            float maxRange = 5f;
             float volume = 1f;
             if (!PlayerControl.LocalPlayer.Data.IsDead) {
                 var pos = PlayerControl.LocalPlayer.transform.position;
                 float dist = (float)Math.Sqrt((x - pos.x) * (x - pos.x) + (y - pos.y) * (y - pos.y));
                 if (dist > maxRange) return;
-                volume *= maxRange - dist;
+                volume *= (maxRange - dist) / maxRange;
             }
             SoundEffectsManager.play(sound, volume);
         }

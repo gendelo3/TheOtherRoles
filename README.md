@@ -117,8 +117,13 @@ View [full changelog](/Readme/Changelog.md)
 ## Sound pack modifications
 <details>
 <summary> Click to show the sound modification instructions </summary>
-To replace an ingame sound, you have to place an audio file in the correct folder (the folder where TheEpicRoles was installed): `AmongUs/Sound/`
+  
+- To replace an ingame sound, you have to place an audio file (e.g. a .mp3 file) in the correct folder (the folder where TheEpicRoles was installed), `AmongUs/Sound/`.
 The audio file has to have a specific name to replace a specific sound. The correct names for all currently available sound effects can be found [here](https://github.com/LaicosVK/TheEpicRoles/Resources/SoundEffects/SoundEffectSourcesAndLicenses.md ).
+- For example, if you wish to replace the sound of the engineer repair, paste an `engineerRepair.mp3` into the Sound folder.
+- sounds with the description `(already has a sound)` can currently _not_ be replaced.
+- The length of your new effect will automatically be cut to the length of the original effect, if yours is longer.
+ 
 </details>
 
 # Roles
@@ -161,5 +166,4 @@ The audio file has to have a specific name to replace a specific sound. The corr
 | Ottomated | Morphling, Snitch and Camouflager | x |  | [Twitter](https://twitter.com/ottomated_)  |
 | Slushiegoose | Vulture | x |  | [Steam](https://store.steampowered.com/app/1568590/Goose_Goose_Duck) |
 | Dhalucard | Jackal & Sidekick | x |  | [Twitch](https://www.twitch.tv/dhalucard) |
-
-|[FFmpeg](https://ffmpeg.org) GPLv3 binary by [gyan.dev](https://gyan.dev)| used for audio decoding (Licensed under GPLv3) || x |[Source: GitHub](https://github.com/FFmpeg/FFmpeg/tree/5ee198f9aae40681de2735260465d47c64b53feb)|
+|[FFmpeg](https://ffmpeg.org) GPLv3 binary by [gyan.dev](https://gyan.dev)| used for audio decoding (Licensed under GPLv3) || x |[GitHub](https://github.com/FFmpeg/FFmpeg/tree/5ee198f9aae40681de2735260465d47c64b53feb)|

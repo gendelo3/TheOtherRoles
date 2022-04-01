@@ -83,6 +83,16 @@ namespace TheEpicRoles.Patches {
                 renderer.sprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.Banner.png", 300f);
             }
         }
+
+        [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
+        private static class ProgressBarAdditionPatch {
+            static void Postfix(MainMenuManager __instance) {
+                var amongUsLogo = GameObject.Find("bannerLogo_AmongUs");
+                CustomProgressBar.enableAll(amongUsLogo.transform);
+            }
+        }
+
+
     }
 }
 

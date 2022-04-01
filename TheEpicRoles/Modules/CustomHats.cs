@@ -472,7 +472,9 @@ namespace TheEpicRoles.Modules {
     	            if (data.backflipresource != null && doesResourceRequireDownload(filePath + data.backflipresource, data.reshashbf, md5))
                         markedfordownload.Add(data.backflipresource);
                 }
-                
+
+                CustomProgressBar pBar = new CustomProgressBar("Downloading TOR Hats");
+                int progress = 0;
                 foreach(var file in markedfordownload) {
                     
                     var hatFileResponse = await http.GetAsync($"{REPO_TOR}/hats/{file}", HttpCompletionOption.ResponseContentRead);
@@ -482,6 +484,7 @@ namespace TheEpicRoles.Modules {
                             responseStream.CopyTo(fileStream);
                         }
                     }
+                    pBar.CurrentValue = (float)++progress / markedfordownload.Count;
                 }
 
                 hatdetails = hatdatas;

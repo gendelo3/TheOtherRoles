@@ -21,7 +21,6 @@ namespace TheEpicRoles.Patches
             new SelectionBehaviour("Show Role Summary", () => MapOptions.showRoleSummary = TheEpicRolesPlugin.ShowRoleSummary.Value = !TheEpicRolesPlugin.ShowRoleSummary.Value, TheEpicRolesPlugin.ShowRoleSummary.Value),
             new SelectionBehaviour("Show Lighter / Darker", () => MapOptions.showLighterDarker = TheEpicRolesPlugin.ShowLighterDarker.Value = !TheEpicRolesPlugin.ShowLighterDarker.Value, TheEpicRolesPlugin.ShowLighterDarker.Value),
             new SelectionBehaviour("Better Cursor", () => MapOptions.toggleCursor = TheEpicRolesPlugin.ToggleCursor.Value = !TheEpicRolesPlugin.ToggleCursor.Value, TheEpicRolesPlugin.ToggleCursor.Value),
-            new SelectionBehaviour("Screen Shake", () => MapOptions.toggleScreenShake = TheEpicRolesPlugin.ToggleScreenShake.Value = !TheEpicRolesPlugin.ToggleScreenShake.Value, TheEpicRolesPlugin.ToggleScreenShake.Value),
         };
         
         private static GameObject popUp;
@@ -204,7 +203,7 @@ namespace TheEpicRoles.Patches
             }
         }
         
-        private class SelectionBehaviour
+        public class SelectionBehaviour
         {
             public string Title;
             public Func<bool> OnClick;

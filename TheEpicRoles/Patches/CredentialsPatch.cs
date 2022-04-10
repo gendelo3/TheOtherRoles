@@ -50,17 +50,24 @@ namespace TheEpicRoles.Patches {
                 modStamp.transform.position = HudManager.Instance.MapButton.transform.position + Vector3.down * offset;
             }
 
-            static void Postfix(PingTracker __instance){
+            static void Postfix(PingTracker __instance)
+            {
                 __instance.text.alignment = TMPro.TextAlignmentOptions.TopRight;
                 __instance.text.SetOutlineThickness(0);
-                if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) {
+                if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started)
+                {
                     __instance.text.text = $"<size=130%><color={terColor}>The Epic Roles</color></size> <size=50%>v{TheEpicRolesPlugin.Version.ToString()}</size>\n" + __instance.text.text;
-                    if (PlayerControl.LocalPlayer.Data.IsDead || (!(PlayerControl.LocalPlayer == null) && (PlayerControl.LocalPlayer == Lovers.lover1 || PlayerControl.LocalPlayer == Lovers.lover2))) {
+                    if (PlayerControl.LocalPlayer.Data.IsDead || (!(PlayerControl.LocalPlayer == null) && (PlayerControl.LocalPlayer == Lovers.lover1 || PlayerControl.LocalPlayer == Lovers.lover2)))
+                    {
                         __instance.transform.localPosition = new Vector3(3.45f, __instance.transform.localPosition.y, __instance.transform.localPosition.z);
-                    } else {
+                    }
+                    else
+                    {
                         __instance.transform.localPosition = new Vector3(4.2f, __instance.transform.localPosition.y, __instance.transform.localPosition.z);
                     }
-                } else {   
+                }
+                else
+                {
                     __instance.text.text = $"{fullCredentials}\n{__instance.text.text}";
                     __instance.transform.localPosition = new Vector3(3.5f, __instance.transform.localPosition.y, __instance.transform.localPosition.z);
                 }
@@ -68,19 +75,57 @@ namespace TheEpicRoles.Patches {
         }
 
         [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
-        private static class LogoPatch
+        public static class LogoPatch
         {
-            static void Postfix(MainMenuManager __instance) {
+            public static SpriteRenderer renderer;
+            public static Sprite bannerSprite;
+            public static Sprite horseBannerSprite;
+            private static PingTracker instance;
+            static void Postfix(PingTracker __instance)
+            {
                 var amongUsLogo = GameObject.Find("bannerLogo_AmongUs");
-                if (amongUsLogo != null) {
+                if (amongUsLogo != null)
+                {
                     amongUsLogo.transform.localScale *= 0.6f;
                     amongUsLogo.transform.position += Vector3.up * 0.25f;
-                }       
+                }
 
-                var torLogo = new GameObject("bannerLogo_TOR");
+                var torLogo = new GameObject("bannerLogo_TER");
                 torLogo.transform.position = Vector3.up;
-                var renderer = torLogo.AddComponent<SpriteRenderer>();
+                renderer = torLogo.AddComponent<SpriteRenderer>();
+                loadSprites();
                 renderer.sprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.Banner.png", 300f);
+
+                instance = __instance;
+                loadSprites();
+                renderer.sprite = MapOptions.enableHorseMode ? horseBannerSprite : bannerSprite;
+            }
+
+            public static void loadSprites()
+            {
+                if (bannerSprite == null) bannerSprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.Banner.png", 300f);
+                if (horseBannerSprite == null) horseBannerSprite = Helpers.loadSpriteFromResources("TheEpicRoles.Resources.BannerHorse.png", 300f);
+            }
+
+            public static void updateSprite()
+            {
+                loadSprites();
+                if (renderer != null)
+                {
+                    float fadeDuration = 1f;
+                    instance.StartCoroutine(Effects.Lerp(fadeDuration, new Action<float>((p) =>
+                    {
+                        renderer.color = new Color(1, 1, 1, 1 - p);
+                        if (p == 1)
+                        {
+                            renderer.sprite = MapOptions.enableHorseMode ? horseBannerSprite : bannerSprite;
+                            instance.StartCoroutine(Effects.Lerp(fadeDuration, new Action<float>((p) =>
+                            {
+                                renderer.color = new Color(1, 1, 1, p);
+                            })));
+                        }
+                    })));
+                }
             }
         }
     }

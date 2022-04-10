@@ -341,5 +341,21 @@ namespace TheEpicRoles.Patches {
             }
         }
     }
+
+    [HarmonyPatch(typeof(Constants), nameof(Constants.ShouldHorseAround))]
+    public static class ShouldAlwaysHorseAround
+    {
+        public static bool isHorseMode;
+        public static bool Prefix(ref bool __result)
+        {
+            if (isHorseMode != MapOptions.enableHorseMode && LobbyBehaviour.Instance != null) __result = isHorseMode;
+            else
+            {
+                __result = MapOptions.enableHorseMode;
+                isHorseMode = MapOptions.enableHorseMode;
+            }
+            return false;
+        }
+    }
 }
 

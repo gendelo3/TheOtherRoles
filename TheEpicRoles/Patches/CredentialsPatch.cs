@@ -46,31 +46,27 @@ namespace TheEpicRoles.Patches {
                     modStamp.transform.parent = __instance.transform.parent;
                     modStamp.transform.localScale *= 0.6f;
                 }
-                float offset = (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) ? 0.75f : 0f;
+                float offset = (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) ? 0.75f : 0.75f;
                 modStamp.transform.position = HudManager.Instance.MapButton.transform.position + Vector3.down * offset;
+
+                // changed position of friends list button
+                var objects = GameObject.FindObjectsOfType<FriendsListButton>();
+                if (objects == null) return;
+                objects[0].transform.localPosition = new Vector3(1.6f, -0.75f, objects[0].transform.localPosition.z);
             }
 
             static void Postfix(PingTracker __instance)
             {
                 __instance.text.alignment = TMPro.TextAlignmentOptions.TopRight;
                 __instance.text.SetOutlineThickness(0);
-                if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started)
-                {
-                    __instance.text.text = $"<size=130%><color={terColor}>The Epic Roles</color></size> <size=50%>v{TheEpicRolesPlugin.Version.ToString()}</size>\n" + __instance.text.text;
-                    if (PlayerControl.LocalPlayer.Data.IsDead || (!(PlayerControl.LocalPlayer == null) && (PlayerControl.LocalPlayer == Lovers.lover1 || PlayerControl.LocalPlayer == Lovers.lover2)))
-                    {
-                        __instance.transform.localPosition = new Vector3(3.45f, __instance.transform.localPosition.y, __instance.transform.localPosition.z);
-                    }
-                    else
-                    {
-                        __instance.transform.localPosition = new Vector3(4.2f, __instance.transform.localPosition.y, __instance.transform.localPosition.z);
-                    }
-                }
+                __instance.text.text = $"{fullCredentials}\n{__instance.text.text}";
+                if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started || PlayerControl.LocalPlayer.Data.IsDead || (!(PlayerControl.LocalPlayer == null) && (PlayerControl.LocalPlayer == Lovers.lover1 || PlayerControl.LocalPlayer == Lovers.lover2)))
+                
+                    __instance.transform.localPosition = new Vector3(3.45f, __instance.transform.localPosition.y, __instance.transform.localPosition.z);
                 else
-                {
-                    __instance.text.text = $"{fullCredentials}\n{__instance.text.text}";
-                    __instance.transform.localPosition = new Vector3(3.5f, __instance.transform.localPosition.y, __instance.transform.localPosition.z);
-                }
+                    __instance.transform.localPosition = new Vector3(4.25f, __instance.transform.localPosition.y, __instance.transform.localPosition.z);
+                __instance.enabled = false;
+                __instance.enabled = true;
             }
         }
 

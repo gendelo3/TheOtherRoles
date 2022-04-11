@@ -40,8 +40,8 @@ namespace TheEpicRoles {
         public static ConfigEntry<bool> GhostsSeeVotes{ get; set; }
         public static ConfigEntry<bool> ShowRoleSummary { get; set; }
         public static ConfigEntry<bool> ShowLighterDarker { get; set; }
+        public static ConfigEntry<bool> EnableHorseMode { get; set; }
         public static ConfigEntry<bool> ToggleCursor { get; set; }
-        public static ConfigEntry<bool> ToggleScreenShake { get; set; }
         public static ConfigEntry<string> StreamerModeReplacementText { get; set; }
         public static ConfigEntry<string> StreamerModeReplacementColor { get; set; }
         public static ConfigEntry<string> Ip { get; set; }
@@ -70,8 +70,8 @@ namespace TheEpicRoles {
             GhostsSeeVotes = Config.Bind("Custom", "Ghosts See Votes", true);
             ShowRoleSummary = Config.Bind("Custom", "Show Role Summary", true);
             ShowLighterDarker = Config.Bind("Custom", "Show Lighter / Darker", true);
+            EnableHorseMode = Config.Bind("Custom", "Enable Horse Mode", false);
             ToggleCursor = Config.Bind("Custom", "Better Cursor", true);
-            ToggleScreenShake = Config.Bind("Custom", "Screen Shake", false);
             ShowPopUpVersion = Config.Bind("Custom", "Show PopUp", "0");
             StreamerModeReplacementText = Config.Bind("Custom", "Streamer Mode Replacement Text", "\n\nThe Epic Roles");
             StreamerModeReplacementColor = Config.Bind("Custom", "Streamer Mode Replacement Text Hex Color", "#00FFDDFF");

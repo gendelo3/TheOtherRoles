@@ -629,12 +629,11 @@ namespace TheEpicRoles {
                 },
                 () => { return Tracker.tracker != null && Tracker.tracker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (PlayerControl.LocalPlayer.CanMove && Tracker.currentTarget != null && !Tracker.usedTracker)
-                    {
+                    if (PlayerControl.LocalPlayer.CanMove && Tracker.currentTarget != null && !Tracker.usedTracker) {
                         showTargetNameOnButton(Tracker.currentTarget, trackerTrackPlayerButton, ""); //Show target name under button if setting is true
                         return true;
                     }
-                    else return false;
+                    return false;
                 },
                 () => { if(Tracker.resetTargetAfterMeeting) Tracker.resetTracked(); },
                 Tracker.getButtonSprite(),

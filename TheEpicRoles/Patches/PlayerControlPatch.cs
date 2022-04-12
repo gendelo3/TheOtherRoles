@@ -1003,65 +1003,82 @@ namespace TheEpicRoles.Patches {
                 }
             }
 
-            // Seer show flash and add dead player position
-            if (Seer.seer != null && PlayerControl.LocalPlayer == Seer.seer && !Seer.seer.Data.IsDead && Seer.seer != target && Seer.mode <= 1) {
-                HudManager.Instance.FullScreen.enabled = true;
-                HudManager.Instance.FullScreen.gameObject.SetActive(true);
-                HudManager.Instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) => {
-                    var renderer = HudManager.Instance.FullScreen;
-                    if (renderer != null) renderer.enabled = true;
-                    if (p < 0.5) {
-                        if (renderer != null)
-                        renderer.color = new Color(42f / 255f, 187f / 255f, 245f / 255f, Mathf.Clamp01(p * 2 * 0.75f));
-                    } else {
-                        if (renderer != null)
-                            renderer.color = new Color(42f / 255f, 187f / 255f, 245f / 255f, Mathf.Clamp01((1-p) * 2 * 0.75f));
-                    }
-                    if (p == 1f && renderer != null) renderer.enabled = false;
-                })));
-            }
-            if (Seer.deadBodyPositions != null) Seer.deadBodyPositions.Add(target.transform.position);
+            if (!target.protectedByGuardianThisRound) //shield is already removed at this point
+            {
+                // Seer show flash and add dead player position
+                if (Seer.seer != null && PlayerControl.LocalPlayer == Seer.seer && !Seer.seer.Data.IsDead && Seer.seer != target && Seer.mode <= 1)
+                {
+                    HudManager.Instance.FullScreen.enabled = true;
+                    HudManager.Instance.FullScreen.gameObject.SetActive(true);
+                    HudManager.Instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) =>
+                    {
+                        var renderer = HudManager.Instance.FullScreen;
+                        if (renderer != null) renderer.enabled = true;
+                        if (p < 0.5)
+                        {
+                            if (renderer != null)
+                                renderer.color = new Color(42f / 255f, 187f / 255f, 245f / 255f, Mathf.Clamp01(p * 2 * 0.75f));
+                        }
+                        else
+                        {
+                            if (renderer != null)
+                                renderer.color = new Color(42f / 255f, 187f / 255f, 245f / 255f, Mathf.Clamp01((1 - p) * 2 * 0.75f));
+                        }
+                        if (p == 1f && renderer != null) renderer.enabled = false;
+                    })));
+                }
+                if (Seer.deadBodyPositions != null) Seer.deadBodyPositions.Add(target.transform.position);
 
-            // Tracker store body positions
-            if (Tracker.deadBodyPositions != null) Tracker.deadBodyPositions.Add(target.transform.position);
+                // Tracker store body positions
+                if (Tracker.deadBodyPositions != null) Tracker.deadBodyPositions.Add(target.transform.position);
 
-            // Medium add body
-            if (Medium.deadBodies != null) {
-                Medium.featureDeadBodies.Add(new Tuple<DeadPlayer, Vector3>(deadPlayer, target.transform.position));
+                // Medium add body
+                if (Medium.deadBodies != null)
+                {
+                    Medium.featureDeadBodies.Add(new Tuple<DeadPlayer, Vector3>(deadPlayer, target.transform.position));
+                }
+
+                // Show flash on bait kill to the killer if enabled
+                if (Bait.bait != null && target == Bait.bait && Bait.showKillFlash && __instance == PlayerControl.LocalPlayer)
+                {
+                    HudManager.Instance.FullScreen.enabled = true;
+                    HudManager.Instance.FullScreen.gameObject.SetActive(true);
+                    HudManager.Instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) =>
+                    {
+                        var renderer = HudManager.Instance.FullScreen;
+                        if (p < 0.5)
+                        {
+                            if (renderer != null)
+                                renderer.color = new Color(204f / 255f, 102f / 255f, 0f / 255f, Mathf.Clamp01(p * 2 * 0.75f));
+                        }
+                        else
+                        {
+                            if (renderer != null)
+                                renderer.color = new Color(204f / 255f, 102f / 255f, 0f / 255f, Mathf.Clamp01((1 - p) * 2 * 0.75f));
+                        }
+                        if (p == 1f && renderer != null) renderer.enabled = false;
+                    })));
+                }
             }
+            target.protectedByGuardianThisRound = false;
 
             // Mini set adapted kill cooldown
-            if (Mini.mini != null && PlayerControl.LocalPlayer == Mini.mini && Mini.mini.Data.Role.IsImpostor && Mini.mini == __instance) {
+            if (Mini.mini != null && PlayerControl.LocalPlayer == Mini.mini && Mini.mini.Data.Role.IsImpostor && Mini.mini == __instance)
+            {
                 var multiplier = Mini.isGrownUp() ? 0.66f : 2f;
                 Mini.mini.SetKillTimer(PlayerControl.GameOptions.KillCooldown * multiplier);
             }
 
             // Set bountyHunter cooldown
-            if (BountyHunter.bountyHunter != null && PlayerControl.LocalPlayer == BountyHunter.bountyHunter && __instance == BountyHunter.bountyHunter) {
-                if (target == BountyHunter.bounty) {
+            if (BountyHunter.bountyHunter != null && PlayerControl.LocalPlayer == BountyHunter.bountyHunter && __instance == BountyHunter.bountyHunter)
+            {
+                if (target == BountyHunter.bounty)
+                {
                     BountyHunter.bountyHunter.SetKillTimer(BountyHunter.bountyKillCooldown);
                     BountyHunter.bountyUpdateTimer = 0f; // Force bounty update
                 }
                 else
-                    BountyHunter.bountyHunter.SetKillTimer(PlayerControl.GameOptions.KillCooldown + BountyHunter.punishmentTime); 
-            }
-
-            // Show flash on bait kill to the killer if enabled
-            if (Bait.bait != null && target == Bait.bait && Bait.showKillFlash && __instance == PlayerControl.LocalPlayer) {
-                HudManager.Instance.FullScreen.enabled = true;
-                HudManager.Instance.FullScreen.gameObject.SetActive(true);
-                HudManager.Instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) => {
-                    var renderer = HudManager.Instance.FullScreen;
-                    if (p < 0.5) {
-                        if (renderer != null)
-                            renderer.color = new Color(204f / 255f, 102f / 255f, 0f / 255f, Mathf.Clamp01(p * 2 * 0.75f));
-                    }
-                    else {
-                        if (renderer != null)
-                            renderer.color = new Color(204f / 255f, 102f / 255f, 0f / 255f, Mathf.Clamp01((1 - p) * 2 * 0.75f));
-                    }
-                    if (p == 1f && renderer != null) renderer.enabled = false;
-                })));
+                    BountyHunter.bountyHunter.SetKillTimer(PlayerControl.GameOptions.KillCooldown + BountyHunter.punishmentTime);
             }
         }
     }

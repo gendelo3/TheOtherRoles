@@ -30,7 +30,7 @@ namespace TheEpicRoles.Objects {
             timeRemaining = duration;
 
             // display the Phasers color in the trace
-            HudManager.Instance.StartCoroutine(Effects.Lerp(CustomOptionHolder.phaserTraceColorTime.getFloat(), new Action<float>((p) => {
+            HudManager.Instance.StartCoroutine(Effects.Lerp(CustomOptionHolder.phaserFragmentColorTime.getFloat(), new Action<float>((p) => {
                 Color c = Palette.PlayerColors[(int)Phaser.phaser.Data.DefaultOutfit.ColorId];
                 if (Camouflager.camouflageTimer > 0) {
                     c = Palette.PlayerColors[6];

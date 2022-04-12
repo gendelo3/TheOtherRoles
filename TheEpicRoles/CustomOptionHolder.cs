@@ -238,8 +238,8 @@ namespace TheEpicRoles {
         public static CustomOption phaserPhaseCooldown;
         public static CustomOption phaserNeedsTargetAlone;
         public static CustomOption phaserKnowsTargetLocation;
-        public static CustomOption phaserTraceTime;
-        public static CustomOption phaserTraceColorTime;
+        public static CustomOption phaserFragmentTime;
+        public static CustomOption phaserFragmentColorTime;
 
         public static CustomOption jumperSpawnRate;
         public static CustomOption jumperJumpTime;
@@ -346,8 +346,8 @@ namespace TheEpicRoles {
             phaserPhaseCooldown = CustomOption.Create(9002, "Phase Cooldown", "impostor", 10f, 10f, 60f, 2.5f, phaserSpawnRate);
             phaserNeedsTargetAlone = CustomOption.Create(9004, "Phaser Can Only Phase\n     If Target Is Alone", "impostor", true, phaserSpawnRate);
             phaserKnowsTargetLocation = CustomOption.Create(9005, "Knows Location Of Target", "impostor", true, phaserSpawnRate);
-            phaserTraceTime = CustomOption.Create(9006, "Trace Duration", "impostor", 5f, 1f, 20f, 0.5f, phaserSpawnRate);
-            phaserTraceColorTime = CustomOption.Create(9007, "Time Till Trace Color Has Faded", "impostor", 2f, 0f, 20f, 0.5f, phaserSpawnRate);
+            phaserFragmentTime = CustomOption.Create(9006, "Fragment Duration", "impostor", 15f, 1f, 30f, 0.5f, phaserSpawnRate);
+            phaserFragmentColorTime = CustomOption.Create(9007, "Time Till Fragment\nColor Has Faded", "impostor", 10f, 0f, 30f, 0.5f, phaserSpawnRate);
 
             miniSpawnRate = CustomOption.Create(180, cs(Mini.color, "Mini"), "other", rates, null, true);
             miniGrowingUpDuration = CustomOption.Create(181, "Mini Growing Up Duration", "other", 400f, 100f, 1500f, 100f, miniSpawnRate);

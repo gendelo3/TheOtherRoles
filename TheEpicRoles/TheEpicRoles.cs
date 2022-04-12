@@ -1490,10 +1490,10 @@ namespace TheEpicRoles
             phaseCooldown = CustomOptionHolder.phaserPhaseCooldown.getFloat();
             knowsTargetLocation = CustomOptionHolder.phaserKnowsTargetLocation.getBool();
             needsTargetAlone = CustomOptionHolder.phaserNeedsTargetAlone.getBool();
-            traceTime = CustomOptionHolder.phaserTraceTime.getFloat();
+            traceTime = CustomOptionHolder.phaserFragmentTime.getFloat();
             
             if (arrow?.arrow != null) UnityEngine.Object.Destroy(arrow.arrow);
-            arrow = new Arrow(Color.black);
+            arrow = new Arrow(Color.green);
             if (arrow.arrow != null) arrow.arrow.SetActive(false);
         }
 

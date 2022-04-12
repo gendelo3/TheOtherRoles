@@ -33,15 +33,15 @@ namespace TheEpicRoles {
 
         public static int optionsPage = 2;
 
-        public static ConfigEntry<bool> DeveloperMode { get; private set; }
+        public static ConfigEntry<string> DeveloperMode { get; private set; }
         public static ConfigEntry<bool> StreamerMode { get; set; }
         public static ConfigEntry<bool> GhostsSeeTasks { get; set; }
         public static ConfigEntry<bool> GhostsSeeRoles { get; set; }
         public static ConfigEntry<bool> GhostsSeeVotes{ get; set; }
         public static ConfigEntry<bool> ShowRoleSummary { get; set; }
         public static ConfigEntry<bool> ShowLighterDarker { get; set; }
+        public static ConfigEntry<bool> EnableHorseMode { get; set; }
         public static ConfigEntry<bool> ToggleCursor { get; set; }
-        public static ConfigEntry<bool> ToggleScreenShake { get; set; }
         public static ConfigEntry<string> StreamerModeReplacementText { get; set; }
         public static ConfigEntry<string> StreamerModeReplacementColor { get; set; }
         public static ConfigEntry<string> Ip { get; set; }
@@ -63,15 +63,15 @@ namespace TheEpicRoles {
 
         public override void Load() {
             Logger = Log;
-            DeveloperMode = Config.Bind("Custom", "Enable Developer Mode", false);
+            DeveloperMode = Config.Bind("Custom", "Enable Developer Mode", "false");
             StreamerMode = Config.Bind("Custom", "Enable Streamer Mode", false);
             GhostsSeeTasks = Config.Bind("Custom", "Ghosts See Remaining Tasks", true);
             GhostsSeeRoles = Config.Bind("Custom", "Ghosts See Roles", true);
             GhostsSeeVotes = Config.Bind("Custom", "Ghosts See Votes", true);
             ShowRoleSummary = Config.Bind("Custom", "Show Role Summary", true);
             ShowLighterDarker = Config.Bind("Custom", "Show Lighter / Darker", true);
+            EnableHorseMode = Config.Bind("Custom", "Enable Horse Mode", false);
             ToggleCursor = Config.Bind("Custom", "Better Cursor", true);
-            ToggleScreenShake = Config.Bind("Custom", "Screen Shake", false);
             ShowPopUpVersion = Config.Bind("Custom", "Show PopUp", "0");
             StreamerModeReplacementText = Config.Bind("Custom", "Streamer Mode Replacement Text", "\n\nThe Epic Roles");
             StreamerModeReplacementColor = Config.Bind("Custom", "Streamer Mode Replacement Text Hex Color", "#00FFDDFF");

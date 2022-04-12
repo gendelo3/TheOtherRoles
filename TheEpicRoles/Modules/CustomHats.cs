@@ -126,34 +126,34 @@ namespace TheEpicRoles.Modules {
             return sprite;
         }
 
-        private static HatBehaviour CreateHatBehaviour(CustomHat ch, bool fromDisk = false, bool testOnly = false) {
-            if (hatShader == null && DestroyableSingleton<HatManager>.InstanceExists) {
-                foreach (HatBehaviour h in DestroyableSingleton<HatManager>.Instance.AllHats) {
-                    if (h.AltShader != null) {
-                        hatShader = h.AltShader;
-                        break;
-                    }
-                }
+        private static HatData CreateHatBehaviour(CustomHat ch, bool fromDisk = false, bool testOnly = false) {
+            if (hatShader == null) {
+                Material tmpShader = new Material("PlayerMaterial");
+                tmpShader.shader = Shader.Find("Unlit/PlayerShader");
+                hatShader = tmpShader;
             }
 
-            HatBehaviour hat = ScriptableObject.CreateInstance<HatBehaviour>();
-            hat.MainImage = CreateHatSprite(ch.resource, fromDisk);
+            HatData hat = ScriptableObject.CreateInstance<HatData>();
+
+            hat.hatViewData.viewData = new HatViewData();
+            hat.hatViewData.viewData.MainImage = CreateHatSprite(ch.resource, fromDisk);
             if (ch.backresource != null) {
-                hat.BackImage = CreateHatSprite(ch.backresource, fromDisk);
+                hat.hatViewData.viewData.BackImage = CreateHatSprite(ch.backresource, fromDisk);
                 ch.behind = true; // Required to view backresource
             }
             if (ch.climbresource != null)
-                hat.ClimbImage = CreateHatSprite(ch.climbresource, fromDisk);
+                hat.hatViewData.viewData.ClimbImage = CreateHatSprite(ch.climbresource, fromDisk);
             hat.name = ch.name;
-            hat.Order = 99;
+            hat.displayOrder = 99;
             hat.ProductId = "hat_" + ch.name.Replace(' ', '_');
             hat.InFront = !ch.behind;
             hat.NoBounce = !ch.bounce;
             hat.ChipOffset = new Vector2(0f, 0.2f);
             hat.Free = true;
 
-            if (ch.adaptive && hatShader != null)
-                hat.AltShader = hatShader;
+            if (ch.adaptive && hatShader != null) {
+                hat.hatViewData.viewData.AltShader = hatShader;
+            }
 
             HatExtension extend = new HatExtension();
             extend.author = ch.author != null ? ch.author : "Unknown";
@@ -175,7 +175,7 @@ namespace TheEpicRoles.Modules {
             return hat;
         }
 
-        private static HatBehaviour CreateHatBehaviour(CustomHatLoader.CustomHatOnline chd) {
+        private static HatData CreateHatBehaviour(CustomHatLoader.CustomHatOnline chd) {
             string filePath = Path.GetDirectoryName(Application.dataPath) + @"\TheEpicHats\";
             chd.resource = filePath + chd.resource;
             if (chd.backresource != null)
@@ -196,12 +196,13 @@ namespace TheEpicRoles.Modules {
                 RUNNING = true; // prevent simultanious execution
                 try {
                     while (CustomHatLoader.hatdetails.Count > 0) {
-                        __instance.AllHats.Add(CreateHatBehaviour(CustomHatLoader.hatdetails[0]));
+                        __instance.allHats.Add(CreateHatBehaviour(CustomHatLoader.hatdetails[0]));
                         CustomHatLoader.hatdetails.RemoveAt(0);
                     }
                 } catch (System.Exception e) {
                     if (!LOADED)
-                        System.Console.WriteLine("Unable to add Custom Hats\n" + e);
+                    TheEpicRolesPlugin.Logger.LogMessage("failed to add hats" + e);
+                    System.Console.WriteLine("Unable to add Custom Hats\n" + e);
                 }
                 LOADED = true;
             }
@@ -214,7 +215,7 @@ namespace TheEpicRoles.Modules {
         private static class PlayerPhysicsHandleAnimationPatch {
             private static void Postfix(PlayerPhysics __instance) {
                 AnimationClip currentAnimation = __instance.Animator.GetCurrentAnimation();
-                if (currentAnimation == __instance.ClimbAnim || currentAnimation == __instance.ClimbDownAnim) return;
+                if (currentAnimation == __instance.CurrentAnimationGroup.ClimbAnim || currentAnimation == __instance.CurrentAnimationGroup.ClimbDownAnim) return;
                 HatParent hp = __instance.myPlayer.HatRenderer;
                 if (hp.Hat == null) return;
                 HatExtension extend = hp.Hat.getHatExtension();
@@ -223,14 +224,14 @@ namespace TheEpicRoles.Modules {
                     if (__instance.rend.flipX) {
                         hp.FrontLayer.sprite = extend.FlipImage;
                     } else {
-                        hp.FrontLayer.sprite = hp.Hat.MainImage;
+                        hp.FrontLayer.sprite = hp.Hat.hatViewData.viewData.MainImage;
                     }
                 }
                 if (extend.BackFlipImage != null) {
                     if (__instance.rend.flipX) {
                         hp.BackLayer.sprite = extend.BackFlipImage;
                     } else {
-                        hp.BackLayer.sprite = hp.Hat.BackImage;
+                        hp.BackLayer.sprite = hp.Hat.hatViewData.viewData.BackImage;
                     }
                 }
             }
@@ -261,7 +262,7 @@ namespace TheEpicRoles.Modules {
             public static string innerslothPackageName = "Innersloth Hats";
             private static TMPro.TMP_Text textTemplate;
 
-            public static float createHatPackage(List<System.Tuple<HatBehaviour, HatExtension>> hats, string packageName, float YStart, HatsTab __instance) {
+            public static float createHatPackage(List<System.Tuple<HatData, HatExtension>> hats, string packageName, float YStart, HatsTab __instance) {
                 bool isDefaultPackage = innerslothPackageName == packageName;
                 if (!isDefaultPackage)
                     hats = hats.OrderBy(x => x.Item1.name).ToList();
@@ -277,7 +278,7 @@ namespace TheEpicRoles.Modules {
                     offset -= 0.8f * __instance.YOffset;
                 }
                 for (int i = 0; i < hats.Count; i++) {
-                    HatBehaviour hat = hats[i].Item1;
+                    HatData hat = hats[i].Item1;
                     HatExtension ext = hats[i].Item2;
 
                     float xpos = __instance.XRange.Lerp((i % __instance.NumPerRow) / (__instance.NumPerRow - 1f));
@@ -327,20 +328,21 @@ namespace TheEpicRoles.Modules {
                     UnityEngine.Object.Destroy(__instance.scroller.Inner.GetChild(i).gameObject);
                 __instance.ColorChips = new Il2CppSystem.Collections.Generic.List<ColorChip>();
 
-                HatBehaviour[] unlockedHats = DestroyableSingleton<HatManager>.Instance.GetUnlockedHats();
-                Dictionary<string, List<System.Tuple<HatBehaviour, HatExtension>>> packages = new Dictionary<string, List<System.Tuple<HatBehaviour, HatExtension>>>();
+                HatData[] unlockedHats = DestroyableSingleton<HatManager>.Instance.GetUnlockedHats();
+                TheEpicRolesPlugin.Logger.LogMessage($"unlockedHats {unlockedHats.Length}");
+                Dictionary<string, List<System.Tuple<HatData, HatExtension>>> packages = new Dictionary<string, List<System.Tuple<HatData, HatExtension>>>();
 
-                foreach (HatBehaviour hatBehaviour in unlockedHats) {
+                foreach (HatData hatBehaviour in unlockedHats) {
                     HatExtension ext = hatBehaviour.getHatExtension();
 
                     if (ext != null) {
                         if (!packages.ContainsKey(ext.package)) 
-                            packages[ext.package] = new List<System.Tuple<HatBehaviour, HatExtension>>();
-                        packages[ext.package].Add(new System.Tuple<HatBehaviour, HatExtension>(hatBehaviour, ext));
+                            packages[ext.package] = new List<System.Tuple<HatData, HatExtension>>();
+                        packages[ext.package].Add(new System.Tuple<HatData, HatExtension>(hatBehaviour, ext));
                     } else {
                         if (!packages.ContainsKey(innerslothPackageName)) 
-                            packages[innerslothPackageName] = new List<System.Tuple<HatBehaviour, HatExtension>>();
-                        packages[innerslothPackageName].Add(new System.Tuple<HatBehaviour, HatExtension>(hatBehaviour, null));
+                            packages[innerslothPackageName] = new List<System.Tuple<HatData, HatExtension>>();
+                        packages[innerslothPackageName].Add(new System.Tuple<HatData, HatExtension>(hatBehaviour, null));
                     }
                 }
 
@@ -358,8 +360,9 @@ namespace TheEpicRoles.Modules {
                     return 5;
                 });
                 foreach (string key in orderedKeys) {
-                    List<System.Tuple<HatBehaviour, HatExtension>> value = packages[key];
+                    List<System.Tuple<HatData, HatExtension>> value = packages[key];
                     YOffset = createHatPackage(value, key, YOffset, __instance);
+                    TheEpicRolesPlugin.Logger.LogMessage($"adding hats {key}{YOffset}");
                 }
 
                 __instance.scroller.ContentYBounds.max = -(YOffset + 4.1f);
@@ -370,8 +373,11 @@ namespace TheEpicRoles.Modules {
 
     public class CustomHatLoader {
         public static bool running = false;
-        private const string REPO_TOR = "https://raw.githubusercontent.com/Eisbison/TheOtherHats/master";
-        private const string REPO_TER = "https://raw.githubusercontent.com/LaicosVK/TheEpicHats/master";
+        static public List<string> REPOS = new List<string>() { // All hat repos that should be loaded
+            "https://raw.githubusercontent.com/Eisbison/TheOtherHats/master",
+            "https://raw.githubusercontent.com/LaicosVK/TheEpicHats/lvk"
+        };
+
 
         public static List<CustomHatOnline> hatdetails = new List<CustomHatOnline>();
         private static Task hatFetchTask = null;
@@ -382,20 +388,16 @@ namespace TheEpicRoles.Modules {
             hatFetchTask = LaunchHatFetcherAsync();
         }
 
-        private static async Task LaunchHatFetcherAsync() {
-            try {
-                HttpStatusCode status = await FetchHats_TOR();
+        private static async Task LaunchHatFetcherAsync()
+        {
+            try
+            {
+                HttpStatusCode status = await FetchHats();
                 if (status != HttpStatusCode.OK)
-                    System.Console.WriteLine("Custom TOR Hats could not be loaded\n");
-            } catch (System.Exception e) {
-                System.Console.WriteLine("Unable to fetch hats\n" + e.Message);
+                    System.Console.WriteLine("Custom Hats could not be loaded\n");
             }
-            try {
-                HttpStatusCode status = await FetchHats_TER();
-                if (status != HttpStatusCode.OK)
-                    System.Console.WriteLine("Custom TER Hats could not be loaded\n");
-            }
-            catch (System.Exception e) {
+            catch (System.Exception e)
+            {
                 System.Console.WriteLine("Unable to fetch hats\n" + e.Message);
             }
             running = false;
@@ -412,166 +414,104 @@ namespace TheEpicRoles.Modules {
             return res;
         }
 
-        public static async Task<HttpStatusCode> FetchHats_TOR() {
-            HttpClient http = new HttpClient();
-            http.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue{ NoCache = true };
-			var response = await http.GetAsync(new System.Uri($"{REPO_TOR}/CustomHats.json"), HttpCompletionOption.ResponseContentRead);
-            try {
-                if (response.StatusCode != HttpStatusCode.OK) return response.StatusCode;
-                if (response.Content == null) {
-                    System.Console.WriteLine("Server returned no data: " + response.StatusCode.ToString());
-                    return HttpStatusCode.ExpectationFailed;
-                }
-                string json = await response.Content.ReadAsStringAsync();
-                JToken jobj = JObject.Parse(json)["hats"];
-                if (!jobj.HasValues) return HttpStatusCode.ExpectationFailed;
-
-                List<CustomHatOnline> hatdatas = new List<CustomHatOnline>();
-
-                for (JToken current = jobj.First; current != null; current = current.Next) {
-                    if (current.HasValues) {
-                        CustomHatOnline info = new CustomHatOnline();
-
-                        info.name = current["name"]?.ToString();
-                        info.resource = sanitizeResourcePath(current["resource"]?.ToString());
-                        if (info.resource == null || info.name == null) // required
-                            continue;
-                        info.reshasha = current["reshasha"]?.ToString();
-                        info.backresource = sanitizeResourcePath(current["backresource"]?.ToString());
-                        info.reshashb = current["reshashb"]?.ToString();
-                        info.climbresource = sanitizeResourcePath(current["climbresource"]?.ToString());
-                        info.reshashc = current["reshashc"]?.ToString();
-                        info.flipresource = sanitizeResourcePath(current["flipresource"]?.ToString());
-                        info.reshashf = current["reshashf"]?.ToString();
-                        info.backflipresource = sanitizeResourcePath(current["backflipresource"]?.ToString());
-                        info.reshashbf = current["reshashbf"]?.ToString();
-
-                        info.author = current["author"]?.ToString();
-                        info.package = $"TOR {current["package"]?.ToString()}";
-                        info.condition = current["condition"]?.ToString();
-                        info.bounce = current["bounce"] != null;
-                        info.adaptive = current["adaptive"] != null;
-                        info.behind = current["behind"] != null;
-                        hatdatas.Add(info);
+        public static async Task<HttpStatusCode> FetchHats()
+        {
+            foreach (string repo in REPOS)
+            {
+                HttpClient http = new HttpClient();
+                http.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue { NoCache = true };
+                var response = await http.GetAsync(new System.Uri($"{repo}/CustomHats.json"), HttpCompletionOption.ResponseContentRead);
+                try
+                {
+                    if (response.StatusCode != HttpStatusCode.OK) return response.StatusCode;
+                    if (response.Content == null)
+                    {
+                        System.Console.WriteLine("Server returned no data: " + response.StatusCode.ToString());
+                        return HttpStatusCode.ExpectationFailed;
                     }
-                }
+                    string json = await response.Content.ReadAsStringAsync();
+                    JToken jobj = JObject.Parse(json)["hats"];
+                    if (!jobj.HasValues) return HttpStatusCode.ExpectationFailed;
 
-                List<string> markedfordownload = new List<string>();
+                    List<CustomHatOnline> hatdatas = new List<CustomHatOnline>();
 
-                string filePath = Path.GetDirectoryName(Application.dataPath) + @"\TheEpicHats\";
-                MD5 md5 = MD5.Create();
-                foreach (CustomHatOnline data in hatdatas) {
-    	            if (doesResourceRequireDownload(filePath + data.resource, data.reshasha, md5))
-                        markedfordownload.Add(data.resource);
-    	            if (data.backresource != null && doesResourceRequireDownload(filePath + data.backresource, data.reshashb, md5))
-                        markedfordownload.Add(data.backresource);
-    	            if (data.climbresource != null && doesResourceRequireDownload(filePath + data.climbresource, data.reshashc, md5))
-                        markedfordownload.Add(data.climbresource);
-    	            if (data.flipresource != null && doesResourceRequireDownload(filePath + data.flipresource, data.reshashf, md5))
-                        markedfordownload.Add(data.flipresource);
-    	            if (data.backflipresource != null && doesResourceRequireDownload(filePath + data.backflipresource, data.reshashbf, md5))
-                        markedfordownload.Add(data.backflipresource);
-                }
-                
-                foreach(var file in markedfordownload) {
-                    
-                    var hatFileResponse = await http.GetAsync($"{REPO_TOR}/hats/{file}", HttpCompletionOption.ResponseContentRead);
-                    if (hatFileResponse.StatusCode != HttpStatusCode.OK) continue;
-                    using (var responseStream = await hatFileResponse.Content.ReadAsStreamAsync()) {
-                        using (var fileStream = File.Create($"{filePath}\\{file}")) {
-                            responseStream.CopyTo(fileStream);
+                    for (JToken current = jobj.First; current != null; current = current.Next)
+                    {
+                        if (current.HasValues)
+                        {
+                            CustomHatOnline info = new CustomHatOnline();
+
+                            info.name = current["name"]?.ToString();
+                            info.resource = sanitizeResourcePath(current["resource"]?.ToString());
+                            if (info.resource == null || info.name == null) // required
+                                continue;
+                            info.reshasha = current["reshasha"]?.ToString();
+                            info.backresource = sanitizeResourcePath(current["backresource"]?.ToString());
+                            info.reshashb = current["reshashb"]?.ToString();
+                            info.climbresource = sanitizeResourcePath(current["climbresource"]?.ToString());
+                            info.reshashc = current["reshashc"]?.ToString();
+                            info.flipresource = sanitizeResourcePath(current["flipresource"]?.ToString());
+                            info.reshashf = current["reshashf"]?.ToString();
+                            info.backflipresource = sanitizeResourcePath(current["backflipresource"]?.ToString());
+                            info.reshashbf = current["reshashbf"]?.ToString();
+
+                            info.author = current["author"]?.ToString();
+                            info.package = $"{current["package"]?.ToString()}";
+                            if (repo.Contains("TheOtherHats")) info.package = "TOR " + info.package;
+                            info.condition = current["condition"]?.ToString();
+                            info.bounce = current["bounce"] != null;
+                            info.adaptive = current["adaptive"] != null;
+                            info.behind = current["behind"] != null;
+                            hatdatas.Add(info);
                         }
                     }
-                }
 
-                hatdetails = hatdatas;
-            } catch (System.Exception ex) {
-                TheEpicRolesPlugin.Instance.Log.LogError(ex.ToString());
-                System.Console.WriteLine(ex);
+                    List<string> markedfordownload = new List<string>();
+
+                    string filePath = Path.GetDirectoryName(Application.dataPath) + @"\TheEpicHats\";
+                    MD5 md5 = MD5.Create();
+                    foreach (CustomHatOnline data in hatdatas)
+                    {
+                        if (doesResourceRequireDownload(filePath + data.resource, data.reshasha, md5))
+                            markedfordownload.Add(data.resource);
+                        if (data.backresource != null && doesResourceRequireDownload(filePath + data.backresource, data.reshashb, md5))
+                            markedfordownload.Add(data.backresource);
+                        if (data.climbresource != null && doesResourceRequireDownload(filePath + data.climbresource, data.reshashc, md5))
+                            markedfordownload.Add(data.climbresource);
+                        if (data.flipresource != null && doesResourceRequireDownload(filePath + data.flipresource, data.reshashf, md5))
+                            markedfordownload.Add(data.flipresource);
+                        if (data.backflipresource != null && doesResourceRequireDownload(filePath + data.backflipresource, data.reshashbf, md5))
+                            markedfordownload.Add(data.backflipresource);
+                    }
+
+                    foreach (var file in markedfordownload)
+                    {
+
+                        var hatFileResponse = await http.GetAsync($"{repo}/hats/{file}", HttpCompletionOption.ResponseContentRead);
+                        if (hatFileResponse.StatusCode != HttpStatusCode.OK) continue;
+                        using (var responseStream = await hatFileResponse.Content.ReadAsStreamAsync())
+                        {
+                            using (var fileStream = File.Create($"{filePath}\\{file}"))
+                            {
+                                responseStream.CopyTo(fileStream);
+                            }
+                        }
+                    }
+
+                    //hatdetails = hatdatas;
+                    hatdetails.AddRange(hatdatas);
+                }
+                catch (System.Exception ex)
+                {
+                    TheEpicRolesPlugin.Instance.Log.LogError(ex.ToString());
+                    System.Console.WriteLine(ex);
+                }
             }
             return HttpStatusCode.OK;
         }
 
-        public static async Task<HttpStatusCode> FetchHats_TER() {
-            HttpClient http = new HttpClient();
-            http.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue { NoCache = true };
-            var response = await http.GetAsync(new System.Uri($"{REPO_TER}/CustomHats.json"), HttpCompletionOption.ResponseContentRead);
-            try {
-                if (response.StatusCode != HttpStatusCode.OK) return response.StatusCode;
-                if (response.Content == null) {
-                    System.Console.WriteLine("Server returned no data: " + response.StatusCode.ToString());
-                    return HttpStatusCode.ExpectationFailed;
-                }
-                string json = await response.Content.ReadAsStringAsync();
-                JToken jobj = JObject.Parse(json)["hats"];
-                if (!jobj.HasValues) return HttpStatusCode.ExpectationFailed;
 
-                List<CustomHatOnline> hatdatas = new List<CustomHatOnline>();
-
-                for (JToken current = jobj.First; current != null; current = current.Next) {
-                    if (current.HasValues) {
-                        CustomHatOnline info = new CustomHatOnline();
-
-                        info.name = current["name"]?.ToString();
-                        info.resource = sanitizeResourcePath(current["resource"]?.ToString());
-                        if (info.resource == null || info.name == null) // required
-                            continue;
-                        info.reshasha = current["reshasha"]?.ToString();
-                        info.backresource = sanitizeResourcePath(current["backresource"]?.ToString());
-                        info.reshashb = current["reshashb"]?.ToString();
-                        info.climbresource = sanitizeResourcePath(current["climbresource"]?.ToString());
-                        info.reshashc = current["reshashc"]?.ToString();
-                        info.flipresource = sanitizeResourcePath(current["flipresource"]?.ToString());
-                        info.reshashf = current["reshashf"]?.ToString();
-                        info.backflipresource = sanitizeResourcePath(current["backflipresource"]?.ToString());
-                        info.reshashbf = current["reshashbf"]?.ToString();
-
-                        info.author = current["author"]?.ToString();
-                        info.package = current["package"]?.ToString();
-                        info.condition = current["condition"]?.ToString();
-                        info.bounce = current["bounce"] != null;
-                        info.adaptive = current["adaptive"] != null;
-                        info.behind = current["behind"] != null;
-                        hatdatas.Add(info);
-                    }
-                }
-
-                List<string> markedfordownload = new List<string>();
-
-                string filePath = Path.GetDirectoryName(Application.dataPath) + @"\TheEpicHats\";
-                MD5 md5 = MD5.Create();
-                foreach (CustomHatOnline data in hatdatas) {
-                    if (doesResourceRequireDownload(filePath + data.resource, data.reshasha, md5))
-                        markedfordownload.Add(data.resource);
-                    if (data.backresource != null && doesResourceRequireDownload(filePath + data.backresource, data.reshashb, md5))
-                        markedfordownload.Add(data.backresource);
-                    if (data.climbresource != null && doesResourceRequireDownload(filePath + data.climbresource, data.reshashc, md5))
-                        markedfordownload.Add(data.climbresource);
-                    if (data.flipresource != null && doesResourceRequireDownload(filePath + data.flipresource, data.reshashf, md5))
-                        markedfordownload.Add(data.flipresource);
-                    if (data.backflipresource != null && doesResourceRequireDownload(filePath + data.backflipresource, data.reshashbf, md5))
-                        markedfordownload.Add(data.backflipresource);
-                }
-
-                foreach (var file in markedfordownload) {
-
-                    var hatFileResponse = await http.GetAsync($"{REPO_TER}/hats/{file}", HttpCompletionOption.ResponseContentRead);
-                    if (hatFileResponse.StatusCode != HttpStatusCode.OK) continue;
-                    using (var responseStream = await hatFileResponse.Content.ReadAsStreamAsync()) {
-                        using (var fileStream = File.Create($"{filePath}\\{file}")) {
-                            responseStream.CopyTo(fileStream);
-                        }
-                    }
-                }
-
-                hatdetails.AddRange(hatdatas);
-            }
-            catch (System.Exception ex) {
-                TheEpicRolesPlugin.Instance.Log.LogError(ex.ToString());
-                System.Console.WriteLine(ex);
-            }
-            return HttpStatusCode.OK;
-        }
+  
 
         private static bool doesResourceRequireDownload(string respath, string reshash, MD5 md5) {
             if (reshash == null || !File.Exists(respath)) 
@@ -592,7 +532,7 @@ namespace TheEpicRoles.Modules {
         }   
     }
     public static class CustomHatExtensions {
-        public static CustomHats.HatExtension getHatExtension(this HatBehaviour hat) {
+        public static CustomHats.HatExtension getHatExtension(this HatData hat) {
             CustomHats.HatExtension ret = null;
             if (CustomHats.TestExt != null && CustomHats.TestExt.condition.Equals(hat.name)) {
                 return CustomHats.TestExt;

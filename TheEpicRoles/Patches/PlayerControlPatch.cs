@@ -47,17 +47,17 @@ namespace TheEpicRoles.Patches {
         }
 
         static void setPlayerOutline(PlayerControl target, Color color) {
-            if (target == null || target.myRend == null) return;
+            if (target == null || target.MyRend == null) return;
 
-            target.myRend.material.SetFloat("_Outline", 1f);
-            target.myRend.material.SetColor("_OutlineColor", color);
+            target.MyRend.material.SetFloat("_Outline", 1f);
+            target.MyRend.material.SetColor("_OutlineColor", color);
         }
 
         // Update functions
 
         static void setBasePlayerOutlines() {
             foreach (PlayerControl target in PlayerControl.AllPlayerControls) {
-                if (target == null || target.myRend == null) continue;
+                if (target == null || target.MyRend == null) continue;
 
                 bool isMorphedMorphling = target == Morphling.morphling && Morphling.morphTarget != null && Morphling.morphTimer > 0f;
                 bool hasVisibleShield = false;
@@ -68,11 +68,11 @@ namespace TheEpicRoles.Patches {
                 }
 
                 if (hasVisibleShield) {
-                    target.myRend.material.SetFloat("_Outline", 1f);
-                    target.myRend.material.SetColor("_OutlineColor", Medic.shieldedColor);
+                    target.MyRend.material.SetFloat("_Outline", 1f);
+                    target.MyRend.material.SetColor("_OutlineColor", Medic.shieldedColor);
                 }
                 else {
-                    target.myRend.material.SetFloat("_Outline", 0f);
+                    target.MyRend.material.SetFloat("_Outline", 0f);
                 }
             }
         }
@@ -1003,62 +1003,82 @@ namespace TheEpicRoles.Patches {
                 }
             }
 
-            // Seer show flash and add dead player position
-            if (Seer.seer != null && PlayerControl.LocalPlayer == Seer.seer && !Seer.seer.Data.IsDead && Seer.seer != target && Seer.mode <= 1) {
-                HudManager.Instance.FullScreen.enabled = true;
-                HudManager.Instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) => {
-                    var renderer = HudManager.Instance.FullScreen;
-                    if (p < 0.5) {
-                        if (renderer != null)
-                            renderer.color = new Color(42f / 255f, 187f / 255f, 245f / 255f, Mathf.Clamp01(p * 2 * 0.75f));
-                    } else {
-                        if (renderer != null)
-                            renderer.color = new Color(42f / 255f, 187f / 255f, 245f / 255f, Mathf.Clamp01((1-p) * 2 * 0.75f));
-                    }
-                    if (p == 1f && renderer != null) renderer.enabled = false;
-                })));
-            }
-            if (Seer.deadBodyPositions != null) Seer.deadBodyPositions.Add(target.transform.position);
+            if (!target.protectedByGuardianThisRound) //shield is already removed at this point
+            {
+                // Seer show flash and add dead player position
+                if (Seer.seer != null && PlayerControl.LocalPlayer == Seer.seer && !Seer.seer.Data.IsDead && Seer.seer != target && Seer.mode <= 1)
+                {
+                    HudManager.Instance.FullScreen.enabled = true;
+                    HudManager.Instance.FullScreen.gameObject.SetActive(true);
+                    HudManager.Instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) =>
+                    {
+                        var renderer = HudManager.Instance.FullScreen;
+                        if (renderer != null) renderer.enabled = true;
+                        if (p < 0.5)
+                        {
+                            if (renderer != null)
+                                renderer.color = new Color(42f / 255f, 187f / 255f, 245f / 255f, Mathf.Clamp01(p * 2 * 0.75f));
+                        }
+                        else
+                        {
+                            if (renderer != null)
+                                renderer.color = new Color(42f / 255f, 187f / 255f, 245f / 255f, Mathf.Clamp01((1 - p) * 2 * 0.75f));
+                        }
+                        if (p == 1f && renderer != null) renderer.enabled = false;
+                    })));
+                }
+                if (Seer.deadBodyPositions != null) Seer.deadBodyPositions.Add(target.transform.position);
 
-            // Tracker store body positions
-            if (Tracker.deadBodyPositions != null) Tracker.deadBodyPositions.Add(target.transform.position);
+                // Tracker store body positions
+                if (Tracker.deadBodyPositions != null) Tracker.deadBodyPositions.Add(target.transform.position);
 
-            // Medium add body
-            if (Medium.deadBodies != null) {
-                Medium.featureDeadBodies.Add(new Tuple<DeadPlayer, Vector3>(deadPlayer, target.transform.position));
+                // Medium add body
+                if (Medium.deadBodies != null)
+                {
+                    Medium.featureDeadBodies.Add(new Tuple<DeadPlayer, Vector3>(deadPlayer, target.transform.position));
+                }
+
+                // Show flash on bait kill to the killer if enabled
+                if (Bait.bait != null && target == Bait.bait && Bait.showKillFlash && __instance == PlayerControl.LocalPlayer)
+                {
+                    HudManager.Instance.FullScreen.enabled = true;
+                    HudManager.Instance.FullScreen.gameObject.SetActive(true);
+                    HudManager.Instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) =>
+                    {
+                        var renderer = HudManager.Instance.FullScreen;
+                        if (p < 0.5)
+                        {
+                            if (renderer != null)
+                                renderer.color = new Color(204f / 255f, 102f / 255f, 0f / 255f, Mathf.Clamp01(p * 2 * 0.75f));
+                        }
+                        else
+                        {
+                            if (renderer != null)
+                                renderer.color = new Color(204f / 255f, 102f / 255f, 0f / 255f, Mathf.Clamp01((1 - p) * 2 * 0.75f));
+                        }
+                        if (p == 1f && renderer != null) renderer.enabled = false;
+                    })));
+                }
             }
+            target.protectedByGuardianThisRound = false;
 
             // Mini set adapted kill cooldown
-            if (Mini.mini != null && PlayerControl.LocalPlayer == Mini.mini && Mini.mini.Data.Role.IsImpostor && Mini.mini == __instance) {
+            if (Mini.mini != null && PlayerControl.LocalPlayer == Mini.mini && Mini.mini.Data.Role.IsImpostor && Mini.mini == __instance)
+            {
                 var multiplier = Mini.isGrownUp() ? 0.66f : 2f;
                 Mini.mini.SetKillTimer(PlayerControl.GameOptions.KillCooldown * multiplier);
             }
 
             // Set bountyHunter cooldown
-            if (BountyHunter.bountyHunter != null && PlayerControl.LocalPlayer == BountyHunter.bountyHunter && __instance == BountyHunter.bountyHunter) {
-                if (target == BountyHunter.bounty) {
+            if (BountyHunter.bountyHunter != null && PlayerControl.LocalPlayer == BountyHunter.bountyHunter && __instance == BountyHunter.bountyHunter)
+            {
+                if (target == BountyHunter.bounty)
+                {
                     BountyHunter.bountyHunter.SetKillTimer(BountyHunter.bountyKillCooldown);
                     BountyHunter.bountyUpdateTimer = 0f; // Force bounty update
                 }
                 else
-                    BountyHunter.bountyHunter.SetKillTimer(PlayerControl.GameOptions.KillCooldown + BountyHunter.punishmentTime); 
-            }
-
-            // Show flash on bait kill to the killer if enabled
-            if (Bait.bait != null && target == Bait.bait && Bait.showKillFlash && __instance == PlayerControl.LocalPlayer) {
-                HudManager.Instance.FullScreen.enabled = true;
-                HudManager.Instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) => {
-                    var renderer = HudManager.Instance.FullScreen;
-                    if (p < 0.5) {
-                        if (renderer != null)
-                            renderer.color = new Color(204f / 255f, 102f / 255f, 0f / 255f, Mathf.Clamp01(p * 2 * 0.75f));
-                    }
-                    else {
-                        if (renderer != null)
-                            renderer.color = new Color(204f / 255f, 102f / 255f, 0f / 255f, Mathf.Clamp01((1 - p) * 2 * 0.75f));
-                    }
-                    if (p == 1f && renderer != null) renderer.enabled = false;
-                })));
+                    BountyHunter.bountyHunter.SetKillTimer(PlayerControl.GameOptions.KillCooldown + BountyHunter.punishmentTime);
             }
         }
     }
@@ -1092,7 +1112,7 @@ namespace TheEpicRoles.Patches {
     class KillAnimationSetMovementPatch {
         private static int? colorId = null;
         public static void Prefix(PlayerControl source, bool canMove) {
-            Color color = source.myRend.material.GetColor("_BodyColor");
+            Color color = source.MyRend.material.GetColor("_BodyColor");
             if (color != null && Morphling.morphling != null && source.Data.PlayerId == Morphling.morphling.PlayerId) {
                 var index = Palette.PlayerColors.IndexOf(color);
                 if (index != -1) colorId = index;

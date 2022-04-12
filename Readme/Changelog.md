@@ -1,5 +1,14 @@
 # Changelog
 
+  ## 1.2.0
+  - First Kill Shield does no longer trigger Seer/Medium/Tracker ghosts to spawn
+  
+  ## 1.1.2
+  - TER now works on the new Among Us release!
+  - Fixed a bug where a promoted deputy had wrong cooldown
+  - Changed the light source to prevent vanilla bugs
+  - Horse mode is now available on the main menu
+  
   ## 1.1.1
   - Fixed a bug where everybody gets killed due to a hotkey permission.
   - Fixed bad shift and witch icon placement.

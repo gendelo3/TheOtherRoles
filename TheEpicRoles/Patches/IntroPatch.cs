@@ -20,9 +20,9 @@ namespace TheEpicRoles.Patches {
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                     GameData.PlayerInfo data = p.Data;
                     PoolablePlayer player = UnityEngine.Object.Instantiate<PoolablePlayer>(__instance.PlayerPrefab, HudManager.Instance.transform);
-                    PlayerControl.SetPlayerMaterialColors(data.DefaultOutfit.ColorId, player.Body);
-                    DestroyableSingleton<HatManager>.Instance.SetSkin(player.Skin.layer, data.DefaultOutfit.SkinId);
-                    player.HatSlot.SetHat(data.DefaultOutfit.HatId, data.DefaultOutfit.ColorId);
+                    PlayerControl.SetPlayerMaterialColors(data.DefaultOutfit.ColorId, player.CurrentBodySprite.BodySprite);
+                    player.SetSkin(data.DefaultOutfit.SkinId, data.DefaultOutfit.ColorId); // TODO! test
+                    player.HatSlot.SetHat(data.DefaultOutfit.HatId, data.DefaultOutfit.ColorId);  
                     PlayerControl.SetPetImage(data.DefaultOutfit.PetId, data.DefaultOutfit.ColorId, player.PetSlot);
                     player.NameText.text = data.PlayerName;
                     player.SetFlipX(true);
@@ -281,49 +281,64 @@ namespace TheEpicRoles.Patches {
             if (roleInfo == null) return;
             if (roleInfo.isNeutral) {
                 var neutralColor = new Color32(76, 84, 78, 255);
-                __instance.BackgroundBar.material.color = neutralColor;
+                __instance.BackgroundBar.material.color = roleInfo.color;
                 __instance.TeamTitle.text = "Neutral";
                 __instance.TeamTitle.color = neutralColor;
-            }
+            } else {
+                bool isCrew = true;
+                if (roleInfo.color == Palette.ImpostorRed) isCrew = false;
+                if (isCrew) {
+                    __instance.BackgroundBar.material.color = roleInfo.color;
+                    __instance.TeamTitle.text = "Crewmate";
+                    __instance.TeamTitle.color = Color.white;
+                } else {
+                    __instance.BackgroundBar.material.color = roleInfo.color;
+                    __instance.TeamTitle.text = "Impostor";
+                    __instance.TeamTitle.color = Palette.ImpostorRed;
+                }
+            }  
         }
 
-        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.SetUpRoleText))]
+        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowRole))]
         class SetUpRoleTextPatch {
-            public static void Postfix(IntroCutscene __instance) {
-                if (!CustomOptionHolder.activateRoles.getBool()) return; // Don't override the intro of the vanilla roles
-
+            static public void SetRoleTexts(IntroCutscene __instance) {
+                // Don't override the intro of the vanilla roles
                 List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(PlayerControl.LocalPlayer);
                 RoleInfo roleInfo = infos.Where(info => info.roleId != RoleId.Lover).FirstOrDefault();
-
                 if (roleInfo != null) {
                     __instance.RoleText.text = roleInfo.name;
                     __instance.RoleText.color = roleInfo.color;
                     __instance.RoleBlurbText.text = roleInfo.introDescription;
                     __instance.RoleBlurbText.color = roleInfo.color;
                 }
-
                 if (infos.Any(info => info.roleId == RoleId.Lover)) {
                     PlayerControl otherLover = PlayerControl.LocalPlayer == Lovers.lover1 ? Lovers.lover2 : Lovers.lover1;
                     __instance.RoleBlurbText.text += Helpers.cs(Lovers.color, $"\n♥ You are in love with {otherLover?.Data?.PlayerName ?? ""} ♥");
                 }
                 if (Deputy.knowsSheriff && Deputy.deputy != null && Sheriff.sheriff != null) {
-                    if (infos.Any(info => info.roleId == RoleId.Sheriff)) 
+                    if (infos.Any(info => info.roleId == RoleId.Sheriff))
                         __instance.RoleBlurbText.text += Helpers.cs(Sheriff.color, $"\nYour Deputy is {Deputy.deputy?.Data?.PlayerName ?? ""}");
                     else if (infos.Any(info => info.roleId == RoleId.Deputy))
                         __instance.RoleBlurbText.text += Helpers.cs(Sheriff.color, $"\nYour Sheriff is {Sheriff.sheriff?.Data?.PlayerName ?? ""}");
                 }
-
+            }
+            public static bool Prefix(IntroCutscene __instance) {
+                if (!CustomOptionHolder.activateRoles.getBool()) return true;
+                HudManager.Instance.StartCoroutine(Effects.Lerp(10f, new Action<float>((p) => {
+                    SetRoleTexts(__instance);
+                })));
+                return true;
             }
         }
 
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginCrewmate))]
         class BeginCrewmatePatch {
-            public static void Prefix(IntroCutscene __instance, ref  Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
-                setupIntroTeamIcons(__instance, ref yourTeam);
+            public static void Prefix(IntroCutscene __instance, ref  Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay) {
+                setupIntroTeamIcons(__instance, ref teamToDisplay);
             }
 
-            public static void Postfix(IntroCutscene __instance, ref  Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
-                setupIntroTeam(__instance, ref yourTeam);
+            public static void Postfix(IntroCutscene __instance, ref  Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay) {
+                setupIntroTeam(__instance, ref teamToDisplay);
             }
         }
 
@@ -336,6 +351,22 @@ namespace TheEpicRoles.Patches {
             public static void Postfix(IntroCutscene __instance, ref  Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
                 setupIntroTeam(__instance, ref yourTeam);
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(Constants), nameof(Constants.ShouldHorseAround))]
+    public static class ShouldAlwaysHorseAround
+    {
+        public static bool isHorseMode;
+        public static bool Prefix(ref bool __result)
+        {
+            if (isHorseMode != MapOptions.enableHorseMode && LobbyBehaviour.Instance != null) __result = isHorseMode;
+            else
+            {
+                __result = MapOptions.enableHorseMode;
+                isHorseMode = MapOptions.enableHorseMode;
+            }
+            return false;
         }
     }
 }

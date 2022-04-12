@@ -328,6 +328,8 @@ namespace TheEpicRoles.Patches {
                 roleSummary.transform.localScale = new Vector3(1f, 1f, 1f);
 
                 var roleSummaryText = new StringBuilder();
+                var crewSummaryText = new StringBuilder();
+                var otherSummaryText = new StringBuilder();
                 roleSummaryText.AppendLine("Players and roles at the end of the game:");
                 foreach(var data in AdditionalTempData.playerRoles) {
                     var playerName = data.PlayerName;
@@ -335,15 +337,17 @@ namespace TheEpicRoles.Patches {
 
                     var roles = string.Join(" ", data.Roles.Select(x => Helpers.cs(x.color, x.name)));
                     var rolesSingle = string.Join(" ", data.Roles.Select(x => x.name));
-                    while (rolesSingle.Length < 20) {
-                        rolesSingle = $"{rolesSingle} ";
-                        roles = $"{roles} ";
+
+                    if (data.TasksTotal > 1)
+                    {
+                        var taskInfo = $"<color=#FAD934FF>({data.TasksCompleted}/{data.TasksTotal})</color>";
+                        crewSummaryText.AppendLine($"{playerName} {taskInfo} {roles}");
                     }
-
-                    var taskInfo = data.TasksTotal > 0 ? $"<color=#FAD934FF>({data.TasksCompleted}/{data.TasksTotal})</color>" : "";
-
-                    roleSummaryText.AppendLine($"{playerName} {roles} {taskInfo}");
+                    else otherSummaryText.AppendLine($"{playerName} {roles}");
                 }
+                roleSummaryText.AppendLine(crewSummaryText.ToString());
+                roleSummaryText.AppendLine(otherSummaryText.ToString());
+
                 TMPro.TMP_Text roleSummaryTextMesh = roleSummary.GetComponent<TMPro.TMP_Text>();
                 roleSummaryTextMesh.alignment = TMPro.TextAlignmentOptions.TopLeft;
                 roleSummaryTextMesh.color = Color.white;

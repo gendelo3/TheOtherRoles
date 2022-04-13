@@ -102,6 +102,7 @@ namespace TheEpicRoles {
         SetFutureShielded,
         SetFutureSpelled,
         PlaceJackInTheBox,
+        PlacePhaserTrace,
         LightsOut,
         PlaceCamera,
         SealVent,
@@ -137,6 +138,7 @@ namespace TheEpicRoles {
         public static void resetVariables() {
             Garlic.clearGarlics();
             JackInTheBox.clearJackInTheBoxes();
+            PhaserTrace.clearTraces();
             clearAndReloadMapOptions();
             clearAndReloadRoles();
             clearGameHistory();
@@ -573,6 +575,13 @@ namespace TheEpicRoles {
             new Garlic(position);
         }
 
+        public static void placePhaserTrace(byte[] buff) {
+            Vector3 position = Vector3.zero;
+            position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
+            position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
+            new PhaserTrace(position, Phaser.traceTime);
+        }
+
         public static void trackerUsedTracker(byte targetId) {
             Tracker.usedTracker = true;
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
@@ -606,12 +615,14 @@ namespace TheEpicRoles {
                 DestroyableSingleton<RoleManager>.Instance.SetRole(player, RoleTypes.Crewmate);
                 erasePlayerRoles(player.PlayerId, true);
                 Sidekick.sidekick = player;
+
                 if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) {
                     PlayerControl.LocalPlayer.moveable = true;
                     SoundEffectsManager.play("warlockCurse");
                 }
             }
             Jackal.canCreateSidekick = false;
+
         }
 
         public static void sidekickPromotes() {
@@ -1068,6 +1079,9 @@ namespace TheEpicRoles {
                     break;
                 case (byte)CustomRPC.PlaceJackInTheBox:
                     RPCProcedure.placeJackInTheBox(reader.ReadBytesAndSize());
+                    break;
+                case (byte)CustomRPC.PlacePhaserTrace:
+                    RPCProcedure.placePhaserTrace(reader.ReadBytesAndSize());
                     break;
                 case (byte)CustomRPC.LightsOut:
                     RPCProcedure.lightsOut();

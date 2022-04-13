@@ -1456,11 +1456,17 @@ namespace TheEpicRoles
         public static PlayerControl curseVictim;
         public static PlayerControl curseVictimTarget;
 
+        public static float traceTime = 1f;
+        public static bool knowsTargetLocation = false;
+        public static bool needsTargetAlone;
+
         public static float markCooldown = 20f;
         public static float phaseCooldown = 10f;
 
         private static Sprite curseButtonSprite;
         private static Sprite curseKillButtonSprite;
+
+        public static Arrow arrow;
 
         public static Sprite getCurseButtonSprite() {
             if (curseButtonSprite) return curseButtonSprite;
@@ -1482,6 +1488,13 @@ namespace TheEpicRoles
             curseVictimTarget = null;
             markCooldown = CustomOptionHolder.phaserMarkCooldown.getFloat();
             phaseCooldown = CustomOptionHolder.phaserPhaseCooldown.getFloat();
+            knowsTargetLocation = CustomOptionHolder.phaserKnowsTargetLocation.getBool();
+            needsTargetAlone = CustomOptionHolder.phaserNeedsTargetAlone.getBool();
+            traceTime = CustomOptionHolder.phaserFragmentTime.getFloat();
+            
+            if (arrow?.arrow != null) UnityEngine.Object.Destroy(arrow.arrow);
+            arrow = new Arrow(Color.green);
+            if (arrow.arrow != null) arrow.arrow.SetActive(false);
         }
 
         public static void resetCurse()

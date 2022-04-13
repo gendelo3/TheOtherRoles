@@ -265,6 +265,30 @@ namespace TheEpicRoles.Patches {
             
         }
 
+        static void phaserUpdate() {  // Updates the arrow to the target!
+            if (Phaser.arrow?.arrow != null) {
+                if (Phaser.phaser == null || Phaser.phaser != PlayerControl.LocalPlayer || !Phaser.knowsTargetLocation) {
+                    Phaser.arrow.arrow.SetActive(false);
+                    return;
+                }
+                if (Phaser.curseVictim != null && !PlayerControl.LocalPlayer.Data.IsDead) {
+                    bool trackedOnMap = !Phaser.curseVictim.Data.IsDead;
+                    Vector3 position = Phaser.curseVictim.transform.position;
+                    if (!trackedOnMap) { // Check for dead body
+                        DeadBody body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Phaser.curseVictim.PlayerId);
+                        if (body != null) {
+                            trackedOnMap = true;
+                            position = body.transform.position;
+                        }
+                    }
+                    Phaser.arrow.Update(position);
+                    Phaser.arrow.arrow.SetActive(trackedOnMap);
+                } else {
+                    Phaser.arrow.arrow.SetActive(false);
+                }
+            }
+        }
+
         static void engineerUpdate() {
             bool jackalHighlight = Engineer.highlightForTeamJackal && (PlayerControl.LocalPlayer == Jackal.jackal || PlayerControl.LocalPlayer == Sidekick.sidekick);
             bool impostorHighlight = Engineer.highlightForImpostors && PlayerControl.LocalPlayer.Data.Role.IsImpostor;
@@ -854,6 +878,8 @@ namespace TheEpicRoles.Patches {
                 hackerUpdate();
                 // Phaser
                 phaserSetTarget();
+                phaserUpdate();
+                PhaserTrace.UpdateAll();
             } 
         }
     }

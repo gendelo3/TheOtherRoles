@@ -651,8 +651,12 @@ namespace TheEpicRoles {
                 },
                 () => { return Tracker.tracker != null && Tracker.tracker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    showTargetNameOnButton(Tracker.currentTarget, trackerTrackPlayerButton, ""); //Show target name under button if setting is true
-                    return PlayerControl.LocalPlayer.CanMove && Tracker.currentTarget != null && !Tracker.usedTracker; },
+                    if (PlayerControl.LocalPlayer.CanMove && Tracker.currentTarget != null && !Tracker.usedTracker) {
+                        showTargetNameOnButton(Tracker.currentTarget, trackerTrackPlayerButton, ""); //Show target name under button if setting is true
+                        return true;
+                    }
+                    return false;
+                },
                 () => { if(Tracker.resetTargetAfterMeeting) Tracker.resetTracked(); },
                 Tracker.getButtonSprite(),
                 new Vector3(-1.8f, -0.06f, 0),
@@ -1464,7 +1468,19 @@ namespace TheEpicRoles {
 
                         SoundEffectsManager.play("warlockCurse");
                     }
-                    else if (Phaser.curseVictim != null && Phaser.curseVictimTarget == null) {
+                    else if (Phaser.curseVictim != null && (Phaser.curseVictimTarget == null || !Phaser.needsTargetAlone)) {
+
+                        var pos = PlayerControl.LocalPlayer.transform.position;
+                        byte[] buff = new byte[sizeof(float) * 2];
+                        Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
+                        Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
+
+                        MessageWriter writer2 = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlacePhaserTrace, Hazel.SendOption.Reliable);
+                        writer2.WriteBytesAndSize(buff);
+                        writer2.EndMessage();
+                        RPCProcedure.placePhaserTrace(buff);
+
+
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetPosition, Hazel.SendOption.Reliable, -1);
                         writer.Write(PlayerControl.LocalPlayer.PlayerId);
                         writer.Write(Phaser.currentTarget.transform.position.x);
@@ -1472,6 +1488,18 @@ namespace TheEpicRoles {
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         MurderAttemptResult murder = Helpers.checkMuderAttemptAndKill(Phaser.phaser, Phaser.currentTarget, showAnimation: true);
                         Phaser.phaser.transform.position = Phaser.currentTarget.transform.position;
+
+                        // Create Second trace after killing
+                        pos = Phaser.phaser.transform.position;
+                        buff = new byte[sizeof(float) * 2];
+                        Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
+                        Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
+
+                        MessageWriter writer3 = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlacePhaserTrace, Hazel.SendOption.Reliable);
+                        writer3.WriteBytesAndSize(buff);
+                        writer3.EndMessage();
+                        RPCProcedure.placePhaserTrace(buff);
+
                         if (murder == MurderAttemptResult.SuppressKill) return;
 
 
@@ -1486,7 +1514,7 @@ namespace TheEpicRoles {
                 () => { return Phaser.phaser != null && Phaser.phaser == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
                     showTargetNameOnButton(Phaser.currentTarget, phaserCurseButton, "MARK"); //Show target name under button if setting is true
-                    return ((Phaser.curseVictim == null && Phaser.currentTarget != null) || (Phaser.curseVictim != null && Phaser.curseVictimTarget == null)) && PlayerControl.LocalPlayer.CanMove; },
+                    return ((Phaser.curseVictim == null && Phaser.currentTarget != null) || (Phaser.curseVictim != null && (Phaser.curseVictimTarget == null || !Phaser.needsTargetAlone))) && PlayerControl.LocalPlayer.CanMove; },
                 () => {
                     phaserCurseButton.Timer = phaserCurseButton.MaxTimer;
                     phaserCurseButton.Sprite = Phaser.getCurseButtonSprite();

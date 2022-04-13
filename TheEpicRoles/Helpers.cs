@@ -90,6 +90,9 @@ namespace TheEpicRoles {
 
         // download and extract ffmpeg binary
         public static void downloadFFmpeg() {
+            bool foundFFmpegInPath = Environment.GetEnvironmentVariable("PATH").Split(';').Any(p => File.Exists(p + "\\ffmpeg.exe"));
+            if (foundFFmpegInPath) return;
+
             string applicationPath = Path.GetDirectoryName(Application.dataPath);
             string zipPath = applicationPath + "\\ffmpeg.zip";
             string exePath = applicationPath + "\\ffmpeg.exe";

@@ -34,12 +34,14 @@ namespace TheEpicRoles
 
             // Load raw audio clips from disk, replacing the ones with the same name
             string applicationPath = Path.GetDirectoryName(Application.dataPath) + "\\Sound\\raw";
-            foreach (var file in Directory.EnumerateFiles(applicationPath, "*.raw")) {
-                string fileName = Path.GetFileName(file);
-                string resourceName = "TheEpicRoles.Resources.SoundEffects." + fileName;
-                if (soundEffects.ContainsKey(resourceName)) {
-                    int originalLength = soundEffects[resourceName].samples;
-                    soundEffects[resourceName] = Helpers.loadAudioClipFromDisk(fileName, maxLength: originalLength);
+            if (Directory.Exists(applicationPath)) {
+                foreach (var file in Directory.EnumerateFiles(applicationPath, "*.raw")) {
+                    string fileName = Path.GetFileName(file);
+                    string resourceName = "TheEpicRoles.Resources.SoundEffects." + fileName;
+                    if (soundEffects.ContainsKey(resourceName)) {
+                        int originalLength = soundEffects[resourceName].samples;
+                        soundEffects[resourceName] = Helpers.loadAudioClipFromDisk(fileName, maxLength: originalLength);
+                    }
                 }
             }
             loaded = true;

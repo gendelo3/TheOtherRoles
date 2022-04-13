@@ -102,7 +102,7 @@ namespace TheEpicRoles {
                     client.DownloadFile(downloadUri, zipPath);
                 }
             }
-            // Extract ffmpeg.exe (works only with windows current windows 10 systems)
+            // Extract ffmpeg.exe (works only with current windows 10 systems)
             Process tar = new Process();
             tar.StartInfo.FileName = "tar";
             tar.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;

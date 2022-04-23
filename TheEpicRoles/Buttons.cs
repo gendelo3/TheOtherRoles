@@ -1476,6 +1476,7 @@ namespace TheEpicRoles {
                         Jumper.jumpLocation = PlayerControl.LocalPlayer.transform.localPosition;
                         jumperButton.Sprite = Jumper.getJumpButtonSprite();
                         Jumper.jumperCharges = Jumper.jumperChargesOnPlace;
+                        jumperButton.actionButton.OverrideText("JUMP");
                     } else if (Jumper.jumperCharges >= 1f) { //teleport to location if you have one
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetPosition, Hazel.SendOption.Reliable, -1);
                         writer.Write(PlayerControl.LocalPlayer.PlayerId);
@@ -1502,7 +1503,9 @@ namespace TheEpicRoles {
                 Jumper.getJumpMarkButtonSprite(),
                 new Vector3(-1.8f, -0.06f, 0),
                 __instance,
-                KeyCode.F
+                KeyCode.F,
+                false,
+                "MARK"
             );
             // Jumper Charges counter
             jumperChargesText = GameObject.Instantiate(jumperButton.actionButton.cooldownTimerText, jumperButton.actionButton.cooldownTimerText.transform.parent);

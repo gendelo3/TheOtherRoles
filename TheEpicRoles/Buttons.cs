@@ -1534,7 +1534,8 @@ namespace TheEpicRoles {
                         Jumper.jumpLocation = PlayerControl.LocalPlayer.transform.localPosition;
                         jumperButton.Sprite = Jumper.getJumpButtonSprite();
                         Jumper.jumperCharges = Jumper.jumperChargesOnPlace;
-
+                        jumperButton.actionButton.OverrideText("JUMP");
+                      
                         SoundEffectsManager.play("warlockCurse");
 
                     } else if (Jumper.jumperCharges >= 1f) { //teleport to location if you have one
@@ -1565,7 +1566,9 @@ namespace TheEpicRoles {
                 Jumper.getJumpMarkButtonSprite(),
                 new Vector3(-1.8f, -0.06f, 0),
                 __instance,
-                KeyCode.F
+                KeyCode.F,
+                false,
+                "MARK"
             );
             // Jumper Charges counter
             jumperChargesText = GameObject.Instantiate(jumperButton.actionButton.cooldownTimerText, jumperButton.actionButton.cooldownTimerText.transform.parent);

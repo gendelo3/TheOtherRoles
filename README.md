@@ -45,6 +45,8 @@ The [Role Assignment](#role-assignment) sections explains how the roles are bein
 # Releases
 | Among Us - Version| Mod Version | Link |
 |----------|-------------|-----------------|
+| 2022.3.29| v4.1.4| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.4/TheOtherRoles.zip)
+| 2022.3.29| v4.1.3| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.3/TheOtherRoles.zip)
 | 2022.3.29| v4.1.2| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.2/TheOtherRoles.zip)
 | 2022.3.29| v4.1.1| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.1/TheOtherRoles.zip)
 | 2022.3.29| v4.1.0| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.0/TheOtherRoles.zip)
@@ -108,6 +110,22 @@ The [Role Assignment](#role-assignment) sections explains how the roles are bein
 # Changelog
 <details>
   <summary>Click to show the Changelog</summary>
+  
+**Version 4.1.4**
+- Added auto updating for BepInEx
+- Fixed hat testing in freeplay for meetings / exile etc.
+- Fixed players not being able to move
+- Fixed getting stuck on the polus laboratory vent
+- Fixed Sherrif suicide with bloody modifier having a trail as a ghost
+- Fixed being able to kill the first killed protected player when a meeting was starting
+- Fixed some cases of the Reliable Packet Not Ack'ed disconnections
+- Fixed the double mod stamp being shown in game
+- Further improvements towards rubberbanding
+
+**Version 4.1.3**
+- Fixed morphling's being morphed during meetings
+- Fixed hide player names hiding the player's name during meetings
+- Added an option to the mayor: "Number Of Remote Meetings", so that the amount of mobile meetings is limited.
 
 **Version 4.1.2**
 - Made some general performance fixes. Special thanks to [probablyadnf](https://github.com/simonkellly)

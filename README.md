@@ -988,8 +988,6 @@ Depending on the options, the Guesser can't guess the shielded player and depend
 \
 **NOTE:**
 - If a player gets shot, you'll get back your votes
-- You can't guess the role **Nice Mini** for obvious reasons
-- You can't guess the role **Lover**, you'll have to guess the primary role of one of the Lovers, to kill both of them
 - Jester wins won't be triggered, if the Guesser shoots the Jester before the Jester gets voted out
 
 ### Game Options

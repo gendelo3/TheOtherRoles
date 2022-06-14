@@ -1661,6 +1661,7 @@ The Mini cannot be killed until it turns 18 years old, however it can be voted o
 **NOTE:**
 - If the Sheriff tries to kill the Mini before it's fully grown, nothing happens.
 - The Sheriff can kill the Impostor/Neutral Mini, but only if it's fully grown up.
+- If the Mini's role is guessed correctly, it dies like every other role and nothing further happens.
 
 ### Game Options
 | Name | Description |

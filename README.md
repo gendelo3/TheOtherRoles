@@ -527,6 +527,8 @@ Not working? You might want to install the dependency [vc_redist](https://aka.ms
 4. Launch the game via Steam
 
 ## The Other Roles Custom Servers
+**A custom server is not necessary and official servers are working just fine with the mod, but in case you want to set up and host your own server, here's a guide for you to follow.**
+
 **Setup the Server:**
 1. Get the Impostor release (https://github.com/Impostor/Impostor)
 2. Follow the steps (using the server release you just downloaded) on the official Impostor-Documentation (https://github.com/Impostor/Impostor/wiki/Running-the-server)

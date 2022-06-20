@@ -500,21 +500,21 @@ The [Role Assignment](#role-assignment) sections explains how the roles are bein
 </details>
 
 # Installation
-## Windows Auto Installation/Updating Using The AmongUsModUpdater
-This tool was made by [Narua](https://github.com/Narua2010) and [Jolle](https://github.com/joelweih). It automatically installs/updates the TheOtherRoles mod to the newest version, runs the game and
-syncs your game options automatically.
 
-1. Simply get the newest [release](https://github.com/Narua2010/AmongUsModUpdater/releases/latest) of the [AmongUsModUpdater](https://github.com/Narua2010/AmongUsModUpdater)
-2. Unzip the folder and run the **setup.exe**
+## Windows Installation Steam
+1. Download the newest [release](https://github.com/Eisbison/TheOtherRoles/releases/latest)
+2. Find the folder of your game. You can right click on the game in your library, a menu will appear, click on properties, local data, browse
+3. Go back one folder to common and make a copy of your Among Us game folder and paste it somewhere on the same drive.
+4. Now unzip and drag or extract the files from the .zip into your Among Us game folder that you just copied, at the `.exe` level (just into the folder).
+5. Run the game by starting the .exe from this folder (the first launch might take a while).
 
-If you have problems with the AmongUsModUpdater, make sure to [contact us](https://discord.gg/csa3pHYdPU).
+Not working? You might want to install the dependency [vc_redist](https://aka.ms/vs/16/release/vc_redist.x86.exe)
 
-## Windows Manual Installation
-1. Download and unzip the newest [release](https://github.com/Eisbison/TheOtherRoles/releases/latest)
-2. Find the folder of your game, for Steam players you can right click in Steam, on the game, a menu will appear proposing you to go to the folders.
-3. Make a copy of your game, it's not obligatory but advised, put it where you want.
-4. Drag or extract the files from the zip into your game, at the `.exe` level.
-5. Run the game (the first launch might take a while)
+## Windows Installation Epic
+1. Download the newest [release](https://github.com/Eisbison/TheOtherRoles/releases/latest)
+2. Find the folder of your game. Should be stored in "Epic/AmongUs" (wherever you installed Epic on your PC)
+3. Now unzip and drag or extract the files from the .zip into the original Epic Among Us game folder.
+4. Run the game by starting the game in your Epic Games launcher (the first launch might take a while).
 
 Not working? You might want to install the dependency [vc_redist](https://aka.ms/vs/16/release/vc_redist.x86.exe)
 

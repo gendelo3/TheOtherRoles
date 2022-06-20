@@ -526,50 +526,35 @@ Not working? You might want to install the dependency [vc_redist](https://aka.ms
 3. Enable `winhttp.dll` via the proton winecfg (https://docs.bepinex.dev/articles/advanced/steam_interop.html#open-winecfg-for-the-target-game)
 4. Launch the game via Steam
 
-# Custom Servers and 10+ Players
-We always recommend you to play on custom servers rather than on the official ones. If you want to play with more than 10 players in one lobby, you're required to use a custom server. Credits for the original implementation that allowed 10+ player lobbies go to the creators of the [CrowdedMod](https://github.com/CrowdedMods/CrowdedMod).
-
-**Setup the Clients:**
-1. Open the region menu where you can choose between the different regions
-2. Select the region *Custom*
-3. Enter the ip/domain and the port of your custom server in the corresponding text fields
-
+## The Other Roles Custom Servers
 **Setup the Server:**
-1. Get the [Impostor](https://github.com/Impostor/Impostor) release for the Among Us version **2021.3.31 - 2021.4.2**
-2. Follow the steps (using the server release you just downloaded) on the official [Impostor-Documentation](https://github.com/Impostor/Impostor/wiki/Running-the-server)
-3. Make sure to set the following values to false in the `config.json` file:
-```
-    ...
-    "AntiCheat": {
-      "Enabled": false,
-      "BanIpFromGame": false
+1. Get the Impostor release (https://github.com/Impostor/Impostor)
+2. Follow the steps (using the server release you just downloaded) on the official Impostor-Documentation (https://github.com/Impostor/Impostor/wiki/Running-the-server)
+3. Make sure to set the following values to false in the config.json file:
+```    ...
+     'AntiCheat': {
+       'Enabled': false,
+      'BanIpFromGame': false
     }
 ```
-4. Make sure to forward the right ports on the hosting machine
-5. Run the server and setup the client
-
-**Setting up Server as Docker Container:** \
+4. Make sure to forward the right ports on the hosting machine.
+5. Run the server and setup the client.
+Setting up Server as Docker Container:
 If you want to run the server as a docker container you'll need to use the image
-```
 aeonlucid/impostor:nightly
-```
-(Currently only the "nightly" tag is starting a server supporting 2021.3.31 or later)
 
-In addition to running it, the environment variables to disable the AntiCheat feature need to be set.
-```
-IMPOSTOR_AntiCheat__Enabled=false
-IMPOSTOR_AntiCheat__BanIpFromGame=false
-```
+(Currently only the 'nightly' tag is starting a server supporting 2021.3.31 or later)
+In addition to running it we need to set the environment variables to disable the AntiCheat feature.
+IMPOSTOR_AntiCheatEnabled=false
+IMPOSTOR_AntiCheatBanIpFromGame=false
 
 Example to docker run command:
-```
-docker run -p 22023:22023/udp --env IMPOSTOR_AntiCheat__Enabled=false --env IMPOSTOR_AntiCheat__BanIpFromGame=false aeonlucid/impostor:nightly
-```
+docker run -p 22023:22023/udp --env IMPOSTOR_AntiCheatEnabled=false --env IMPOSTOR_AntiCheatBanIpFromGame=false aeonlucid/impostor:nightly
 
 Or use to run it in the background
-```
-docker run -d -p 22023:22023/udp --env IMPOSTOR_AntiCheat__Enabled=false --env IMPOSTOR_AntiCheat__BanIpFromGame=false aeonlucid/impostor:nightly
-```
+docker run -d -p 22023:22023/udp --env IMPOSTOR_AntiCheatEnabled=false --env IMPOSTOR_AntiCheatBanIpFromGame=false aeonlucid/impostor:nightly
+
+**If you have any problems regarding custom servers, please contact https://github.com/Impostor/Impostor or https://discord.gg/ThJUGAsz**
 
 
 # Credits & Resources

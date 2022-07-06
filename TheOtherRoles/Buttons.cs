@@ -795,7 +795,7 @@ namespace TheOtherRoles
                     writer.WriteBytesAndSize(buff);
                     writer.EndMessage();
                     RPCProcedure.placePortal(buff);
-                    SoundEffectsManager.play("tricksterPlaceBoxeBox");
+                    SoundEffectsManager.play("tricksterPlaceBox");
                 },
                 () => { return Portalmaker.portalmaker != null && Portalmaker.portalmaker == CachedPlayer.LocalPlayer.PlayerControl && !CachedPlayer.LocalPlayer.Data.IsDead && Portal.secondPortal == null; },
                 () => { return CachedPlayer.LocalPlayer.PlayerControl.CanMove && Portal.secondPortal == null; },
@@ -820,6 +820,7 @@ namespace TheOtherRoles
                     }
                     RPCProcedure.usePortal(CachedPlayer.LocalPlayer.PlayerId);
                     usePortalButton.Timer = usePortalButton.MaxTimer;
+                    SoundEffectsManager.play("portalUse");
                     FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Portal.teleportDuration, new Action<float>((p) => { // Delayed action
                         CachedPlayer.LocalPlayer.PlayerControl.moveable = false;
                         CachedPlayer.LocalPlayer.NetTransform.Halt();
@@ -852,6 +853,7 @@ namespace TheOtherRoles
                     writer.Write(Jackal.currentTarget.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.jackalCreatesSidekick(Jackal.currentTarget.PlayerId);
+                    SoundEffectsManager.play("jackalSidekick");
                 },
                 () => { return Jackal.canCreateSidekick && Jackal.jackal != null && Jackal.jackal == CachedPlayer.LocalPlayer.PlayerControl && !CachedPlayer.LocalPlayer.Data.IsDead; },
                 () => { return Jackal.canCreateSidekick && Jackal.currentTarget != null && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },

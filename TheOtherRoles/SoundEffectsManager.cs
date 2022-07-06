@@ -49,5 +49,9 @@ namespace TheOtherRoles
         public static void stop(string path) {
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.StopSound(get(path));
         }
+
+        public static void stopAll() {
+            foreach (var path in soundEffects.Keys) stop(path);
+        }
     }
 }

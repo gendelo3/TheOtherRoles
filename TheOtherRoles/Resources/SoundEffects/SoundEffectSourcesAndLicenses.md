@@ -19,9 +19,8 @@
 |trackerTrackCorpses |sniffing sound|[Male_Breath_Sniff_Stereo_NT4.wav](https://freesound.org/people/Nox_Sound/sounds/554905/ ) | CC0 1.0 |
 |vampireKill |combined |[Gore Rend](https://freesound.org/people/magnuswaker/sounds/563491/ ) +  [R15-53-Blood Sucking.wav](https://freesound.org/people/craigsmith/sounds/487070/ ) | CC0 1.0 both|
 |garlic | | [Garlic cloves](https://freesound.org/people/Aemyn/sounds/512453/ )| CC0 1.0 |
-|jackalKill  | (already has a sound) |-|-|
-|sidekickKill  | (already has a sound) |-|-|
-|jackalSidekick  | (already has a sound) |-|-|
+|jackalKill | (already has a sound) |-|-|
+|jackalSidekick | | [Snare - Nice.wav]( https://freesound.org/people/molodiaz/sounds/593550/ )| CC0 1.0 |
 |lighterLight | |[Torch Click 2](https://freesound.org/people/BenjaminNelan/sounds/410360/ ) | CC0 1.0 |
 |eraserErase | | [Pencil Eraser Erasing](https://freesound.org/people/deleted_user_7146007/sounds/383861/ ) | CC0 1.0 |
 |tricksterPlaceBox | |[Carton_impact_5.wav](https://freesound.org/people/andresix/sounds/245617/ ) | CC0 1.0 |
@@ -37,3 +36,5 @@
 |mediumAsk| |[ghost_sounds.wav](https://freesound.org/people/fishwithfeathers/sounds/177768/ )| CC0 1.0|
 |pursuerBlank | | [gun load.wav](https://freesound.org/people/Shelby_Wideman/sounds/178141/ )| CC0 1.0 |
 |witchSpell | | [witch's laugh](https://freesound.org/people/Yogoorth/sounds/589144/ ) | CC0 1.0 |
+|portalmakerPlacePortal | same as tricksterPlaceBox| - | - |
+|portalUse | | [Static electronic noise - Xbox 360](https://freesound.org/people/scenes/sounds/431654/ ) + [Teleport Slurp](https://freesound.org/people/GameAudio/sounds/220163/  ) | CC0 1.0 both |

@@ -560,6 +560,9 @@ namespace TheOtherRoles.Patches {
                 
                 // Reset zoomed out ghosts
                 Helpers.toggleZoom(reset: true);
+
+                // Stop all playing sounds
+                SoundEffectsManager.stopAll();
             }
         }
 

@@ -21,6 +21,7 @@ namespace TheOtherRoles.Patches {
 			vector.z = -1f;
 			__instance.HerePoint.transform.localPosition = vector;
 			CachedPlayer.LocalPlayer.PlayerControl.SetPlayerMaterialColors(__instance.HerePoint);
+
 			return false;
 		}
 	}

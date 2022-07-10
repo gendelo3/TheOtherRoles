@@ -42,7 +42,7 @@ namespace TheOtherRoles
         {
             AudioClip clipToPlay = get(path);
             // if (false) clipToPlay = get("exampleClip"); for april fools?
-
+            stop(path);
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(clipToPlay, false, volume);
         }
 

@@ -362,6 +362,7 @@ namespace TheOtherRoles.Patches {
                             MessageWriter murderAttemptWriter = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShieldedMurderAttempt, Hazel.SendOption.Reliable, -1);
                             AmongUsClient.Instance.FinishRpcImmediately(murderAttemptWriter);
                             RPCProcedure.shieldedMurderAttempt();
+                            SoundEffectsManager.play("fail");
                             return;
                         }
 

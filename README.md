@@ -122,7 +122,7 @@ The [Role Assignment](#role-assignment) sections explains how the roles are bein
 - Fixed a bug where Morphling & Camouflager did not work correctly for skins with adaptive color
 - Fixed a bug where the first kill shield was given to the wrong lover
 - Fixed a bug where Pursuer appeared in the GuesserUI even when Lawyer was disabled
-- Fixed a bug where a guessed Guesser could still guess during the same meeting
+- Fixed a bug where a guessed Guesser could still if they had the guesser ui open
 
 \* After Death Modifiers: Modifiers which will have an effect after your death **and** could reveal the killer as a bad guy automatically (Bait & VIP)
 

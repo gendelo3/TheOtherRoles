@@ -77,6 +77,7 @@ namespace TheOtherRoles
         ResetVaribles = 60,
         ShareOptions,
         ForceEnd,
+        WorkaroundSetRoles,
         SetRole,
         SetModifier,
         VersionHandshake,
@@ -172,6 +173,23 @@ namespace TheOtherRoles
                     player.MurderPlayer(player);
                     player.Data.IsDead = true;
                 }
+            }
+        }
+
+        public static void workaroundSetRoles(byte numberOfRoles, MessageReader reader)
+        {
+            try
+            {
+                for (int i = 0; i < numberOfRoles; i++)
+                {                   
+                    byte playerId = (byte) reader.ReadPackedUInt32();
+                    byte roleId = (byte) reader.ReadPackedUInt32();
+                    setRole(roleId, playerId);
+                }
+            }
+            catch (Exception e)
+            {
+                TheOtherRolesPlugin.Logger.LogError("Error while deserializing roles: " + e.Message);
             }
         }
 
@@ -973,6 +991,9 @@ namespace TheOtherRoles
                 case (byte)CustomRPC.ForceEnd:
                     RPCProcedure.forceEnd();
                     break; 
+                case (byte)CustomRPC.WorkaroundSetRoles:
+                    RPCProcedure.workaroundSetRoles(reader.ReadByte(), reader);
+                    break;
                 case (byte)CustomRPC.SetRole:
                     byte roleId = reader.ReadByte();
                     byte playerId = reader.ReadByte();

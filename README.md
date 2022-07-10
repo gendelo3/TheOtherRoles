@@ -110,7 +110,7 @@ The [Role Assignment](#role-assignment) sections explains how the roles are bein
   
 **Version 4.1.6**  
 - Added Sound Effects: Most buttons / role funcionalities now have a sound!
-- Added an option: Make (some) Modifiers hidden: (Off / After Death Modifiers* / All)
+- Added an option: Hide After Death Modifiers: Modifiers which will have an effect after your death will be hidden while the player is alive so they cant be claimed / called
 - Re-Added the player's last position to the map in meetings
 - Added lobby timer sync, so that each player can see when the lobby will close on Vanilla Servers
 - Added a credits screen to the main menu
@@ -123,8 +123,6 @@ The [Role Assignment](#role-assignment) sections explains how the roles are bein
 - Fixed a bug where the first kill shield was given to the wrong lover
 - Fixed a bug where Pursuer appeared in the GuesserUI even when Lawyer was disabled
 - Fixed a bug where a guessed Guesser could still guess if they had the guesser ui open
-
-\* After Death Modifiers: Modifiers which will have an effect after your death **and** could reveal the killer as a bad guy automatically (Bait & VIP)
 
 **Version 4.1.5**
 - Updated to Among Us version 2022.6.21

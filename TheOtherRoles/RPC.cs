@@ -178,19 +178,17 @@ namespace TheOtherRoles
 
         public static void workaroundSetRoles(byte numberOfRoles, MessageReader reader)
         {
-            try
-            {
                 for (int i = 0; i < numberOfRoles; i++)
                 {                   
                     byte playerId = (byte) reader.ReadPackedUInt32();
                     byte roleId = (byte) reader.ReadPackedUInt32();
-                    setRole(roleId, playerId);
-                }
+                    try {
+                        setRole(roleId, playerId);
+                    } catch (Exception e) {
+                        TheOtherRolesPlugin.Logger.LogError("Error while deserializing roles: " + e.Message);
+                    }
             }
-            catch (Exception e)
-            {
-                TheOtherRolesPlugin.Logger.LogError("Error while deserializing roles: " + e.Message);
-            }
+            
         }
 
         public static void setRole(byte roleId, byte playerId) {

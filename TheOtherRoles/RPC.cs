@@ -910,10 +910,13 @@ namespace TheOtherRoles
             }
             PlayerControl guesser = Helpers.playerById(killerId);
             if (FastDestroyableSingleton<HudManager>.Instance != null && guesser != null)
-                if (CachedPlayer.LocalPlayer.PlayerControl == dyingTarget) 
+                if (CachedPlayer.LocalPlayer.PlayerControl == dyingTarget) {
                     FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(guesser.Data, dyingTarget.Data);
-                else if (dyingLoverPartner != null && CachedPlayer.LocalPlayer.PlayerControl == dyingLoverPartner) 
+                    if (MeetingHudPatch.guesserUI != null) MeetingHudPatch.guesserUIExitButton.OnClick.Invoke();
+                } else if (dyingLoverPartner != null && CachedPlayer.LocalPlayer.PlayerControl == dyingLoverPartner) {
                     FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(dyingLoverPartner.Data, dyingLoverPartner.Data);
+                    if (MeetingHudPatch.guesserUI != null) MeetingHudPatch.guesserUIExitButton.OnClick.Invoke();
+                }
             
             PlayerControl guessedTarget = Helpers.playerById(guessedTargetId);
             if (Guesser.showInfoInGhostChat && CachedPlayer.LocalPlayer.Data.IsDead && guessedTarget != null) {

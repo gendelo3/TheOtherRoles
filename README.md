@@ -40,6 +40,7 @@ The [Role Assignment](#role-assignment) sections explains how the roles are bein
 # Releases
 | Among Us - Version| Mod Version | Link |
 |----------|-------------|-----------------|
+| 2022.6.21| v4.1.6| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.6/TheOtherRoles.zip)
 | 2022.6.21| v4.1.5| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.5/TheOtherRoles.zip)
 | 2022.3.29| v4.1.4| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.4/TheOtherRoles.zip)
 | 2022.3.29| v4.1.3| [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.3/TheOtherRoles.zip)
@@ -107,6 +108,22 @@ The [Role Assignment](#role-assignment) sections explains how the roles are bein
 <details>
   <summary>Click to show the Changelog</summary>
   
+**Version 4.1.6**  
+- Added Sound Effects: Most buttons / role funcionalities now have a sound!
+- Added an option: Hide After Death Modifiers: Modifiers which will have an effect after your death will be hidden while the player is alive so they cant be claimed / called
+- Re-Added the player's last position to the map in meetings
+- Added lobby timer sync, so that each player can see when the lobby will close on Vanilla Servers
+- Added a credits screen to the main menu
+
+- Fixed the Spy's Name appearing in white to the impostors in the intro cutscene
+- Fixed a bug where the zoom function for ghosts would zoom in too far
+- Fixed a bug where custom color names did not work (TOR is now compatible with colorblind mode)
+- Fixed a bug where the ninjas color name did not become invisible in colorblind mode
+- Fixed a bug where Morphling & Camouflager did not work correctly for skins with adaptive color
+- Fixed a bug where the first kill shield was given to the wrong lover
+- Fixed a bug where Pursuer appeared in the GuesserUI even when Lawyer was disabled
+- Fixed a bug where a guessed Guesser could still guess if they had the guesser ui open
+
 **Version 4.1.5**
 - Updated to Among Us version 2022.6.21
 - Added Custom servers (Modded EU & Modded NA). Thanks to [miniduikboot](https://github.com/miniduikboot) & GD

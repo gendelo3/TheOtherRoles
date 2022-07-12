@@ -29,7 +29,7 @@ namespace TheOtherRoles.Patches {
             // If player is Lighter with ability active
             if ((Lighter.lighter != null && Lighter.lighter.PlayerId == player.PlayerId
                       || Doppelganger.doppelganger != null && Doppelganger.doppelganger.PlayerId == player.PlayerId && Doppelganger.copiedRole == RoleInfo.lighter) && Lighter.lighterTimer > 0f) {
-                float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, true));
+                float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                 __result = Mathf.Lerp(__instance.MaxLightRadius * Lighter.lighterModeLightsOffVision, __instance.MaxLightRadius * Lighter.lighterModeLightsOnVision, unlerped);
             }
 

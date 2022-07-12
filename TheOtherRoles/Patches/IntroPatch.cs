@@ -22,11 +22,11 @@ namespace TheOtherRoles.Patches {
                     GameData.PlayerInfo data = p.Data;
                     PoolablePlayer player = UnityEngine.Object.Instantiate<PoolablePlayer>(__instance.PlayerPrefab, FastDestroyableSingleton<HudManager>.Instance.transform);
                     playerPrefab = __instance.PlayerPrefab;
-                    PlayerControl.SetPlayerMaterialColors(data.DefaultOutfit.ColorId, player.CurrentBodySprite.BodySprite);
+                    p.SetPlayerMaterialColors(player.cosmetics.currentBodySprite.BodySprite);
                     player.SetSkin(data.DefaultOutfit.SkinId, data.DefaultOutfit.ColorId);
-                    player.HatSlot.SetHat(data.DefaultOutfit.HatId, data.DefaultOutfit.ColorId);
-                    PlayerControl.SetPetImage(data.DefaultOutfit.PetId, data.DefaultOutfit.ColorId, player.PetSlot);
-                    player.NameText.text = data.PlayerName;
+                    player.cosmetics.SetHat(data.DefaultOutfit.HatId, data.DefaultOutfit.ColorId);
+                   // PlayerControl.SetPetImage(data.DefaultOutfit.PetId, data.DefaultOutfit.ColorId, player.PetSlot);
+                    player.cosmetics.nameText.text = data.PlayerName;
                     player.SetFlipX(true);
                     MapOptions.playerIcons[p.PlayerId] = player;
 
@@ -55,7 +55,10 @@ namespace TheOtherRoles.Patches {
                     BountyHunter.cooldownText.transform.localPosition = bottomLeft + new Vector3(0f, -1f, -1f);
                     BountyHunter.cooldownText.gameObject.SetActive(true);
                 }
-            } 
+            }
+
+            // Force Reload of SoundEffectHolder
+            SoundEffectsManager.Load();
 
             // First kill
             if (AmongUsClient.Instance.AmHost && MapOptions.shieldFirstKill && MapOptions.firstKillName != "") {
@@ -114,6 +117,14 @@ namespace TheOtherRoles.Patches {
             __instance.ourCrewmate.gameObject.SetActive(false);
            
         }
+
+        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CreatePlayer))]
+        class CreatePlayerPatch {
+            public static void Postfix(IntroCutscene __instance, bool impostorPositioning, ref PoolablePlayer __result) {
+                if (impostorPositioning) __result.SetNameColor(Palette.ImpostorRed);
+            }
+        }
+
 
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowRole))]
         class SetUpRoleTextPatch {

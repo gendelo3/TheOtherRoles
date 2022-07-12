@@ -1305,6 +1305,7 @@ namespace TheOtherRoles
         public static bool hasCopied = false;
         public static RoleInfo copiedRole = null;
         public static bool canBeGuesser = true;
+        public static bool copiesModifier;
 
         // Parameters needed from other roles. Some don't need to be initialized, as they will be copied too!
         public static int guesserRemainingShots;
@@ -1341,6 +1342,7 @@ namespace TheOtherRoles
             hasCopied = false;
             copiedRole = null;
             canBeGuesser = CustomOptionHolder.doppelgangerCanBeGuesser.getBool();
+            copiesModifier = CustomOptionHolder.doppelgangerCopiesModifier.getBool();
             baitWasCleaned = false;
             baitReported = false;
             timeMasterShieldActive = false;

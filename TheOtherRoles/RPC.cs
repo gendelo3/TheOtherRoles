@@ -530,8 +530,15 @@ namespace TheOtherRoles
                 return;
             }
             Doppelganger.hasCopied = true;
-            // Copy role
-            Doppelganger.copiedRole = RoleInfo.getRoleInfoForPlayer(player).FirstOrDefault();
+            // Copy role and modifier
+            var roleInfo = RoleInfo.getRoleInfoForPlayer(player, showModifier:true);
+            Doppelganger.copiedRole = roleInfo.FirstOrDefault(x => !x.isModifier);
+            var copiedModifier = roleInfo.FirstOrDefault(x => x.isModifier);
+            if (Doppelganger.copiesModifier && copiedModifier != null && (!(new List<RoleInfo>() {RoleInfo.mini, RoleInfo.lover}).Contains(copiedModifier))) {
+                if (copiedModifier != RoleInfo.tiebreaker || Tiebreaker.tiebreaker.Data.IsDead) // tiebreaker only if tiebreaker is dead, steal the modifier!
+                    setModifier((byte)copiedModifier.roleId, oldDoppelganger.PlayerId, 0);
+            }
+
             // Dont copy the spy
             if (Doppelganger.copiedRole == RoleInfo.spy
                 || Doppelganger.copiedRole == RoleInfo.goodGuesser && !Doppelganger.canBeGuesser

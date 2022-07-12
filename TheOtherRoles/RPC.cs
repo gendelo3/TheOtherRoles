@@ -79,6 +79,7 @@ namespace TheOtherRoles
         ResetVaribles = 60,
         ShareOptions,
         ForceEnd,
+        WorkaroundSetRoles,
         SetRole,
         SetModifier,
         VersionHandshake,
@@ -152,6 +153,7 @@ namespace TheOtherRoles
             clearAndReloadRoles();
             clearGameHistory();
             setCustomButtonCooldowns();
+            Helpers.toggleZoom(reset : true);
         }
 
         public static void HandleShareOptions(byte numberOfOptions, MessageReader reader) {            
@@ -177,6 +179,21 @@ namespace TheOtherRoles
                     player.Data.IsDead = true;
                 }
             }
+        }
+
+        public static void workaroundSetRoles(byte numberOfRoles, MessageReader reader)
+        {
+                for (int i = 0; i < numberOfRoles; i++)
+                {                   
+                    byte playerId = (byte) reader.ReadPackedUInt32();
+                    byte roleId = (byte) reader.ReadPackedUInt32();
+                    try {
+                        setRole(roleId, playerId);
+                    } catch (Exception e) {
+                        TheOtherRolesPlugin.Logger.LogError("Error while deserializing roles: " + e.Message);
+                    }
+            }
+            
         }
 
         public static void setRole(byte roleId, byte playerId) {
@@ -428,9 +445,7 @@ namespace TheOtherRoles
             TimeMaster.shieldActive = false; // Shield is no longer active when rewinding
             Doppelganger.timeMasterShieldActive = false; // Doesn't hurt to deactivate this one too.
             
-            /*if(TimeMaster.timeMaster != null && TimeMaster.timeMaster == PlayerControl.LocalPlayer) {
-                resetTimeMasterButton();
-            }*/
+            SoundEffectsManager.stop("timemasterShield");  // Shield sound stopped when rewinding
             if (masterId == PlayerControl.LocalPlayer.PlayerId)
             {
                 resetTimeMasterButton();
@@ -733,7 +748,7 @@ namespace TheOtherRoles
                 FastDestroyableSingleton<RoleManager>.Instance.SetRole(player, RoleTypes.Crewmate);
                 if (player == Lawyer.lawyer && Lawyer.target != null)
                 {
-                    Transform playerInfoTransform = Lawyer.target.nameText.transform.parent.FindChild("Info");
+                    Transform playerInfoTransform = Lawyer.target.cosmetics.nameText.transform.parent.FindChild("Info");
                     TMPro.TextMeshPro playerInfo = playerInfoTransform != null ? playerInfoTransform.GetComponent<TMPro.TextMeshPro>() : null;
                     if (playerInfo != null) playerInfo.text = "";
                 }
@@ -743,6 +758,7 @@ namespace TheOtherRoles
                 if (wasSpy || wasImpostor) Sidekick.wasTeamRed = true;
                 Sidekick.wasSpy = wasSpy;
                 Sidekick.wasImpostor = wasImpostor;
+                if (player == CachedPlayer.LocalPlayer.PlayerControl) SoundEffectsManager.play("jackalSidekick");
             }
             Jackal.canCreateSidekick = false;
         }
@@ -883,8 +899,9 @@ namespace TheOtherRoles
             if (target == null) return;
             if (flag == byte.MaxValue)
             {
-                target.MyRend.color = Color.white;
-                target.setDefaultLook();
+                target.cosmetics.currentBodySprite.BodySprite.color = Color.white;
+                target.cosmetics.colorBlindText.gameObject.SetActive(SaveManager.colorblindMode);
+                if (Camouflager.camouflageTimer <= 0) target.setDefaultLook();
                 Ninja.isInvisble = false;
                 return;
             }
@@ -892,7 +909,8 @@ namespace TheOtherRoles
             target.setLook("", 6, "", "", "", "");
             Color color = Color.clear;           
             if (CachedPlayer.LocalPlayer.Data.Role.IsImpostor || CachedPlayer.LocalPlayer.Data.IsDead) color.a = 0.1f;
-            target.MyRend.color = color;
+            target.cosmetics.currentBodySprite.BodySprite.color = color;
+            target.cosmetics.colorBlindText.gameObject.SetActive(false);
             Ninja.invisibleTimer = Ninja.invisibleDuration;
             Ninja.isInvisble = true;
         }
@@ -1022,7 +1040,7 @@ namespace TheOtherRoles
             Pursuer.pursuer = player;
 
             if (player.PlayerId == CachedPlayer.LocalPlayer.PlayerId && client != null) {
-                    Transform playerInfoTransform = client.nameText.transform.parent.FindChild("Info");
+                    Transform playerInfoTransform = client.cosmetics.nameText.transform.parent.FindChild("Info");
                     TMPro.TextMeshPro playerInfo = playerInfoTransform != null ? playerInfoTransform.GetComponent<TMPro.TextMeshPro>() : null;
                     if (playerInfo != null) playerInfo.text = "";
             }
@@ -1059,10 +1077,13 @@ namespace TheOtherRoles
             }
             PlayerControl guesser = Helpers.playerById(killerId);
             if (FastDestroyableSingleton<HudManager>.Instance != null && guesser != null)
-                if (CachedPlayer.LocalPlayer.PlayerControl == dyingTarget) 
+                if (CachedPlayer.LocalPlayer.PlayerControl == dyingTarget) {
                     FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(guesser.Data, dyingTarget.Data);
-                else if (dyingLoverPartner != null && CachedPlayer.LocalPlayer.PlayerControl == dyingLoverPartner) 
+                    if (MeetingHudPatch.guesserUI != null) MeetingHudPatch.guesserUIExitButton.OnClick.Invoke();
+                } else if (dyingLoverPartner != null && CachedPlayer.LocalPlayer.PlayerControl == dyingLoverPartner) {
                     FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(dyingLoverPartner.Data, dyingLoverPartner.Data);
+                    if (MeetingHudPatch.guesserUI != null) MeetingHudPatch.guesserUIExitButton.OnClick.Invoke();
+                }
             
             PlayerControl guessedTarget = Helpers.playerById(guessedTargetId);
             if (Guesser.showInfoInGhostChat && CachedPlayer.LocalPlayer.Data.IsDead && guessedTarget != null) {
@@ -1119,6 +1140,9 @@ namespace TheOtherRoles
                 case (byte)CustomRPC.ForceEnd:
                     RPCProcedure.forceEnd();
                     break; 
+                case (byte)CustomRPC.WorkaroundSetRoles:
+                    RPCProcedure.workaroundSetRoles(reader.ReadByte(), reader);
+                    break;
                 case (byte)CustomRPC.SetRole:
                     byte roleId = reader.ReadByte();
                     byte playerId = reader.ReadByte();
@@ -1134,6 +1158,8 @@ namespace TheOtherRoles
                     byte major = reader.ReadByte();
                     byte minor = reader.ReadByte();
                     byte patch = reader.ReadByte();
+                    float timer = reader.ReadSingle();
+                    if (!AmongUsClient.Instance.AmHost && timer >= 0f) GameStartManagerPatch.timer = timer;
                     int versionOwnerId = reader.ReadPackedInt32();
                     byte revision = 0xFF;
                     Guid guid;

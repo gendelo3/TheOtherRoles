@@ -116,6 +116,7 @@ namespace TheOtherRoles.Patches {
                 writer.Write(isEnter ? byte.MaxValue : (byte)0);
                 writer.EndMessage();
                 RPCProcedure.useUncheckedVent(__instance.Id, CachedPlayer.LocalPlayer.PlayerId, isEnter ? byte.MaxValue : (byte)0);
+                SoundEffectsManager.play("tricksterUseBoxVent");
                 return false;
             }
 
@@ -306,8 +307,8 @@ namespace TheOtherRoles.Patches {
 
                 //Fix Visor in Vitals
                 foreach (VitalsPanel panel in __instance.vitals) {
-                    if (panel.PlayerIcon != null && panel.PlayerIcon.Skin != null) {
-                         panel.PlayerIcon.Skin.transform.position = new Vector3(0, 0, 0f);
+                    if (panel.PlayerIcon != null && panel.PlayerIcon.cosmetics.skin != null) {
+                         panel.PlayerIcon.cosmetics.skin.transform.position = new Vector3(0, 0, 0f);
                     }
                 }
             }
@@ -402,8 +403,8 @@ namespace TheOtherRoles.Patches {
                                     if (!component || component.Data == null || component.Data.Disconnected || component.Data.IsDead)
                                     {
                                         num2--;
-                                    } else if (component?.MyRend?.material != null) {
-                                        Color color = component.MyRend.material.GetColor("_BodyColor");
+                                    } else if (component?.cosmetics?.currentBodySprite?.BodySprite?.material != null) {
+                                        Color color = component.cosmetics.currentBodySprite.BodySprite.material.GetColor("_BodyColor");
                                         if (Hacker.onlyColorType) {
                                             var id = Mathf.Max(0, Palette.PlayerColors.IndexOf(color));
                                             color = Helpers.isLighterColor((byte)id) ? Palette.PlayerColors[7] : Palette.PlayerColors[6];

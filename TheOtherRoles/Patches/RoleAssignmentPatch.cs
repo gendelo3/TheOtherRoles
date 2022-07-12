@@ -21,6 +21,7 @@ namespace TheOtherRoles.Patches {
         private static int crewValues;
         private static int impValues;
         private static bool isEvilGuesser;
+        private static List<Tuple<byte, byte>> playerRoleMap = new List<Tuple<byte, byte>>();
         public static void Postfix() {
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.Reliable, -1);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -39,9 +40,10 @@ namespace TheOtherRoles.Patches {
             assignChanceRoles(data); // Assign roles that may or may not be in the game last
             assignRoleTargets(data);
             assignModifiers();
+            setRolesAgain();
         }
 
-        private static RoleAssignmentData getRoleAssignmentData() {
+        public static RoleAssignmentData getRoleAssignmentData() {
             // Get the players that we want to assign the roles to. Crewmate and Neutral roles are assigned to natural crewmates. Impostor roles to impostors.
             List<PlayerControl> crewmates = PlayerControl.AllPlayerControls.ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
             crewmates.RemoveAll(x => x.Data.Role.IsImpostor);
@@ -422,6 +424,8 @@ namespace TheOtherRoles.Patches {
             byte playerId = playerList[index].PlayerId;
             if (removePlayer) playerList.RemoveAt(index);
 
+            playerRoleMap.Add(new Tuple<byte, byte>(playerId, roleId));
+
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SetRole, Hazel.SendOption.Reliable, -1);
             writer.Write(roleId);
             writer.Write(playerId);
@@ -511,8 +515,27 @@ namespace TheOtherRoles.Patches {
             return selection;
         }
 
+        private static void setRolesAgain()
+        {
 
-        private class RoleAssignmentData {
+            while (playerRoleMap.Any())
+            {
+                byte amount = (byte)Math.Min(playerRoleMap.Count, 20);
+                var writer = AmongUsClient.Instance!.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.WorkaroundSetRoles, SendOption.Reliable, -1);
+                writer.Write(amount);
+                for (int i = 0; i < amount; i++)
+                {
+                    var option = playerRoleMap[0];
+                    playerRoleMap.RemoveAt(0);
+                    writer.WritePacked((uint)option.Item1);
+                    writer.WritePacked((uint)option.Item2);
+                }
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+            }
+        }
+
+
+        public class RoleAssignmentData {
             public List<PlayerControl> crewmates {get;set;}
             public List<PlayerControl> impostors {get;set;}
             public Dictionary<byte, int> impSettings = new Dictionary<byte, int>();

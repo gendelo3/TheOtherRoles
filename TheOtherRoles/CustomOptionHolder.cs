@@ -212,6 +212,7 @@ namespace TheOtherRoles {
         public static CustomOption doppelgangerSpawnRate;
         public static CustomOption doppelgangerCanBeGuesser;
         public static CustomOption doppelgangerCopiesModifier;
+        public static CustomOption doppelgangerGetsRandomRoleIfImpossible;
         public static CustomOption vultureSpawnRate;
         public static CustomOption vultureCooldown;
         public static CustomOption vultureNumberToWin;
@@ -515,6 +516,7 @@ namespace TheOtherRoles {
             doppelgangerSpawnRate = CustomOption.Create(3040, Types.Crewmate, cs(Doppelganger.color, "Doppelganger"), rates, null, true);
             doppelgangerCanBeGuesser = CustomOption.Create(3041, Types.Crewmate, "Doppelganger Can Be Guesser", true, doppelgangerSpawnRate);
             doppelgangerCopiesModifier = CustomOption.Create(3042, Types.Crewmate, "Doppelganger Copies Modifier", true, doppelgangerSpawnRate);
+            doppelgangerGetsRandomRoleIfImpossible = CustomOption.Create(3043, Types.Crewmate, "If Role Can't Be Copied\n Get A Random Enabled Role", true, doppelgangerSpawnRate);
             
             mediumSpawnRate = CustomOption.Create(360, Types.Crewmate, cs(Medium.color, "Medium"), rates, null, true);
             mediumCooldown = CustomOption.Create(361, Types.Crewmate, "Medium Questioning Cooldown", 30f, 5f, 120f, 5f, mediumSpawnRate);

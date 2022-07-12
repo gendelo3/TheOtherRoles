@@ -539,10 +539,31 @@ namespace TheOtherRoles
                     setModifier((byte)copiedModifier.roleId, oldDoppelganger.PlayerId, 0);
             }
 
-            // Dont copy the spy
+            // Dont copy roles that arent implemented / not copyable, replace or crewmate
             if (Doppelganger.copiedRole == RoleInfo.spy
                 || Doppelganger.copiedRole == RoleInfo.goodGuesser && !Doppelganger.canBeGuesser
-                ) Doppelganger.copiedRole = RoleInfo.crewmate;
+                || Doppelganger.copiedRole == RoleInfo.portalmaker
+                ) {
+                if(CustomOptionHolder.doppelgangerGetsRandomRoleIfImpossible.getBool()) {
+                    System.Random rnd = new System.Random(targetId + oldDoppelganger.PlayerId); // RND no problem, as it is seeded with the same seed on every client!
+                    int playerIndex;
+                    int i;
+                    for (i = 0; i < 100; i++) {
+                        playerIndex = rnd.Next(0, PlayerControl.AllPlayerControls.Count);
+                        player = PlayerControl.AllPlayerControls[playerIndex];
+                        if (player.Data.Role.IsImpostor) continue;
+                        Doppelganger.copiedRole = RoleInfo.getRoleInfoForPlayer(player).FirstOrDefault();
+                        if (!Doppelganger.copiedRole.isNeutral && !(Doppelganger.copiedRole == RoleInfo.spy
+                            || Doppelganger.copiedRole == RoleInfo.goodGuesser && !Doppelganger.canBeGuesser
+                            || Doppelganger.copiedRole == RoleInfo.portalmaker
+                            )) break;
+                    }
+                    if (i >= 100) {  // Didnt find an alternative role to assign
+                    Doppelganger.copiedRole = RoleInfo.crewmate;
+                    }
+                } else
+                    Doppelganger.copiedRole = RoleInfo.crewmate;
+            } 
             
             // For certain roles, copy some of their variables.
             if (Doppelganger.copiedRole == RoleInfo.goodGuesser)

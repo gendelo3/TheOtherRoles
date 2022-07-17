@@ -68,6 +68,7 @@ namespace TheOtherRoles
         public static RoleInfo crewmate = new RoleInfo("Crewmate", Color.white, "Find the Impostors", "Find the Impostors", RoleId.Crewmate);
         public static RoleInfo witch = new RoleInfo("Witch", Witch.color, "Cast a spell upon your foes", "Cast a spell upon your foes", RoleId.Witch);
         public static RoleInfo ninja = new RoleInfo("Ninja", Ninja.color, "Surprise and assassinate your foes", "Surprise and assassinate your foes", RoleId.Ninja);
+        public static RoleInfo thief = new RoleInfo("Thief", Thief.color, "Steal a killers role by killing them", "Steal a killers role", RoleId.Thief, true);
 
 
 
@@ -108,6 +109,7 @@ namespace TheOtherRoles
             vulture,
             pursuer,
             lawyer,
+            thief,
             crewmate,
             shifter,
             mayor,
@@ -199,6 +201,7 @@ namespace TheOtherRoles
             if (p == Medium.medium) infos.Add(medium);
             if (p == Lawyer.lawyer) infos.Add(lawyer);
             if (p == Pursuer.pursuer) infos.Add(pursuer);
+            if (p == Thief.thief) infos.Add(thief);
 
             // Default roles
             if (infos.Count == 0 && p.Data.Role.IsImpostor) infos.Add(impostor); // Just Impostor

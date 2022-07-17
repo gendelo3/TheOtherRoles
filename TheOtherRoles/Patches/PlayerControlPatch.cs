@@ -788,6 +788,17 @@ namespace TheOtherRoles.Patches {
             setPlayerOutline(Ninja.currentTarget, Ninja.color);
         }
 
+        static void thiefSetTarget() {
+            if (Thief.thief == null || Thief.thief != CachedPlayer.LocalPlayer.PlayerControl) return;
+            List<PlayerControl> untargetables = new List<PlayerControl>();
+            if (Mini.mini != null && !Mini.isGrownUp()) untargetables.Add(Mini.mini);
+            Thief.currentTarget = setTarget(onlyCrewmates: false, untargetablePlayers: untargetables);
+            setPlayerOutline(Thief.currentTarget, Thief.color);
+        }
+
+
+
+
         static void baitUpdate() {
             if (!Bait.active.Any()) return;
 
@@ -917,6 +928,9 @@ namespace TheOtherRoles.Patches {
                 ninjaSetTarget();
                 NinjaTrace.UpdateAll();
                 ninjaUpdate();
+                // Thief
+                thiefSetTarget();
+
                 hackerUpdate();
                 swapperUpdate();
 

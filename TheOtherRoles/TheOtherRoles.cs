@@ -55,6 +55,7 @@ namespace TheOtherRoles
             Pursuer.clearAndReload();
             Witch.clearAndReload();
             Ninja.clearAndReload();
+            Thief.clearAndReload();
 
             // Modifier
             Bait.clearAndReload();
@@ -1511,6 +1512,27 @@ namespace TheOtherRoles
             if (arrow?.arrow != null) UnityEngine.Object.Destroy(arrow.arrow);
             arrow = new Arrow(Color.black);
             if (arrow.arrow != null) arrow.arrow.SetActive(false);
+        }
+    }
+
+    public static class Thief {
+        public static PlayerControl thief;
+        public static Color color = new Color32(71, 99, 45, Byte.MaxValue);
+        public static PlayerControl currentTarget;
+
+        public static float cooldown = 30f;
+
+        public static bool canKillCrew;
+
+        public static bool newTeamMatesKnow;
+        public static bool canKillOutOfVents;
+
+        public static void clearAndReload() {
+            thief = null;
+            currentTarget = null;
+            canKillCrew = true; // todo option
+            newTeamMatesKnow = true;  // todo option and implementation
+            canKillOutOfVents = true; // todo option
         }
     }
 

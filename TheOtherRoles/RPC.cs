@@ -56,6 +56,7 @@ namespace TheOtherRoles
         Pursuer,
         Witch,
         Ninja,
+        Thief,
         Crewmate,
         Impostor,
         // Modifier ---
@@ -131,7 +132,8 @@ namespace TheOtherRoles
         SetFirstKill,
         Invert,
         SetTiebreak,
-        SetInvisible
+        SetInvisible,
+        ThiefStealsRole,
     }
 
     public static class RPCProcedure {
@@ -315,8 +317,11 @@ namespace TheOtherRoles
                     case RoleId.Ninja:
                         Ninja.ninja = player;
                         break;
-                    }
+                    case RoleId.Thief:
+                        Thief.thief = player;
+                    break;
                 }
+        }
         }
 
         public static void setModifier(byte modifierId, byte playerId, byte flag) {
@@ -968,6 +973,41 @@ namespace TheOtherRoles
         {
             Tiebreaker.isTiebreak = true;
         }
+
+        public static void thiefStealsRole(byte playerId) {
+            PlayerControl target = Helpers.playerById(playerId);
+            if (target == null) return;
+            if (target == Sheriff.sheriff) Sheriff.sheriff = Thief.thief;
+            if (target == Jackal.jackal) {
+                Jackal.jackal = Thief.thief;
+                Jackal.formerJackals.Add(target);
+            }
+            if (target == Sidekick.sidekick) {
+                Sidekick.sidekick = Thief.thief;
+                Jackal.formerJackals.Add(target);
+            }
+            if (target == Guesser.evilGuesser) Guesser.evilGuesser = Thief.thief;
+            if (target == Godfather.godfather) Godfather.godfather = Thief.thief;
+            if (target == Mafioso.mafioso) Mafioso.mafioso = Thief.thief;
+            if (target == Janitor.janitor) Janitor.janitor = Thief.thief;
+            if (target == Morphling.morphling) Morphling.morphling = Thief.thief;
+            if (target == Camouflager.camouflager) Camouflager.camouflager = Thief.thief;
+            if (target == Vampire.vampire) Vampire.vampire = Thief.thief;
+            if (target == Eraser.eraser) Eraser.eraser = Thief.thief;
+            if (target == Trickster.trickster) Trickster.trickster = Thief.thief;
+            if (target == Cleaner.cleaner) Cleaner.cleaner = Thief.thief;
+            if (target == Warlock.warlock) Warlock.warlock = Thief.thief;
+            if (target == BountyHunter.bountyHunter) BountyHunter.bountyHunter = Thief.thief;
+            if (target == Witch.witch) Witch.witch = Thief.thief;
+            if (target == Ninja.ninja) Ninja.ninja = Thief.thief;
+            if (target.Data.Role.IsImpostor) {
+                RoleManager.Instance.SetRole(Thief.thief, RoleTypes.Impostor);
+                HudManager.Instance.KillButton.SetCoolDown(PlayerControl.GameOptions.KillCooldown, PlayerControl.GameOptions.KillCooldown);
+            }
+            Thief.clearAndReload();
+            CustomButton.ResetAllCooldowns();
+
+        }
     }   
 
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
@@ -1190,7 +1230,12 @@ namespace TheOtherRoles
                     byte invisiblePlayer = reader.ReadByte();
                     byte invisibleFlag = reader.ReadByte();
                     RPCProcedure.setInvisible(invisiblePlayer, invisibleFlag);
-                    break;  
+                    break;
+                case (byte)CustomRPC.ThiefStealsRole:
+                    byte thiefTargetId = reader.ReadByte();
+                    RPCProcedure.thiefStealsRole(thiefTargetId);
+                    break;
+
             }
         }
     }

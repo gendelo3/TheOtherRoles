@@ -50,6 +50,7 @@ namespace TheOtherRoles
         public static CustomButton witchSpellButton;
         public static CustomButton ninjaButton;
         public static CustomButton mayorMeetingButton;
+        public static CustomButton thiefKillButton;
         public static CustomButton zoomOutButton;
 
         public static Dictionary<byte, List<CustomButton>> deputyHandcuffedButtons = null;
@@ -98,6 +99,7 @@ namespace TheOtherRoles
             trackerTrackCorpsesButton.MaxTimer = Tracker.corpsesTrackingCooldown;
             witchSpellButton.MaxTimer = Witch.cooldown;
             ninjaButton.MaxTimer = Ninja.cooldown;
+            thiefKillButton.MaxTimer = Thief.cooldown;
             mayorMeetingButton.MaxTimer = PlayerControl.GameOptions.EmergencyCooldown;
 
             timeMasterShieldButton.EffectDuration = TimeMaster.shieldDuration;
@@ -1547,7 +1549,7 @@ namespace TheOtherRoles
                    AmongUsClient.Instance.FinishRpcImmediately(writer);
                    mayorMeetingButton.Timer = 1f;
                },
-               () => { return Mayor.mayor != null && Mayor.mayor == CachedPlayer.LocalPlayer.PlayerControl && !CachedPlayer.LocalPlayer.Data.IsDead ;},
+               () => { return Mayor.mayor != null && Mayor.mayor == CachedPlayer.LocalPlayer.PlayerControl && !CachedPlayer.LocalPlayer.Data.IsDead; },
                () => {
                    mayorMeetingButton.actionButton.OverrideText("Emergency ("+ Mayor.remoteMeetingsLeft + ")");
                    bool sabotageActive = false;
@@ -1568,6 +1570,35 @@ namespace TheOtherRoles
                false,
                "Meeting"
            );
+
+            thiefKillButton = new CustomButton(
+                () => {
+                    if (Helpers.checkMuderAttemptAndKill(Thief.thief, Thief.currentTarget) == MurderAttemptResult.SuppressKill) return;
+
+
+                    // Thief steal role if survived.
+                    if (Thief.thief.Data.IsDead) return;
+                    
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ThiefStealsRole, Hazel.SendOption.Reliable, -1);
+                    writer.Write(Thief.currentTarget.PlayerId);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.thiefStealsRole(Thief.currentTarget.PlayerId);
+
+
+                    thiefKillButton.Timer = thiefKillButton.MaxTimer;
+                    Thief.currentTarget = null;
+                },
+               () => { return Thief.thief != null && CachedPlayer.LocalPlayer.PlayerControl == Thief.thief && !CachedPlayer.LocalPlayer.Data.IsDead; },
+               () => { return Thief.currentTarget != null && (CachedPlayer.LocalPlayer.PlayerControl.CanMove || CachedPlayer.LocalPlayer.PlayerControl.inVent && Thief.canKillOutOfVents); },
+               () => { thiefKillButton.Timer = thiefKillButton.MaxTimer; },
+               __instance.KillButton.graphic.sprite,
+               new Vector3(0, 1f, 0),
+               __instance,
+               KeyCode.Q
+               );
+           
+
+
 
             zoomOutButton = new CustomButton(
                 () => { Helpers.toggleZoom();

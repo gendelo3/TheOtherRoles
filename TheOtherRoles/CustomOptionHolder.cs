@@ -225,6 +225,12 @@ namespace TheOtherRoles {
         public static CustomOption pursuerCooldown;
         public static CustomOption pursuerBlanksNumber;
 
+        public static CustomOption thiefSpawnRate;
+        public static CustomOption thiefCooldown;
+        public static CustomOption thiefKillsCrew;
+        public static CustomOption thiefTeammatesKnow;
+
+
         public static CustomOption modifiersAreHidden;
 
         public static CustomOption modifierBait;
@@ -510,6 +516,11 @@ namespace TheOtherRoles {
             mediumCooldown = CustomOption.Create(361, Types.Crewmate, "Medium Questioning Cooldown", 30f, 5f, 120f, 5f, mediumSpawnRate);
             mediumDuration = CustomOption.Create(362, Types.Crewmate, "Medium Questioning Duration", 3f, 0f, 15f, 1f, mediumSpawnRate);
             mediumOneTimeUse = CustomOption.Create(363, Types.Crewmate, "Each Soul Can Only Be Questioned Once", false, mediumSpawnRate);
+
+            thiefSpawnRate = CustomOption.Create(400, Types.Neutral, cs(Thief.color, "Thief"), rates, null, true);
+            thiefCooldown = CustomOption.Create(401, Types.Neutral, "Thief Cooldown", 30f, 5f, 120f, 5f, thiefSpawnRate);
+            thiefKillsCrew = CustomOption.Create(402, Types.Neutral, "Crewmate Dies With Thief", false, thiefSpawnRate);
+            thiefTeammatesKnow = CustomOption.Create(403, Types.Neutral, "Thief's New Teammates Know", true, thiefSpawnRate);
 
             // Modifier
             modifiersAreHidden = CustomOption.Create(1009, Types.Modifier, cs(Color.yellow, "Hide After Death Modifiers"), true, null, true);

@@ -16,7 +16,8 @@ namespace TheOtherRoles {
     public enum MurderAttemptResult {
         PerformKill,
         SuppressKill,
-        BlankKill
+        BlankKill,
+        ThiefMiss,
     }
     public static class Helpers
     {
@@ -312,7 +313,7 @@ namespace TheOtherRoles {
 
         public static bool roleCanUseVents(this PlayerControl player) {
             bool roleCouldUse = false;
-            if (Engineer.engineer != null && Engineer.engineer == player)
+            if (Engineer.engineer != null && Engineer.engineer == player || Thief.thief != null && Thief.thief == player)
                 roleCouldUse = true;
             else if (Jackal.canUseVents && Jackal.jackal != null && Jackal.jackal == player)
                 roleCouldUse = true;
@@ -334,6 +335,8 @@ namespace TheOtherRoles {
         }
 
         public static MurderAttemptResult checkMuderAttempt(PlayerControl killer, PlayerControl target, bool blockRewind = false) {
+            var targetRole = RoleInfo.getRoleInfoForPlayer(target, false).FirstOrDefault();
+
             // Modified vanilla checks
             if (AmongUsClient.Instance.IsGameOver) return MurderAttemptResult.SuppressKill;
             if (killer == null || killer.Data == null || killer.Data.IsDead || killer.Data.Disconnected) return MurderAttemptResult.SuppressKill; // Allow non Impostor kills compared to vanilla code
@@ -375,6 +378,20 @@ namespace TheOtherRoles {
                     RPCProcedure.timeMasterRewindTime();
                 }
                 return MurderAttemptResult.SuppressKill;
+            }
+
+            // Thief if hit crew only kill if needed, return miss!
+            else if (killer == Thief.thief && !target.Data.Role.IsImpostor && !new List<RoleInfo> {RoleInfo.jackal, RoleInfo.sheriff, RoleInfo.sidekick }.Contains(targetRole)) {
+                if (Thief.thief.inVent) HudManager.Instance.ImpostorVentButton.currentTarget.Use();
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedMurderPlayer, Hazel.SendOption.Reliable, -1);
+                writer.Write(killer.PlayerId);
+                writer.Write(killer.PlayerId);
+                writer.Write(0);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                RPCProcedure.uncheckedMurderPlayer(killer.PlayerId, killer.PlayerId, 0);
+                if (!Thief.canKillCrew && !targetRole.isNeutral) {
+                    return MurderAttemptResult.SuppressKill;
+                }
             }
             return MurderAttemptResult.PerformKill;
         }

@@ -715,6 +715,7 @@ namespace TheOtherRoles
             if (player == Vulture.vulture) Vulture.clearAndReload();
             if (player == Lawyer.lawyer) Lawyer.clearAndReload();
             if (player == Pursuer.pursuer) Pursuer.clearAndReload();
+            if (player == Thief.thief) Thief.clearAndReload();
 
             // Modifier
             if (!ignoreModifier)
@@ -1002,10 +1003,11 @@ namespace TheOtherRoles
             if (target == Ninja.ninja) Ninja.ninja = Thief.thief;
             if (target.Data.Role.IsImpostor) {
                 RoleManager.Instance.SetRole(Thief.thief, RoleTypes.Impostor);
-                HudManager.Instance.KillButton.SetCoolDown(PlayerControl.GameOptions.KillCooldown, PlayerControl.GameOptions.KillCooldown);
+                FastDestroyableSingleton<HudManager>.Instance.KillButton.SetCoolDown(Thief.thief.killTimer, PlayerControl.GameOptions.KillCooldown);
             }
+            if (Thief.thief == PlayerControl.LocalPlayer) CustomButton.ResetAllCooldowns();
             Thief.clearAndReload();
-            CustomButton.ResetAllCooldowns();
+            
 
         }
     }   

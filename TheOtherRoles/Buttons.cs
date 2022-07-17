@@ -294,8 +294,7 @@ namespace TheOtherRoles
                         byte targetId = 0;
                         if ((Sheriff.currentTarget.Data.Role.IsImpostor && (Sheriff.currentTarget != Mini.mini || Mini.isGrownUp())) ||
                             (Sheriff.spyCanDieToSheriff && Spy.spy == Sheriff.currentTarget) ||
-                            (Sheriff.canKillNeutrals && (Arsonist.arsonist == Sheriff.currentTarget || Jester.jester == Sheriff.currentTarget || Vulture.vulture == Sheriff.currentTarget || Lawyer.lawyer == Sheriff.currentTarget || Pursuer.pursuer == Sheriff.currentTarget)) ||
-                            (Jackal.jackal == Sheriff.currentTarget || Sidekick.sidekick == Sheriff.currentTarget)) {
+                            (Sheriff.canKillNeutrals && RoleInfo.getRoleInfoForPlayer(Sheriff.currentTarget, false).FirstOrDefault().isNeutral) ) {
                             targetId = Sheriff.currentTarget.PlayerId;
                         }
                         else {
@@ -1573,20 +1572,36 @@ namespace TheOtherRoles
 
             thiefKillButton = new CustomButton(
                 () => {
-                    if (Helpers.checkMuderAttemptAndKill(Thief.thief, Thief.currentTarget) == MurderAttemptResult.SuppressKill) return;
+                    PlayerControl thief = Thief.thief;
+                    PlayerControl target = Thief.currentTarget;
+                    var result = Helpers.checkMuderAttempt(thief, target);
+                    if (result == MurderAttemptResult.BlankKill) {
+                        thiefKillButton.Timer = thiefKillButton.MaxTimer;
+                        return;
+                    }
 
+                    if (Thief.murderedCrew) {
+                        // Suicide
+                        MessageWriter writer2 = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedMurderPlayer, Hazel.SendOption.Reliable, -1);
+                        writer2.Write(thief.PlayerId);
+                        writer2.Write(thief.PlayerId);
+                        writer2.Write(0);
+                        RPCProcedure.uncheckedMurderPlayer(thief.PlayerId, thief.PlayerId, 0);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer2);
+                        Thief.murderedCrew = false;
+                    }
 
-                    // Thief steal role if survived.
-                    if (Thief.thief.Data.IsDead) return;
-                    
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ThiefStealsRole, Hazel.SendOption.Reliable, -1);
-                    writer.Write(Thief.currentTarget.PlayerId);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.thiefStealsRole(Thief.currentTarget.PlayerId);
-
-
-                    thiefKillButton.Timer = thiefKillButton.MaxTimer;
-                    Thief.currentTarget = null;
+                    // Steal role if survived.
+                    if (!Thief.thief.Data.IsDead) {
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ThiefStealsRole, Hazel.SendOption.Reliable, -1);
+                        writer.Write(target.PlayerId);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        RPCProcedure.thiefStealsRole(target.PlayerId);
+                    }
+                    // Kill the victim (after becoming their role - so that no win is triggered for other teams)
+                    if (result == MurderAttemptResult.PerformKill) {
+                        Helpers.checkMuderAttemptAndKill(thief, target);
+                    }
                 },
                () => { return Thief.thief != null && CachedPlayer.LocalPlayer.PlayerControl == Thief.thief && !CachedPlayer.LocalPlayer.Data.IsDead; },
                () => { return Thief.currentTarget != null && (CachedPlayer.LocalPlayer.PlayerControl.CanMove || CachedPlayer.LocalPlayer.PlayerControl.inVent && Thief.canKillOutOfVents); },

@@ -1523,16 +1523,18 @@ namespace TheOtherRoles
         public static float cooldown = 30f;
 
         public static bool canKillCrew;
+        public static bool murderedCrew = false;
 
-        public static bool newTeamMatesKnow;
+        public static bool hasImpostorVision;
         public static bool canKillOutOfVents;
 
         public static void clearAndReload() {
             thief = null;
+            murderedCrew = false;
             currentTarget = null;
-            canKillCrew = true; // todo option
-            newTeamMatesKnow = true;  // todo option and implementation
-            canKillOutOfVents = true; // todo option
+            canKillCrew = CustomOptionHolder.thiefKillsCrew.getBool(); // todo option
+            hasImpostorVision = CustomOptionHolder.hasImpVision.getBool();  // todo option and implementation
+            cooldown = CustomOptionHolder.thiefCooldown.getFloat();
         }
     }
 

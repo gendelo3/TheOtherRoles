@@ -228,7 +228,7 @@ namespace TheOtherRoles {
         public static CustomOption thiefSpawnRate;
         public static CustomOption thiefCooldown;
         public static CustomOption thiefKillsCrew;
-        public static CustomOption thiefTeammatesKnow;
+        public static CustomOption hasImpVision;
 
 
         public static CustomOption modifiersAreHidden;
@@ -520,7 +520,7 @@ namespace TheOtherRoles {
             thiefSpawnRate = CustomOption.Create(400, Types.Neutral, cs(Thief.color, "Thief"), rates, null, true);
             thiefCooldown = CustomOption.Create(401, Types.Neutral, "Thief Cooldown", 30f, 5f, 120f, 5f, thiefSpawnRate);
             thiefKillsCrew = CustomOption.Create(402, Types.Neutral, "Crewmate Dies With Thief", false, thiefSpawnRate);
-            thiefTeammatesKnow = CustomOption.Create(403, Types.Neutral, "Thief's New Teammates Know", true, thiefSpawnRate);
+            hasImpVision = CustomOption.Create(403, Types.Neutral, "Thief Has Impostor Vision", true, thiefSpawnRate);
 
             // Modifier
             modifiersAreHidden = CustomOption.Create(1009, Types.Modifier, cs(Color.yellow, "Hide After Death Modifiers"), true, null, true);

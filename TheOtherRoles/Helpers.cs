@@ -17,7 +17,6 @@ namespace TheOtherRoles {
         PerformKill,
         SuppressKill,
         BlankKill,
-        ThiefMiss,
     }
     public static class Helpers
     {
@@ -380,15 +379,10 @@ namespace TheOtherRoles {
                 return MurderAttemptResult.SuppressKill;
             }
 
-            // Thief if hit crew only kill if needed, return miss!
+            // Thief if hit crew only kill if setting says so, but also kill the thief.
             else if (killer == Thief.thief && !target.Data.Role.IsImpostor && !new List<RoleInfo> {RoleInfo.jackal, RoleInfo.sheriff, RoleInfo.sidekick }.Contains(targetRole)) {
-                if (Thief.thief.inVent) HudManager.Instance.ImpostorVentButton.currentTarget.Use();
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedMurderPlayer, Hazel.SendOption.Reliable, -1);
-                writer.Write(killer.PlayerId);
-                writer.Write(killer.PlayerId);
-                writer.Write(0);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.uncheckedMurderPlayer(killer.PlayerId, killer.PlayerId, 0);
+                Thief.murderedCrew = true;
                 if (!Thief.canKillCrew && !targetRole.isNeutral) {
                     return MurderAttemptResult.SuppressKill;
                 }

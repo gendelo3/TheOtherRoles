@@ -161,6 +161,7 @@ namespace TheOtherRoles
             }
 
             // Special roles
+            int count = infos.Count;  // Save list length in order to know if it has changed for the role
             if (p == Jester.jester) infos.Add(jester);
             if (p == Mayor.mayor) infos.Add(mayor);
             if (p == Portalmaker.portalmaker) infos.Add(portalmaker);
@@ -204,8 +205,8 @@ namespace TheOtherRoles
             if (p == Thief.thief) infos.Add(thief);
 
             // Default roles
-            if (infos.Count == 0 && p.Data.Role.IsImpostor) infos.Add(impostor); // Just Impostor
-            if (infos.Count == 0 && !p.Data.Role.IsImpostor) infos.Add(crewmate); // Just Crewmate
+            if (infos.Count == count && p.Data.Role.IsImpostor) infos.Add(impostor); // Just Impostor
+            if (infos.Count == count && !p.Data.Role.IsImpostor) infos.Add(crewmate); // Just Crewmate
 
             return infos;
         }

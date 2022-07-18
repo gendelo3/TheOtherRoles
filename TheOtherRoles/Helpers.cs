@@ -419,6 +419,17 @@ namespace TheOtherRoles {
             return team;
         }
 
+        public static bool isNeutral(PlayerControl player) {
+            return Arsonist.arsonist == player ||
+                Jester.jester == player || 
+                Vulture.vulture == player || 
+                Lawyer.lawyer == player ||
+                Pursuer.pursuer == player || 
+                Jackal.jackal == player ||
+                Jackal.formerJackals.Contains(player) ||
+                Sidekick.sidekick == player;
+        }
+
 
         public static bool zoomOutStatus = false;
         public static void toggleZoom(bool reset=false) {

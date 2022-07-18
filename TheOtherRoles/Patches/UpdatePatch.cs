@@ -193,14 +193,16 @@ namespace TheOtherRoles.Patches {
                             player.NameText.text += suffix;
             }
 
-            // Lawyer
-            if (Lawyer.lawyer != null && Lawyer.target != null && Lawyer.lawyer == CachedPlayer.LocalPlayer.PlayerControl) {
-                string suffix = Helpers.cs(Lawyer.color, " §");
-                Lawyer.target.cosmetics.nameText.text += suffix;
+            // Lawyer or Prosecutor
+            if ((Lawyer.lawyer != null && Lawyer.target != null && Lawyer.lawyer == CachedPlayer.LocalPlayer.PlayerControl)) {
+                Color color = Lawyer.color;
+                PlayerControl target = Lawyer.target;
+                string suffix = Helpers.cs(color, " §");
+                target.cosmetics.nameText.text += suffix;
 
                 if (MeetingHud.Instance != null)
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                        if (player.TargetPlayerId == Lawyer.target.PlayerId)
+                        if (player.TargetPlayerId == target.PlayerId)
                             player.NameText.text += suffix;
             }
 

@@ -17,7 +17,7 @@ namespace TheOtherRoles.Patches {
         JesterWin = 13,
         ArsonistWin = 14,
         VultureWin = 15,
-        LawyerSoloWin = 16
+        ProsecutorWin = 16
     }
 
     enum WinCondition {
@@ -29,9 +29,9 @@ namespace TheOtherRoles.Patches {
         MiniLose,
         ArsonistWin,
         VultureWin,
-        LawyerSoloWin,
         AdditionalLawyerBonusWin,
-        AdditionalAlivePursuerWin
+        AdditionalAlivePursuerWin,
+        ProsecutorWin
     }
 
     static class AdditionalTempData {
@@ -99,7 +99,7 @@ namespace TheOtherRoles.Patches {
             bool loversWin = Lovers.existingAndAlive() && (gameOverReason == (GameOverReason)CustomGameOverReason.LoversWin || (TempData.DidHumansWin(gameOverReason) && !Lovers.existingWithKiller())); // Either they win if they are among the last 3 players, or they win if they are both Crewmates and both alive and the Crew wins (Team Imp/Jackal Lovers can only win solo wins)
             bool teamJackalWin = gameOverReason == (GameOverReason)CustomGameOverReason.TeamJackalWin && ((Jackal.jackal != null && !Jackal.jackal.Data.IsDead) || (Sidekick.sidekick != null && !Sidekick.sidekick.Data.IsDead));
             bool vultureWin = Vulture.vulture != null && gameOverReason == (GameOverReason)CustomGameOverReason.VultureWin;
-            bool lawyerSoloWin = Lawyer.lawyer != null && gameOverReason == (GameOverReason)CustomGameOverReason.LawyerSoloWin;
+            bool prosecutorWin = Lawyer.lawyer != null && gameOverReason == (GameOverReason)CustomGameOverReason.ProsecutorWin;
 
             bool isPursurerLose = jesterWin || arsonistWin || miniLose || vultureWin || teamJackalWin;
 
@@ -134,6 +134,14 @@ namespace TheOtherRoles.Patches {
                 WinningPlayerData wpd = new WinningPlayerData(Vulture.vulture.Data);
                 TempData.winners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.VultureWin;
+            }
+
+            // Jester win
+            else if (prosecutorWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(Lawyer.lawyer.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.ProsecutorWin;
             }
 
             // Lovers win conditions
@@ -182,16 +190,8 @@ namespace TheOtherRoles.Patches {
                 }
             }
 
-            // Lawyer solo win 
-            else if (lawyerSoloWin && !Pursuer.notAckedExiled) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Lawyer.lawyer.Data);
-                TempData.winners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.LawyerSoloWin;
-            }
-
             // Possible Additional winner: Lawyer
-            if (!lawyerSoloWin && Lawyer.lawyer != null && Lawyer.target != null && (!Lawyer.target.Data.IsDead || Lawyer.target == Jester.jester) && !Pursuer.notAckedExiled) {
+            if (Lawyer.lawyer != null && Lawyer.target != null && (!Lawyer.target.Data.IsDead || Lawyer.target == Jester.jester) && !Pursuer.notAckedExiled && !Lawyer.isProsecutor) {
                 WinningPlayerData winningClient = null;
                 foreach (WinningPlayerData winner in TempData.winners.GetFastEnumerator()) {
                     if (winner.PlayerName == Lawyer.target.Data.PlayerName)
@@ -283,8 +283,8 @@ namespace TheOtherRoles.Patches {
                 textRenderer.text = "Vulture Wins";
                 textRenderer.color = Vulture.color;
             }
-            else if (AdditionalTempData.winCondition == WinCondition.LawyerSoloWin) {
-                textRenderer.text = "Lawyer Wins";
+            else if (AdditionalTempData.winCondition == WinCondition.ProsecutorWin) {
+                textRenderer.text = "Prosecutor Wins";
                 textRenderer.color = Lawyer.color;
             }
             else if (AdditionalTempData.winCondition == WinCondition.LoversTeamWin) {
@@ -351,11 +351,11 @@ namespace TheOtherRoles.Patches {
             var statistics = new PlayerStatistics(__instance);
             if (CheckAndEndGameForMiniLose(__instance)) return false;
             if (CheckAndEndGameForJesterWin(__instance)) return false;
-            if (CheckAndEndGameForLawyerMeetingWin(__instance)) return false;
             if (CheckAndEndGameForArsonistWin(__instance)) return false;
             if (CheckAndEndGameForVultureWin(__instance)) return false;
             if (CheckAndEndGameForSabotageWin(__instance)) return false;
             if (CheckAndEndGameForTaskWin(__instance)) return false;
+            if (CheckAndEndGameForProsecutorWin(__instance)) return false;
             if (CheckAndEndGameForLoverWin(__instance, statistics)) return false;
             if (CheckAndEndGameForJackalWin(__instance, statistics)) return false;
             if (CheckAndEndGameForImpostorWin(__instance, statistics)) return false;
@@ -398,15 +398,6 @@ namespace TheOtherRoles.Patches {
             }
             return false;
         }
-        
-        private static bool CheckAndEndGameForLawyerMeetingWin(ShipStatus __instance) {
-            if (Lawyer.triggerLawyerWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.LawyerSoloWin, false);
-                return true;
-            }
-            return false;
-        }
 
         private static bool CheckAndEndGameForSabotageWin(ShipStatus __instance) {
             if (MapUtilities.Systems == null) return false;
@@ -438,6 +429,15 @@ namespace TheOtherRoles.Patches {
             if (GameData.Instance.TotalTasks > 0 && GameData.Instance.TotalTasks <= GameData.Instance.CompletedTasks) {
                 __instance.enabled = false;
                 ShipStatus.RpcEndGame(GameOverReason.HumansByTask, false);
+                return true;
+            }
+            return false;
+        }
+
+        private static bool CheckAndEndGameForProsecutorWin(ShipStatus __instance) {
+            if (Lawyer.triggerProsecutorWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ProsecutorWin, false);
                 return true;
             }
             return false;

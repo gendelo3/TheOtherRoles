@@ -1370,7 +1370,8 @@ namespace TheOtherRoles
         public static PlayerControl target;
         public static Color color = new Color32(134, 153, 25, byte.MaxValue);
         public static Sprite targetSprite;
-        public static bool triggerLawyerWin = false;
+        public static bool triggerProsecutorWin = false;
+        public static bool isProsecutor = false;
 
         public static float vision = 1f;
         public static bool lawyerKnowsRole = false;
@@ -1389,8 +1390,8 @@ namespace TheOtherRoles
                 target = null;
                 targetWasGuessed = false;
             }
-            triggerLawyerWin = false;
-
+            isProsecutor = false;
+            triggerProsecutorWin = false;
             vision = CustomOptionHolder.lawyerVision.getFloat();
             lawyerKnowsRole = CustomOptionHolder.lawyerKnowsRole.getBool();
             targetCanBeJester = CustomOptionHolder.lawyerTargetCanBeJester.getBool();

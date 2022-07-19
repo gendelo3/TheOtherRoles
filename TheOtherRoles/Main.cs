@@ -24,7 +24,7 @@ namespace TheOtherRoles
     {
         public const string Id = "me.eisbison.theotherroles";
         public const string VersionString = "4.1.6";
-        public static uint isBeta = 0;  // amount of days for the build to be usable (0 for infinite!)
+        public static uint betaDays = 1;  // amount of days for the build to be usable (0 for infinite!)
 
         public static Version Version = Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -84,11 +84,7 @@ namespace TheOtherRoles
             Logger = Log;
             Instance = this;
 
-            if (isBeta > 0) {
-                var compileTime = new DateTime(Builtin.CompileTime, DateTimeKind.Utc);  // This may show as an error, but it is not, compilation will work!
-                if ((DateTime.Now - compileTime).TotalDays > isBeta ) return;  // Don't load TOR!
-                else Logger.LogMessage($"Beta will remain runnable for {(DateTime.Now - compileTime).TotalDays - isBeta} days!");
-            }
+            Helpers.checkBeta(); // Exit if running an expired beta
 
             DebugMode = Config.Bind("Custom", "Enable Debug Mode", false);
             GhostsSeeTasks = Config.Bind("Custom", "Ghosts See Remaining Tasks", true);

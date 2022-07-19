@@ -10,6 +10,7 @@ using HarmonyLib;
 using Hazel;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
+using System.Threading.Tasks;
 
 namespace TheOtherRoles {
 
@@ -434,6 +435,18 @@ namespace TheOtherRoles {
             HudManagerStartPatch.zoomOutButton.Sprite = zoomOutStatus ? Helpers.loadSpriteFromResources("TheOtherRoles.Resources.PlusButton.png", 75f) : Helpers.loadSpriteFromResources("TheOtherRoles.Resources.MinusButton.png", 150f);
             HudManagerStartPatch.zoomOutButton.PositionOffset = zoomOutStatus ? new Vector3(0f, 3f, 0) : new Vector3(0.4f, 2.8f, 0);
             ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height); // This will move button positions to the correct position.
+        }
+
+        public static void checkBeta() {
+            if (TheOtherRolesPlugin.betaDays > 0) {
+                var compileTime = new DateTime(Builtin.CompileTime, DateTimeKind.Utc);  // This may show as an error, but it is not, compilation will work!
+                if ((DateTime.Now - compileTime).TotalDays > TheOtherRolesPlugin.betaDays) {
+                    TheOtherRolesPlugin.Logger.LogMessage($"Beta expired!");
+                    BepInExUpdater.MessageBox(IntPtr.Zero, "BETA is expired. You cannot play this version anymore.", "The Other Roles", 1);
+                    Application.Quit();
+
+                } else TheOtherRolesPlugin.Logger.LogMessage($"Beta will remain runnable for {(DateTime.Now - compileTime).TotalDays - TheOtherRolesPlugin.betaDays} days!");
+            }
         }
         
         public static object TryCast(this Il2CppObjectBase self, Type type)

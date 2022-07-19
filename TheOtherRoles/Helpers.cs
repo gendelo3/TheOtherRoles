@@ -312,7 +312,7 @@ namespace TheOtherRoles {
 
         public static bool roleCanUseVents(this PlayerControl player) {
             bool roleCouldUse = false;
-            if (Engineer.engineer != null && Engineer.engineer == player || Thief.thief != null && Thief.thief == player)
+            if (Engineer.engineer != null && Engineer.engineer == player)
                 roleCouldUse = true;
             else if (Jackal.canUseVents && Jackal.jackal != null && Jackal.jackal == player)
                 roleCouldUse = true;
@@ -321,6 +321,8 @@ namespace TheOtherRoles {
             else if (Spy.canEnterVents && Spy.spy != null && Spy.spy == player)
                 roleCouldUse = true;
             else if (Vulture.canUseVents && Vulture.vulture != null && Vulture.vulture == player)
+                roleCouldUse = true;
+            else if (Thief.canUseVents &&  Thief.thief != null && Thief.thief == player)
                 roleCouldUse = true;
             else if (player.Data?.Role != null && player.Data.Role.CanVent)  {
                 if (Janitor.janitor != null && Janitor.janitor == CachedPlayer.LocalPlayer.PlayerControl)

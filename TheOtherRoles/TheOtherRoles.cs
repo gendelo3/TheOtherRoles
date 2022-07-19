@@ -1527,14 +1527,16 @@ namespace TheOtherRoles
 
         public static bool hasImpostorVision;
         public static bool canKillOutOfVents;
+        public static bool canUseVents;
 
         public static void clearAndReload() {
             thief = null;
             murderedCrew = false;
             currentTarget = null;
             canKillCrew = CustomOptionHolder.thiefKillsCrew.getBool(); // todo option
-            hasImpostorVision = CustomOptionHolder.hasImpVision.getBool();  // todo option and implementation
+            hasImpostorVision = CustomOptionHolder.thiefHasImpVision.getBool();  // todo option and implementation
             cooldown = CustomOptionHolder.thiefCooldown.getFloat();
+            canUseVents = CustomOptionHolder.thiefCanUseVents.getBool();
         }
     }
 

@@ -52,6 +52,7 @@ namespace TheOtherRoles
         BountyHunter,
         Vulture,
         Medium,
+        Trapper,
         Lawyer,
         Pursuer,
         Witch,
@@ -131,7 +132,9 @@ namespace TheOtherRoles
         SetFirstKill,
         Invert,
         SetTiebreak,
-        SetInvisible
+        SetInvisible,
+        SetTrap,
+        TriggerTrap
     }
 
     public static class RPCProcedure {
@@ -144,6 +147,7 @@ namespace TheOtherRoles
             NinjaTrace.clearTraces();
             Portal.clearPortals();
             Bloodytrail.resetSprites();
+            Trap.clearTraps();
             clearAndReloadMapOptions();
             clearAndReloadRoles();
             clearGameHistory();
@@ -302,6 +306,9 @@ namespace TheOtherRoles
                         break;
                     case RoleId.Medium:
                         Medium.medium = player;
+                        break;
+                    case RoleId.Trapper:
+                        Trapper.trapper = player;
                         break;
                     case RoleId.Lawyer:
                         Lawyer.lawyer = player;
@@ -543,6 +550,8 @@ namespace TheOtherRoles
                 
             if (Medium.medium != null && Medium.medium == player)
                 Medium.medium = oldShifter;
+            if (Trapper.trapper != null && Trapper.trapper == player)
+                Trapper.trapper = oldShifter;
 
             // Set cooldowns to max for both players
             if (CachedPlayer.LocalPlayer.PlayerControl == oldShifter || CachedPlayer.LocalPlayer.PlayerControl == player)
@@ -679,6 +688,7 @@ namespace TheOtherRoles
             if (player == Spy.spy) Spy.clearAndReload();
             if (player == SecurityGuard.securityGuard) SecurityGuard.clearAndReload();
             if (player == Medium.medium) Medium.clearAndReload();
+            if (player == Trapper.trapper) Trapper.clearAndReload();
 
             // Impostor roles
             if (player == Morphling.morphling) Morphling.clearAndReload();
@@ -964,9 +974,19 @@ namespace TheOtherRoles
             MapOptions.firstKillPlayer = target;
         }
 
-        public static void setTiebreak()
-        {
+        public static void setTiebreak() {
             Tiebreaker.isTiebreak = true;
+        }
+        
+        public static void setTrap() {
+            if (Trapper.trapper == null) return;
+            Trapper.charges -= 1;
+            Vector3 position = Trapper.trapper.transform.position;
+            new Trap(position);
+        }
+
+        public static void triggerTrap(byte playerId, byte trapId) {
+            Trap.triggerTrap(playerId, trapId);
         }
     }   
 
@@ -1190,7 +1210,15 @@ namespace TheOtherRoles
                     byte invisiblePlayer = reader.ReadByte();
                     byte invisibleFlag = reader.ReadByte();
                     RPCProcedure.setInvisible(invisiblePlayer, invisibleFlag);
-                    break;  
+                    break;
+                case (byte)CustomRPC.SetTrap:
+                    RPCProcedure.setTrap();
+                    break;
+                case (byte)CustomRPC.TriggerTrap:
+                    byte trappedPlayer = reader.ReadByte();
+                    byte trapId = reader.ReadByte();
+                    RPCProcedure.triggerTrap(trappedPlayer, trapId);
+                    break;
             }
         }
     }

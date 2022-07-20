@@ -563,7 +563,24 @@ namespace TheOtherRoles.Patches {
                         FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(CachedPlayer.LocalPlayer.PlayerControl, $"{msg}");
                     }
                 }
-                
+                // Add trapped Info into Trapper chat
+                if (CachedPlayer.LocalPlayer.PlayerControl == Trapper.trapper) {
+                    Trapper.trappedRoles.OrderBy(x => rnd.Next()).ToList();
+                    string msg = $"Trapped roles: ";
+                    int i = 1;
+                    string postfix = ", ";
+                    foreach (string s in Trapper.trappedRoles) {
+                        if (i == Trapper.trappedRoles.Count) postfix = "";
+                        msg += s + postfix;
+                        i++;
+                    }
+                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(CachedPlayer.LocalPlayer.PlayerControl, $"{msg}");
+                }
+                Trapper.trappedRoles = new List<string>();
+
+                // Remove revealed traps
+                Trap.clearRevealedTraps();
+
                 // Reset zoomed out ghosts
                 Helpers.toggleZoom(reset: true);
 

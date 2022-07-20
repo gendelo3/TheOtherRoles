@@ -55,6 +55,7 @@ namespace TheOtherRoles
             Pursuer.clearAndReload();
             Witch.clearAndReload();
             Ninja.clearAndReload();
+            Trapper.clearAndReload();
 
             // Modifier
             Bait.clearAndReload();
@@ -1511,6 +1512,42 @@ namespace TheOtherRoles
             if (arrow?.arrow != null) UnityEngine.Object.Destroy(arrow.arrow);
             arrow = new Arrow(Color.black);
             if (arrow.arrow != null) arrow.arrow.SetActive(false);
+        }
+    }
+
+    public static class Trapper {
+        public static PlayerControl trapper;
+        public static Color color = new Color32(238, 112, 46, byte.MaxValue);
+
+        public static float cooldown = 30f;
+        public static int maxCharges = 5;
+        public static int rechargeTasksNumber = 3;
+        public static int rechargedTasks = 3;
+        public static int charges = 1;
+        public static List<string> trappedRoles = new List<string>();
+
+        private static Sprite trapButtonSprite;
+        private static Sprite trapSprite;
+        public static Sprite getButtonSprite() {
+            if (trapButtonSprite) return trapButtonSprite;
+            trapButtonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.DouseButton.png", 115f);
+            return trapButtonSprite;
+        }
+
+        public static Sprite getTrapSprite() {
+            if (trapSprite) return trapSprite;
+            trapSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.AnimatedVentSealed.png", 115f);
+            return trapSprite;
+        }
+
+        public static void clearAndReload() {
+            trapper = null;
+            cooldown = CustomOptionHolder.trapperCooldown.getFloat();
+            maxCharges = Mathf.RoundToInt(CustomOptionHolder.trapperMaxCharges.getFloat());
+            rechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.trapperRechargeTasksNumber.getFloat());
+            rechargedTasks = Mathf.RoundToInt(CustomOptionHolder.trapperRechargeTasksNumber.getFloat());
+            charges = Mathf.RoundToInt(CustomOptionHolder.trapperMaxCharges.getFloat()) / 2;
+            trappedRoles = new List<string>();
         }
     }
 

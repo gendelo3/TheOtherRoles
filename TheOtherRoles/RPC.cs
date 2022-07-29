@@ -12,6 +12,7 @@ using UnityEngine;
 using System;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
+using TheOtherRoles.CustomGameModes;
 
 namespace TheOtherRoles
 {
@@ -86,6 +87,7 @@ namespace TheOtherRoles
         UncheckedCmdReportDeadBody,
         UncheckedExilePlayer,
         DynamicMapOption,
+        ShareGamemode,
 
         // Role functionality
 
@@ -131,7 +133,8 @@ namespace TheOtherRoles
         SetFirstKill,
         Invert,
         SetTiebreak,
-        SetInvisible
+        SetInvisible,
+        SetGuesserGm
     }
 
     public static class RPCProcedure {
@@ -174,6 +177,10 @@ namespace TheOtherRoles
                     player.Data.IsDead = true;
                 }
             }
+        }
+
+        public static void shareGamemode(byte gm) {
+            MapOptions.gameMode = (CustomGamemodes) gm;
         }
 
         public static void workaroundSetRoles(byte numberOfRoles, MessageReader reader)
@@ -904,7 +911,7 @@ namespace TheOtherRoles
             dyingTarget.Exiled();
             byte partnerId = dyingLoverPartner != null ? dyingLoverPartner.PlayerId : dyingTargetId;
 
-            Guesser.remainingShots(killerId, true);
+            HandleGuesser.remainingShots(killerId, true);
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(dyingTarget.KillSfx, false, 0.8f);
             if (MeetingHud.Instance) {
                 foreach (PlayerVoteArea pva in MeetingHud.Instance.playerStates) {
@@ -935,9 +942,9 @@ namespace TheOtherRoles
                 }
             
             PlayerControl guessedTarget = Helpers.playerById(guessedTargetId);
-            if (Guesser.showInfoInGhostChat && CachedPlayer.LocalPlayer.Data.IsDead && guessedTarget != null) {
+            if (CachedPlayer.LocalPlayer.Data.IsDead && guessedTarget != null && guesser != null) {
                 RoleInfo roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
-                string msg = $"Guesser guessed the role {roleInfo?.name ?? ""} for {guessedTarget.Data.PlayerName}!";
+                string msg = $"{guesser.Data.PlayerName} guessed the role {roleInfo?.name ?? ""} for {guessedTarget.Data.PlayerName}!";
                 if (AmongUsClient.Instance.AmClient && FastDestroyableSingleton<HudManager>.Instance)
                     FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(guesser, msg);
                 if (msg.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0)
@@ -967,6 +974,12 @@ namespace TheOtherRoles
         public static void setTiebreak()
         {
             Tiebreaker.isTiebreak = true;
+        }
+
+        public static void setGuesserGm (byte playerId) {
+            PlayerControl target = Helpers.playerById(playerId);
+            if (target == null) return;
+            new GuesserGM(target);
         }
     }   
 
@@ -1190,7 +1203,15 @@ namespace TheOtherRoles
                     byte invisiblePlayer = reader.ReadByte();
                     byte invisibleFlag = reader.ReadByte();
                     RPCProcedure.setInvisible(invisiblePlayer, invisibleFlag);
-                    break;  
+                    break;
+                case (byte)CustomRPC.ShareGamemode:
+                    byte gm = reader.ReadByte();
+                    RPCProcedure.shareGamemode(gm);
+                    break;
+                case (byte)CustomRPC.SetGuesserGm:
+                    byte guesserGm = reader.ReadByte();
+                    RPCProcedure.setGuesserGm(guesserGm);
+                    break;
             }
         }
     }

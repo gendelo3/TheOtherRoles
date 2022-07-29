@@ -17,7 +17,8 @@ namespace TheOtherRoles {
             Impostor,
             Neutral,
             Crewmate,
-            Modifier
+            Modifier,
+            Guesser
         }
 
         public static List<CustomOption> options = new List<CustomOption>();
@@ -144,6 +145,29 @@ namespace TheOtherRoles {
     [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Start))]
     class GameOptionsMenuStartPatch {
         public static void Postfix(GameOptionsMenu __instance) {
+
+            switch (MapOptions.gameMode) {
+                case CustomGamemodes.Classic:
+                    createClassicTabs();
+                    break;
+                case CustomGamemodes.Guesser:
+                    createGuesserTabs();
+                    break;
+            }
+
+            // Adapt task count for main options
+
+            var commonTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumCommonTasks").TryCast<NumberOption>();
+            if(commonTasksOption != null) commonTasksOption.ValidRange = new FloatRange(0f, 4f);
+
+            var shortTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumShortTasks").TryCast<NumberOption>();
+            if(shortTasksOption != null) shortTasksOption.ValidRange = new FloatRange(0f, 23f);
+
+            var longTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumLongTasks").TryCast<NumberOption>();
+            if(longTasksOption != null) longTasksOption.ValidRange = new FloatRange(0f, 15f);
+        }
+
+        private static void createClassicTabs() {
             if (GameObject.Find("TORSettings") != null) { // Settings setup has already been performed, fixing the title of the tab and returning
                 GameObject.Find("TORSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("The Other Roles Settings");
                 return;
@@ -170,7 +194,7 @@ namespace TheOtherRoles {
             if (template == null) return;
             var gameSettings = GameObject.Find("Game Settings");
             var gameSettingMenu = UnityEngine.Object.FindObjectsOfType<GameSettingMenu>().FirstOrDefault();
-            
+
             var torSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
             var torMenu = torSettings.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
             torSettings.name = "TORSettings";
@@ -250,7 +274,7 @@ namespace TheOtherRoles {
                     modifierTabHighlight.enabled = false;
                     if (copiedIndex == 0) {
                         gameSettingMenu.RegularGameSettings.SetActive(true);
-                        gameSettingMenu.GameSettingsHightlight.enabled = true;  
+                        gameSettingMenu.GameSettingsHightlight.enabled = true;
                     } else if (copiedIndex == 1) {
                         gameSettingMenu.RolesSettings.gameObject.SetActive(true);
                         gameSettingMenu.RolesSettingsHightlight.enabled = true;
@@ -275,7 +299,7 @@ namespace TheOtherRoles {
 
             foreach (OptionBehaviour option in torMenu.GetComponentsInChildren<OptionBehaviour>())
                 UnityEngine.Object.Destroy(option.gameObject);
-            List<OptionBehaviour> torOptions = new List<OptionBehaviour>();          
+            List<OptionBehaviour> torOptions = new List<OptionBehaviour>();
 
             foreach (OptionBehaviour option in impostorMenu.GetComponentsInChildren<OptionBehaviour>())
                 UnityEngine.Object.Destroy(option.gameObject);
@@ -326,17 +350,221 @@ namespace TheOtherRoles {
 
             modifierMenu.Children = modifierOptions.ToArray();
             modifierSettings.gameObject.SetActive(false);
+        }
 
-            // Adapt task count for main options
+        private static void createGuesserTabs() {
+            if (GameObject.Find("TORSettings") != null) { // Settings setup has already been performed, fixing the title of the tab and returning
+                GameObject.Find("TORSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("The Other Roles Settings");
+                return;
+            }
+            if (GameObject.Find("GuesserSettings") != null) {
+                GameObject.Find("GuesserSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Guesser Mode Settings");
+                return;
+            }
+            if (GameObject.Find("ImpostorSettings") != null) {
+                GameObject.Find("ImpostorSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Impostor Roles Settings");
+                return;
+            }
+            if (GameObject.Find("NeutralSettings") != null) {
+                GameObject.Find("NeutralSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Neutral Roles Settings");
+                return;
+            }
+            if (GameObject.Find("CrewmateSettings") != null) {
+                GameObject.Find("CrewmateSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Crewmate Roles Settings");
+                return;
+            }
+            if (GameObject.Find("ModifierSettings") != null) {
+                GameObject.Find("ModifierSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Modifier Settings");
+                return;
+            }
 
-            var commonTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumCommonTasks").TryCast<NumberOption>();
-            if(commonTasksOption != null) commonTasksOption.ValidRange = new FloatRange(0f, 4f);
+            // Setup TOR tab
+            var template = UnityEngine.Object.FindObjectsOfType<StringOption>().FirstOrDefault();
+            if (template == null) return;
+            var gameSettings = GameObject.Find("Game Settings");
+            var gameSettingMenu = UnityEngine.Object.FindObjectsOfType<GameSettingMenu>().FirstOrDefault();
 
-            var shortTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumShortTasks").TryCast<NumberOption>();
-            if(shortTasksOption != null) shortTasksOption.ValidRange = new FloatRange(0f, 23f);
+            var torSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
+            var torMenu = torSettings.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
+            torSettings.name = "TORSettings";
 
-            var longTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumLongTasks").TryCast<NumberOption>();
-            if(longTasksOption != null) longTasksOption.ValidRange = new FloatRange(0f, 15f);
+            var guesserSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
+            var guesserMenu = guesserSettings.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
+            guesserSettings.name = "GuesserSettings";
+
+            var impostorSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
+            var impostorMenu = impostorSettings.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
+            impostorSettings.name = "ImpostorSettings";
+
+            var neutralSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
+            var neutralMenu = neutralSettings.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
+            neutralSettings.name = "NeutralSettings";
+
+            var crewmateSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
+            var crewmateMenu = crewmateSettings.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
+            crewmateSettings.name = "CrewmateSettings";
+
+            var modifierSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
+            var modifierMenu = modifierSettings.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
+            modifierSettings.name = "ModifierSettings";
+
+            var roleTab = GameObject.Find("RoleTab");
+            var gameTab = GameObject.Find("GameTab");
+
+            var torTab = UnityEngine.Object.Instantiate(roleTab, gameTab.transform.parent);
+            var torTabHighlight = torTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
+            torTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.TabIcon.png", 100f);
+
+            var guesserTab = UnityEngine.Object.Instantiate(roleTab, torTab.transform);
+            var guesserTabHighlight = guesserTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
+            guesserTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.TabGuesserSettings.png", 100f);
+            guesserTab.name = "GuesserTab";
+
+            var impostorTab = UnityEngine.Object.Instantiate(roleTab, guesserTab.transform);
+            var impostorTabHighlight = impostorTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
+            impostorTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.TabIconImpostor.png", 100f);
+            impostorTab.name = "ImpostorTab";
+
+            var neutralTab = UnityEngine.Object.Instantiate(roleTab, impostorTab.transform);
+            var neutralTabHighlight = neutralTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
+            neutralTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.TabIconNeutral.png", 100f);
+            neutralTab.name = "NeutralTab";
+
+            var crewmateTab = UnityEngine.Object.Instantiate(roleTab, neutralTab.transform);
+            var crewmateTabHighlight = crewmateTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
+            crewmateTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.TabIconCrewmate.png", 100f);
+            crewmateTab.name = "CrewmateTab";
+
+            var modifierTab = UnityEngine.Object.Instantiate(roleTab, crewmateTab.transform);
+            var modifierTabHighlight = modifierTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
+            modifierTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.TabIconModifier.png", 100f);
+            modifierTab.name = "ModifierTab";
+
+            roleTab.active = false;
+            // Position of Tab Icons
+            gameTab.transform.position += Vector3.left * 3f;
+            torTab.transform.position += Vector3.left * 3f;
+            guesserTab.transform.localPosition = Vector3.right * 1f;
+            impostorTab.transform.localPosition = Vector3.right * 1f;
+            neutralTab.transform.localPosition = Vector3.right * 1f;
+            crewmateTab.transform.localPosition = Vector3.right * 1f;
+            modifierTab.transform.localPosition = Vector3.right * 1f;
+
+            var tabs = new GameObject[] { gameTab, torTab, impostorTab, neutralTab, crewmateTab, modifierTab, guesserTab };
+            for (int i = 0; i < tabs.Length; i++) {
+                var button = tabs[i].GetComponentInChildren<PassiveButton>();
+                if (button == null) continue;
+                int copiedIndex = i;
+                button.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+                button.OnClick.AddListener((System.Action)(() => {
+                    gameSettingMenu.RegularGameSettings.SetActive(false);
+                    torSettings.gameObject.SetActive(false);
+                    impostorSettings.gameObject.SetActive(false);
+                    guesserSettings.gameObject.SetActive(false);
+                    neutralSettings.gameObject.SetActive(false);
+                    crewmateSettings.gameObject.SetActive(false);
+                    modifierSettings.gameObject.SetActive(false);
+                    gameSettingMenu.GameSettingsHightlight.enabled = false;
+                    torTabHighlight.enabled = false;
+                    guesserTabHighlight.enabled = false;
+                    impostorTabHighlight.enabled = false;
+                    neutralTabHighlight.enabled = false;
+                    crewmateTabHighlight.enabled = false;
+                    modifierTabHighlight.enabled = false;
+
+                    if (copiedIndex == 0) {
+                        gameSettingMenu.RegularGameSettings.SetActive(true);
+                        gameSettingMenu.GameSettingsHightlight.enabled = true;
+                    }
+                    else if (copiedIndex == 1) {
+                        torSettings.gameObject.SetActive(true);
+                        torTabHighlight.enabled = true;
+                    }
+                    else if (copiedIndex == 2) {
+                        impostorSettings.gameObject.SetActive(true);
+                        impostorTabHighlight.enabled = true;
+                    }
+                    else if (copiedIndex == 3) {
+                        neutralSettings.gameObject.SetActive(true);
+                        neutralTabHighlight.enabled = true;
+                    }
+                    else if (copiedIndex == 4) {
+                        crewmateSettings.gameObject.SetActive(true);
+                        crewmateTabHighlight.enabled = true;
+                    }
+                    else if (copiedIndex == 5) {
+                        modifierSettings.gameObject.SetActive(true);
+                        modifierTabHighlight.enabled = true;
+                    }
+                    else if (copiedIndex == 6) {
+                        guesserSettings.gameObject.SetActive(true);
+                        guesserTabHighlight.enabled = true;
+                    }
+                }));
+            }
+
+            foreach (OptionBehaviour option in torMenu.GetComponentsInChildren<OptionBehaviour>())
+                UnityEngine.Object.Destroy(option.gameObject);
+            List<OptionBehaviour> torOptions = new List<OptionBehaviour>();
+
+            foreach (OptionBehaviour option in guesserMenu.GetComponentsInChildren<OptionBehaviour>())
+                UnityEngine.Object.Destroy(option.gameObject);
+            List<OptionBehaviour> guesserOptions = new List<OptionBehaviour>();
+
+            foreach (OptionBehaviour option in impostorMenu.GetComponentsInChildren<OptionBehaviour>())
+                UnityEngine.Object.Destroy(option.gameObject);
+            List<OptionBehaviour> impostorOptions = new List<OptionBehaviour>();
+
+            foreach (OptionBehaviour option in neutralMenu.GetComponentsInChildren<OptionBehaviour>())
+                UnityEngine.Object.Destroy(option.gameObject);
+            List<OptionBehaviour> neutralOptions = new List<OptionBehaviour>();
+
+            foreach (OptionBehaviour option in crewmateMenu.GetComponentsInChildren<OptionBehaviour>())
+                UnityEngine.Object.Destroy(option.gameObject);
+            List<OptionBehaviour> crewmateOptions = new List<OptionBehaviour>();
+
+            foreach (OptionBehaviour option in modifierMenu.GetComponentsInChildren<OptionBehaviour>())
+                UnityEngine.Object.Destroy(option.gameObject);
+            List<OptionBehaviour> modifierOptions = new List<OptionBehaviour>();
+
+
+            List<Transform> menus = new List<Transform>() { torMenu.transform, impostorMenu.transform, neutralMenu.transform, crewmateMenu.transform, modifierMenu.transform, guesserMenu.transform };
+            List<List<OptionBehaviour>> optionBehaviours = new List<List<OptionBehaviour>>() { torOptions, impostorOptions, neutralOptions, crewmateOptions, modifierOptions, guesserOptions };
+            List<int> exludedIds = new List<int> { 310, 311, 312, 313, 314, 315, 316, 317, 318 };
+
+            for (int i = 0; i < CustomOption.options.Count; i++) {
+                CustomOption option = CustomOption.options[i];
+                if (exludedIds.Contains(option.id)) continue;
+                if (option.optionBehaviour == null) {
+                    StringOption stringOption = UnityEngine.Object.Instantiate(template, menus[(int)option.type]);
+                    optionBehaviours[(int)option.type].Add(stringOption);
+                    stringOption.OnValueChanged = new Action<OptionBehaviour>((o) => { });
+                    stringOption.TitleText.text = option.name;
+                    stringOption.Value = stringOption.oldValue = option.selection;
+                    stringOption.ValueText.text = option.selections[option.selection].ToString();
+
+                    option.optionBehaviour = stringOption;
+                }
+                option.optionBehaviour.gameObject.SetActive(true);
+            }
+
+            torMenu.Children = torOptions.ToArray();
+            torSettings.gameObject.SetActive(false);
+
+            impostorMenu.Children = impostorOptions.ToArray();
+            impostorSettings.gameObject.SetActive(false);
+
+            neutralMenu.Children = neutralOptions.ToArray();
+            neutralSettings.gameObject.SetActive(false);
+
+            crewmateMenu.Children = crewmateOptions.ToArray();
+            crewmateSettings.gameObject.SetActive(false);
+
+            modifierMenu.Children = modifierOptions.ToArray();
+            modifierSettings.gameObject.SetActive(false);
+
+            guesserMenu.Children = guesserOptions.ToArray();
+            guesserSettings.gameObject.SetActive(false);
         }
     }
 
@@ -415,6 +643,8 @@ namespace TheOtherRoles {
                     continue;
                 if (GameObject.Find("ModifierSettings") && option.type != CustomOption.CustomOptionType.Modifier)
                     continue;
+                if (GameObject.Find("GuesserSettings") && option.type != CustomOption.CustomOptionType.Guesser)
+                    continue;
                 if (option?.optionBehaviour != null && option.optionBehaviour.gameObject != null) {
                     bool enabled = true;
                     var parent = option.parent;
@@ -481,6 +711,14 @@ namespace TheOtherRoles {
         private static string buildOptionsOfType(CustomOption.CustomOptionType type, bool headerOnly) {
             StringBuilder sb = new StringBuilder("\n");
             var options = CustomOption.options.Where(o => o.type == type);
+            if (MapOptions.gameMode == CustomGamemodes.Guesser) {
+                if (type == CustomOption.CustomOptionType.General)
+                    options = CustomOption.options.Where(o => o.type == type || o.type == CustomOption.CustomOptionType.Guesser);
+                List<int> remove = new List<int>{ 310, 311, 312, 313, 314, 315, 316, 317, 318 };
+                options = options.Where(x => !remove.Contains(x.id));
+            } else if (MapOptions.gameMode == CustomGamemodes.Classic) 
+                options = options.Where(x => !(x.type == CustomOption.CustomOptionType.Guesser));
+
             foreach (var option in options) {
                 if (option.parent == null) {
                     sb.AppendLine($"{option.name}: {option.selections[option.selection].ToString()}");

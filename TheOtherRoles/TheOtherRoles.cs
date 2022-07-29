@@ -47,7 +47,6 @@ namespace TheOtherRoles
             Warlock.clearAndReload();
             SecurityGuard.clearAndReload();
             Arsonist.clearAndReload();
-            Guesser.clearAndReload();
             BountyHunter.clearAndReload();
             Vulture.clearAndReload();
             Medium.clearAndReload();
@@ -65,6 +64,9 @@ namespace TheOtherRoles
             Mini.clearAndReload();
             Vip.clearAndReload();
             Invert.clearAndReload();
+
+            // Handle Guesser
+            HandleGuesser.clearAndReload();
         }
 
         public static class Jester {
@@ -1200,20 +1202,9 @@ namespace TheOtherRoles
         public static PlayerControl niceGuesser;
         public static PlayerControl evilGuesser;
         public static Color color = new Color32(255, 255, 0, byte.MaxValue);
-        private static Sprite targetSprite;
 
         public static int remainingShotsEvilGuesser = 2;
         public static int remainingShotsNiceGuesser = 2;
-        public static bool hasMultipleShotsPerMeeting = false;
-        public static bool showInfoInGhostChat = true;
-        public static bool killsThroughShield = true;
-        public static bool evilGuesserCanGuessSpy = true;
-        public static bool guesserCantGuessSnitch = false;
-        public static Sprite getTargetSprite() {
-            if (targetSprite) return targetSprite;
-            targetSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.TargetIcon.png", 150f);
-            return targetSprite;
-        }
 
         public static bool isGuesser (byte playerId) {
             if ((niceGuesser != null && niceGuesser.PlayerId == playerId) || (evilGuesser != null && evilGuesser.PlayerId == playerId)) return true;
@@ -1239,13 +1230,8 @@ namespace TheOtherRoles
         public static void clearAndReload() {
             niceGuesser = null;
             evilGuesser = null;
-            guesserCantGuessSnitch = CustomOptionHolder.guesserCantGuessSnitchIfTaksDone.getBool();
             remainingShotsEvilGuesser = Mathf.RoundToInt(CustomOptionHolder.guesserNumberOfShots.getFloat());
             remainingShotsNiceGuesser = Mathf.RoundToInt(CustomOptionHolder.guesserNumberOfShots.getFloat());
-            hasMultipleShotsPerMeeting = CustomOptionHolder.guesserHasMultipleShotsPerMeeting.getBool();
-            showInfoInGhostChat = CustomOptionHolder.guesserShowInfoInGhostChat.getBool();
-            killsThroughShield = CustomOptionHolder.guesserKillsThroughShield.getBool();
-            evilGuesserCanGuessSpy = CustomOptionHolder.guesserEvilCanKillSpy.getBool();
         }
     }
 

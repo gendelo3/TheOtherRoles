@@ -134,6 +134,18 @@ namespace TheOtherRoles.Patches {
                 __instance.PlayerCounter.text = currentText + suffix;
                 __instance.PlayerCounter.autoSizeTextContainer = true;
 
+                if (AmongUsClient.Instance.AmHost) {
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareGamemode, Hazel.SendOption.Reliable, -1);
+                    writer.Write((byte) MapOptions.gameMode);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.shareGamemode((byte) MapOptions.gameMode);
+                }
+
+                if (MapOptions.gameMode == CustomGamemodes.Guesser) {
+                    __instance.GameStartText.text = $"<color=#FFFFFF>GUESSER GAMEMODE\n</color>";
+                    __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 1.3f;
+                }
+
             }
         }
 

@@ -18,6 +18,11 @@ namespace TheOtherRoles {
         SuppressKill,
         BlankKill
     }
+
+    public enum CustomGamemodes {
+        Classic,
+        Guesser
+    }
     public static class Helpers
     {
 
@@ -417,6 +422,17 @@ namespace TheOtherRoles {
             }
             
             return team;
+        }
+
+        public static bool isNeutral(PlayerControl player) {
+            return Arsonist.arsonist == player ||
+                Jester.jester == player ||
+                Vulture.vulture == player ||
+                Lawyer.lawyer == player ||
+                Pursuer.pursuer == player ||
+                Jackal.jackal == player ||
+                Jackal.formerJackals.Contains(player) ||
+                Sidekick.sidekick == player;
         }
 
 

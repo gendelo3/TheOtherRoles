@@ -838,7 +838,16 @@ namespace TheOtherRoles.Patches {
                 HudManagerStartPatch.ninjaButton.MaxTimer = Ninja.cooldown * multiplier;
             }
         }
-    public static void Postfix(PlayerControl __instance) {
+
+        public static void trapperUpdate() {
+            if (Trapper.trapper == null || CachedPlayer.LocalPlayer.PlayerControl != Trapper.trapper || Trapper.trapper.Data.IsDead) return;
+            var (playerCompleted, _) = TasksHandler.taskInfo(Trapper.trapper.Data);
+            if (playerCompleted == Trapper.rechargedTasks) {
+                Trapper.rechargedTasks += Trapper.rechargeTasksNumber;
+                if (Trapper.maxCharges > Trapper.charges) Trapper.charges++;
+            }
+        }
+        public static void Postfix(PlayerControl __instance) {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
 
             // Mini and Morphling shrink
@@ -874,6 +883,7 @@ namespace TheOtherRoles.Patches {
                 // Vampire
                 vampireSetTarget();
                 Garlic.UpdateAll();
+                Trap.Update();
                 // Eraser
                 eraserSetTarget();
                 // Engineer
@@ -917,11 +927,11 @@ namespace TheOtherRoles.Patches {
                 ninjaSetTarget();
                 NinjaTrace.UpdateAll();
                 ninjaUpdate();
-                hackerUpdate();
                 swapperUpdate();
-
                 // Hacker
                 hackerUpdate();
+                // Trapper
+                trapperUpdate();
 
                 // --MODIFIER--
                 // Bait

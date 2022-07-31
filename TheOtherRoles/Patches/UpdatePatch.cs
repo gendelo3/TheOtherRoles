@@ -131,6 +131,8 @@ namespace TheOtherRoles.Patches {
                 setPlayerNameColor(Vulture.vulture, Vulture.color);
             } else if (Medium.medium != null && Medium.medium == localPlayer) {
                 setPlayerNameColor(Medium.medium, Medium.color);
+            } else if (Trapper.trapper != null && Trapper.trapper == localPlayer) {
+                setPlayerNameColor(Trapper.trapper, Trapper.color);
             } else if (Lawyer.lawyer != null && Lawyer.lawyer == localPlayer) {
                 setPlayerNameColor(Lawyer.lawyer, Lawyer.color);
             } else if (Pursuer.pursuer != null && Pursuer.pursuer == localPlayer) {

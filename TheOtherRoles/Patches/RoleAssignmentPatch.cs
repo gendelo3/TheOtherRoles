@@ -440,15 +440,20 @@ namespace TheOtherRoles.Patches {
             List<PlayerControl> crewPlayer = PlayerControl.AllPlayerControls.ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
             impPlayer.RemoveAll(x => !x.Data.Role.IsImpostor);
             neutralPlayer.RemoveAll(x => !Helpers.isNeutral(x));
-            crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor && Helpers.isNeutral(x));
+            crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor || Helpers.isNeutral(x));
             assignGuesserGamemodeToPlayers(crewPlayer, Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeCrewNumber.getFloat()));
-            assignGuesserGamemodeToPlayers(neutralPlayer, Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeNeutralNumber.getFloat()));
+            assignGuesserGamemodeToPlayers(neutralPlayer, Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeNeutralNumber.getFloat()), CustomOptionHolder.guesserForceJackalGuesser.getBool());
             assignGuesserGamemodeToPlayers(impPlayer, Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeImpNumber.getFloat()));
         }
 
-        private static void assignGuesserGamemodeToPlayers(List<PlayerControl> playerList, int count) {
+        private static void assignGuesserGamemodeToPlayers(List<PlayerControl> playerList, int count, bool forceJackal = false) {
             for (int i = 0; i < count && playerList.Count > 0; i++) {
                 var index = rnd.Next(0, playerList.Count);
+                if (forceJackal) {
+                    if (Jackal.jackal != null)
+                        index = playerList.FindIndex(x => x == Jackal.jackal);
+                    forceJackal = false;
+                }
                 byte playerId = playerList[index].PlayerId;
                 playerList.RemoveAt(index);
 

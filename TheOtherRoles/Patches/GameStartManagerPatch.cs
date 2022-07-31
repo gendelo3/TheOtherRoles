@@ -142,8 +142,8 @@ namespace TheOtherRoles.Patches {
                 }
 
                 if (MapOptions.gameMode == CustomGamemodes.Guesser) {
-                    __instance.GameStartText.text = $"<color=#FFFFFF>GUESSER GAMEMODE\n</color>";
-                    __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 1.3f;
+                    __instance.GameStartText.text += $"\n<color=#FFFFFF>GUESSER GAMEMODE\n</color>";
+                    __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 1f;
                 }
 
             }

@@ -317,6 +317,7 @@ namespace TheOtherRoles.Patches {
                 if (HandleGuesser.isGuesserGm && CachedPlayer.LocalPlayer.PlayerControl.Data.Role.IsImpostor && !HandleGuesser.evilGuesserCanGuessSpy && roleInfo.roleId == RoleId.Spy) continue;
                 // remove all roles that cannot spawn due to the settings from the ui.
                 RoleManagerSelectRolesPatch.RoleAssignmentData roleData = RoleManagerSelectRolesPatch.getRoleAssignmentData();
+                if (!roleData.neutralSettings.ContainsKey((byte)roleInfo.roleId) && !roleData.crewSettings.ContainsKey((byte)roleInfo.roleId) && !roleData.impSettings.ContainsKey((byte)roleInfo.roleId) && roleInfo.roleId != RoleId.Crewmate && roleInfo.roleId != RoleId.Impostor) continue;
                 if (roleData.neutralSettings.ContainsKey((byte)roleInfo.roleId) && roleData.neutralSettings[(byte)roleInfo.roleId] == 0) continue;
                 else if (roleData.impSettings.ContainsKey((byte)roleInfo.roleId) && roleData.impSettings[(byte)roleInfo.roleId] == 0) continue;
                 else if (roleData.crewSettings.ContainsKey((byte)roleInfo.roleId) && roleData.crewSettings[(byte)roleInfo.roleId] == 0) continue;

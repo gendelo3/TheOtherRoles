@@ -18,7 +18,7 @@ namespace TheOtherRoles.Objects {
         private static Sprite trapSprite;
         public static Sprite getTrapSprite() {
             if (trapSprite) return trapSprite;
-            trapSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Garlic.png", 300f);
+            trapSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Trapper_Trap_Ingame.png", 300f);
             return trapSprite;
         }
 
@@ -84,11 +84,12 @@ namespace TheOtherRoles.Objects {
             float closestDistance = float.MaxValue;
 
             if (vent == null || player == null) return;
+            float ud = vent.UsableDistance / 2;
             Trap target = null;
             foreach (Trap trap in traps) {
                 if (trap.revealed || !trap.triggerable) continue;
                 float distance = Vector2.Distance(trap.trap.transform.position, player.PlayerControl.GetTruePosition());
-                if (distance <= vent.UsableDistance && distance < closestDistance) {
+                if (distance <= ud && distance < closestDistance) {
                     closestDistance = distance;
                     target = trap;
                 }

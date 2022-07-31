@@ -1527,17 +1527,11 @@ namespace TheOtherRoles
         public static List<string> trappedRoles = new List<string>();
 
         private static Sprite trapButtonSprite;
-        private static Sprite trapSprite;
+
         public static Sprite getButtonSprite() {
             if (trapButtonSprite) return trapButtonSprite;
-            trapButtonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.DouseButton.png", 115f);
+            trapButtonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Trapper_Place_Button.png", 115f);
             return trapButtonSprite;
-        }
-
-        public static Sprite getTrapSprite() {
-            if (trapSprite) return trapSprite;
-            trapSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.AnimatedVentSealed.png", 115f);
-            return trapSprite;
         }
 
         public static void clearAndReload() {

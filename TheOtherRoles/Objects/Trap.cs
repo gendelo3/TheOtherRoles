@@ -70,7 +70,7 @@ namespace TheOtherRoles.Objects {
                     player.moveable = true;
                 }
             })));
-            Trapper.trappedRoles.Add(RoleInfo.GetRolesString(player, false));
+            Trapper.trappedRoles.Add(RoleInfo.GetRolesString(player, false, false));
             if (CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) {
                 Helpers.showFlash(Trapper.color);
             }

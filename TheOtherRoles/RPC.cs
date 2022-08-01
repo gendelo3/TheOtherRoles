@@ -138,7 +138,6 @@ namespace TheOtherRoles
         SetInvisible,
         SetTrap,
         TriggerTrap,
-        SetInvisible,
         SetGuesserGm
     }
 

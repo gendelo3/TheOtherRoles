@@ -320,7 +320,8 @@ namespace TheOtherRoles.Patches {
                 if (HandleGuesser.isGuesserGm && CachedPlayer.LocalPlayer.PlayerControl.Data.Role.IsImpostor && !HandleGuesser.evilGuesserCanGuessSpy && roleInfo.roleId == RoleId.Spy) continue;
                 // remove all roles that cannot spawn due to the settings from the ui.
                 RoleManagerSelectRolesPatch.RoleAssignmentData roleData = RoleManagerSelectRolesPatch.getRoleAssignmentData();
-                if (!roleData.neutralSettings.ContainsKey((byte)roleInfo.roleId) && !roleData.crewSettings.ContainsKey((byte)roleInfo.roleId) && !roleData.impSettings.ContainsKey((byte)roleInfo.roleId) && roleInfo.roleId != RoleId.Crewmate && roleInfo.roleId != RoleId.Impostor) continue;
+                if (roleInfo.roleId != RoleId.Lawyer && roleInfo.roleId != RoleId.Prosecutor)
+                    if (!roleData.neutralSettings.ContainsKey((byte)roleInfo.roleId) && !roleData.crewSettings.ContainsKey((byte)roleInfo.roleId) && !roleData.impSettings.ContainsKey((byte)roleInfo.roleId) && roleInfo.roleId != RoleId.Crewmate && roleInfo.roleId != RoleId.Impostor) continue;
                 if (roleData.neutralSettings.ContainsKey((byte)roleInfo.roleId) && roleData.neutralSettings[(byte)roleInfo.roleId] == 0) continue;
                 else if (roleData.impSettings.ContainsKey((byte)roleInfo.roleId) && roleData.impSettings[(byte)roleInfo.roleId] == 0) continue;
                 else if (roleData.crewSettings.ContainsKey((byte)roleInfo.roleId) && roleData.crewSettings[(byte)roleInfo.roleId] == 0) continue;
@@ -329,6 +330,8 @@ namespace TheOtherRoles.Patches {
                 if (roleInfo.roleId == RoleId.Deputy && (CustomOptionHolder.deputySpawnRate.getSelection() == 0 || CustomOptionHolder.sheriffSpawnRate.getSelection() == 0)) continue;
                 if (roleInfo.roleId == RoleId.Pursuer && CustomOptionHolder.lawyerSpawnRate.getSelection() == 0) continue;
                 if (roleInfo.roleId == RoleId.Spy && roleData.impostors.Count <= 1) continue;
+                if (roleInfo.roleId == RoleId.Prosecutor && (CustomOptionHolder.lawyerIsProsecutorChance.getSelection() == 0 || CustomOptionHolder.lawyerSpawnRate.getSelection() == 0)) continue;
+                if (roleInfo.roleId == RoleId.Lawyer && (CustomOptionHolder.lawyerIsProsecutorChance.getSelection() == 10 || CustomOptionHolder.lawyerSpawnRate.getSelection() == 0)) continue;
                 if (Snitch.snitch != null && HandleGuesser.guesserCantGuessSnitch) {
                     var (playerCompleted, playerTotal) = TasksHandler.taskInfo(Snitch.snitch.Data);
                     int numberOfLeftTasks = playerTotal - playerCompleted;
@@ -572,7 +575,7 @@ namespace TheOtherRoles.Patches {
                     }
                 }
                 // Add trapped Info into Trapper chat
-                if (CachedPlayer.LocalPlayer.PlayerControl == Trapper.trapper) {
+                if (CachedPlayer.LocalPlayer.PlayerControl == Trapper.trapper && Trapper.trappedRoles.Count > 0) {
                     Trapper.trappedRoles.OrderBy(x => rnd.Next()).ToList();
                     string msg = $"Trapped roles: ";
                     int i = 1;

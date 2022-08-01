@@ -218,6 +218,7 @@ namespace TheOtherRoles {
         public static CustomOption mediumOneTimeUse;
 
         public static CustomOption lawyerSpawnRate;
+        public static CustomOption lawyerIsProsecutorChance;
         public static CustomOption lawyerTargetCanBeJester;
         public static CustomOption lawyerVision;
         public static CustomOption lawyerKnowsRole;
@@ -410,9 +411,10 @@ namespace TheOtherRoles {
             vultureShowArrows = CustomOption.Create(344, Types.Neutral, "Show Arrows Pointing Towards The Corpses", true, vultureSpawnRate);
 
             lawyerSpawnRate = CustomOption.Create(350, Types.Neutral, cs(Lawyer.color, "Lawyer"), rates, null, true);
+            lawyerIsProsecutorChance = CustomOption.Create(358, Types.Neutral, "Chance That The Lawyer Is Prosecutor", rates, lawyerSpawnRate);
+            lawyerVision = CustomOption.Create(354, Types.Neutral, "Vision", 1f, 0.25f, 3f, 0.25f, lawyerSpawnRate);
+            lawyerKnowsRole = CustomOption.Create(355, Types.Neutral, "Lawyer/Prosecutor Knows Target Role", false, lawyerSpawnRate);
             lawyerTargetCanBeJester = CustomOption.Create(351, Types.Neutral, "Lawyer Target Can Be The Jester", false, lawyerSpawnRate);
-            lawyerVision = CustomOption.Create(354, Types.Neutral, "Lawyer Vision", 1f, 0.25f, 3f, 0.25f, lawyerSpawnRate);
-            lawyerKnowsRole = CustomOption.Create(355, Types.Neutral, "Lawyer Knows Target Role", false, lawyerSpawnRate);
             pursuerCooldown = CustomOption.Create(356, Types.Neutral, "Pursuer Blank Cooldown", 30f, 5f, 60f, 2.5f, lawyerSpawnRate);
             pursuerBlanksNumber = CustomOption.Create(357, Types.Neutral, "Pursuer Number Of Blanks", 5f, 1f, 20f, 1f, lawyerSpawnRate);
 

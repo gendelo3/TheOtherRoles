@@ -78,7 +78,7 @@ namespace TheOtherRoles.Patches {
     class IntroPatch {
         public static void setupIntroTeamIcons(IntroCutscene __instance, ref  Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
             // Intro solo teams
-            if (CachedPlayer.LocalPlayer.PlayerControl == Jester.jester || CachedPlayer.LocalPlayer.PlayerControl == Jackal.jackal || CachedPlayer.LocalPlayer.PlayerControl == Arsonist.arsonist || CachedPlayer.LocalPlayer.PlayerControl == Vulture.vulture || CachedPlayer.LocalPlayer.PlayerControl == Lawyer.lawyer) {
+            if (Helpers.isNeutral(CachedPlayer.LocalPlayer.PlayerControl)) {
                 var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                 soloTeam.Add(CachedPlayer.LocalPlayer.PlayerControl);
                 yourTeam = soloTeam;

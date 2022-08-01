@@ -40,9 +40,9 @@ namespace TheOtherRoles.Patches {
             assignEnsuredRoles(data); // Assign roles that should always be in the game next
             assignDependentRoles(data); // Assign roles that may have a dependent role
             assignChanceRoles(data); // Assign roles that may or may not be in the game last
-            assignRoleTargets(data);
+            assignRoleTargets(data); // Assign targets for Lawyer & Prosecutor
             if (isGuesserGamemode) assignGuesserGamemode();
-            assignModifiers();
+            assignModifiers();// Assign modifier
             setRolesAgain();
         }
 
@@ -95,7 +95,11 @@ namespace TheOtherRoles.Patches {
             neutralSettings.Add((byte)RoleId.Arsonist, CustomOptionHolder.arsonistSpawnRate.getSelection());
             neutralSettings.Add((byte)RoleId.Jackal, CustomOptionHolder.jackalSpawnRate.getSelection());
             neutralSettings.Add((byte)RoleId.Vulture, CustomOptionHolder.vultureSpawnRate.getSelection());
-            neutralSettings.Add((byte)RoleId.Lawyer, CustomOptionHolder.lawyerSpawnRate.getSelection());
+
+            if ((rnd.Next(1, 101) <= CustomOptionHolder.lawyerIsProsecutorChance.getSelection() * 10)) // Lawyer or Prosecutor
+                neutralSettings.Add((byte)RoleId.Prosecutor, CustomOptionHolder.lawyerSpawnRate.getSelection());
+            else
+                neutralSettings.Add((byte)RoleId.Lawyer, CustomOptionHolder.lawyerSpawnRate.getSelection());
 
             crewSettings.Add((byte)RoleId.Mayor, CustomOptionHolder.mayorSpawnRate.getSelection());
             crewSettings.Add((byte)RoleId.Portalmaker, CustomOptionHolder.portalmakerSpawnRate.getSelection());
@@ -345,13 +349,21 @@ namespace TheOtherRoles.Patches {
         }
 
         private static void assignRoleTargets(RoleAssignmentData data) {
-            // Set Lawyer Target
+            // Set Lawyer or Prosecutor Target
             if (Lawyer.lawyer != null) {
                 var possibleTargets = new List<PlayerControl>();
-                foreach (PlayerControl p in CachedPlayer.AllPlayers) {
-                    if (!p.Data.IsDead && !p.Data.Disconnected && p != Lovers.lover1 && p != Lovers.lover2 && (p.Data.Role.IsImpostor || p == Jackal.jackal || (Lawyer.targetCanBeJester && p == Jester.jester)))
-                        possibleTargets.Add(p);
+                if (!Lawyer.isProsecutor) { // Lawyer
+                    foreach (PlayerControl p in CachedPlayer.AllPlayers) {
+                        if (!p.Data.IsDead && !p.Data.Disconnected && p != Lovers.lover1 && p != Lovers.lover2 && (p.Data.Role.IsImpostor || p == Jackal.jackal || (Lawyer.targetCanBeJester && p == Jester.jester)))
+                            possibleTargets.Add(p);
+                    }
+                } else { // Prosecutor
+                    foreach (PlayerControl p in CachedPlayer.AllPlayers) {
+                        if (!p.Data.IsDead && !p.Data.Disconnected && p != Lovers.lover1 && p != Lovers.lover2 && p != Mini.mini && !p.Data.Role.IsImpostor && !Helpers.isNeutral(p) && p != Swapper.swapper)
+                            possibleTargets.Add(p);
+                    }
                 }
+                
                 if (possibleTargets.Count == 0) {
                     MessageWriter w = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, Hazel.SendOption.Reliable, -1);
                     AmongUsClient.Instance.FinishRpcImmediately(w);

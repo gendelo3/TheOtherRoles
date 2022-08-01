@@ -55,6 +55,7 @@ namespace TheOtherRoles
         Medium,
         Trapper,
         Lawyer,
+        Prosecutor,
         Pursuer,
         Witch,
         Ninja,
@@ -320,6 +321,10 @@ namespace TheOtherRoles
                         break;
                     case RoleId.Lawyer:
                         Lawyer.lawyer = player;
+                        break;
+                    case RoleId.Prosecutor:
+                        Lawyer.lawyer = player;
+                        Lawyer.isProsecutor = true;
                         break;
                     case RoleId.Pursuer:
                         Pursuer.pursuer = player;
@@ -638,6 +643,7 @@ namespace TheOtherRoles
         public static void jackalCreatesSidekick(byte targetId) {
             PlayerControl player = Helpers.playerById(targetId);
             if (player == null) return;
+            if (Lawyer.target == player && Lawyer.isProsecutor) Lawyer.isProsecutor = false;
 
             if (!Jackal.canCreateSidekickFromImpostor && player.Data.Role.IsImpostor) {
                 Jackal.fakeSidekick = player;
@@ -892,10 +898,6 @@ namespace TheOtherRoles
             Vulture.triggerVultureWin = true;
         }
 
-        public static void lawyerWin() {
-            Lawyer.triggerLawyerWin = true;
-        }
-
         public static void lawyerSetTarget(byte playerId) {
             Lawyer.target = Helpers.playerById(playerId);
         }
@@ -904,6 +906,7 @@ namespace TheOtherRoles
             PlayerControl player = Lawyer.lawyer;
             PlayerControl client = Lawyer.target;
             Lawyer.clearAndReload(false);
+
             Pursuer.pursuer = player;
 
             if (player.PlayerId == CachedPlayer.LocalPlayer.PlayerId && client != null) {
@@ -1191,9 +1194,6 @@ namespace TheOtherRoles
                 case (byte)CustomRPC.VultureWin:
                     RPCProcedure.vultureWin();
                     break;
-                case (byte)CustomRPC.LawyerWin:
-                    RPCProcedure.lawyerWin();
-                    break; 
                 case (byte)CustomRPC.LawyerSetTarget:
                     RPCProcedure.lawyerSetTarget(reader.ReadByte()); 
                     break;

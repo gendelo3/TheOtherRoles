@@ -200,12 +200,15 @@ namespace TheOtherRoles.Patches {
                 Swapper.playerId1 = Byte.MaxValue;
                 Swapper.playerId2 = Byte.MaxValue;
 
+                if (Lawyer.lawyer != null && Lawyer.target != null && exiled != null && Lawyer.isProsecutor && Lawyer.target.PlayerId == exiled.PlayerId && !Lawyer.lawyer.Data.IsDead)
+                    Lawyer.triggerProsecutorWin = true;
+
                 // Lovers, Lawyer & Pursuer save next to be exiled, because RPC of ending game comes before RPC of exiled
                 Lovers.notAckedExiledIsLover = false;
                 Pursuer.notAckedExiled = false;
                 if (exiled != null) {
                     Lovers.notAckedExiledIsLover = ((Lovers.lover1 != null && Lovers.lover1.PlayerId == exiled.PlayerId) || (Lovers.lover2 != null && Lovers.lover2.PlayerId == exiled.PlayerId));
-                    Pursuer.notAckedExiled = (Pursuer.pursuer != null && Pursuer.pursuer.PlayerId == exiled.PlayerId) || (Lawyer.lawyer != null && Lawyer.target != null && Lawyer.target.PlayerId == exiled.PlayerId && Lawyer.target != Jester.jester);
+                    Pursuer.notAckedExiled = (Pursuer.pursuer != null && Pursuer.pursuer.PlayerId == exiled.PlayerId) || (Lawyer.lawyer != null && Lawyer.target != null && Lawyer.target.PlayerId == exiled.PlayerId && Lawyer.target != Jester.jester && !Lawyer.isProsecutor);
                 }
                                
             }

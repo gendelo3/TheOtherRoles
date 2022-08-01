@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
+using static TheOtherRoles.TheOtherRoles;
 
 namespace TheOtherRoles {
     public class CustomOption {
@@ -723,6 +724,14 @@ namespace TheOtherRoles {
                 if (option.parent == null) {
                     sb.AppendLine($"{option.name}: {option.selections[option.selection].ToString()}");
                 }
+                else if (option.parent.getSelection() > 0) {
+                    if (option.id == 103) //Deputy
+                        sb.AppendLine($"     {Helpers.cs(Deputy.color, "Deputy")}: {option.selections[option.selection].ToString()}");
+                    else if (option.id == 224) //Sidekick
+                        sb.AppendLine($"     {Helpers.cs(Sidekick.color, "Sidekick")}: {option.selections[option.selection].ToString()}");
+                    else if (option.id == 358) //Prosecutor
+                        sb.AppendLine($"     {Helpers.cs(Lawyer.color, "Prosecutor")}: {option.selections[option.selection].ToString()}");
+                }
             }
             if (headerOnly) return sb.ToString();
             else sb = new StringBuilder();
@@ -730,7 +739,6 @@ namespace TheOtherRoles {
             foreach (CustomOption option in options) {
                 if (option.parent != null) {
                     bool isIrrelevant = option.parent.getSelection() == 0 || (option.parent.parent != null && option.parent.parent.getSelection() == 0);
-                    
                     Color c = isIrrelevant ? Color.grey : Color.white;  // No use for now
                     if (isIrrelevant) continue;
                     sb.AppendLine(Helpers.cs(c, $"{option.name}: {option.selections[option.selection].ToString()}"));

@@ -158,6 +158,8 @@ namespace TheOtherRoles
                 if (Invert.invert.Any(x => x.PlayerId == p.PlayerId)) infos.Add(invert);
             }
 
+            int count = infos.Count;  // Save count after modifiers are added so that the role count can be checked
+
             // Special roles
             if (p == Jester.jester) infos.Add(jester);
             if (p == Mayor.mayor) infos.Add(mayor);
@@ -201,8 +203,8 @@ namespace TheOtherRoles
             if (p == Pursuer.pursuer) infos.Add(pursuer);
 
             // Default roles
-            if (infos.Count == 0 && p.Data.Role.IsImpostor) infos.Add(impostor); // Just Impostor
-            if (infos.Count == 0 && !p.Data.Role.IsImpostor) infos.Add(crewmate); // Just Crewmate
+            if (infos.Count == count && p.Data.Role.IsImpostor) infos.Add(impostor); // Just Impostor
+            if (infos.Count == count && !p.Data.Role.IsImpostor) infos.Add(crewmate); // Just Crewmate
 
             return infos;
         }

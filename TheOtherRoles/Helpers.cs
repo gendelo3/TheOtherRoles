@@ -10,6 +10,9 @@ using HarmonyLib;
 using Hazel;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
+using System.Threading.Tasks;
+using System.Net;
+using System.Globalization;
 
 namespace TheOtherRoles {
 
@@ -434,6 +437,28 @@ namespace TheOtherRoles {
             HudManagerStartPatch.zoomOutButton.Sprite = zoomOutStatus ? Helpers.loadSpriteFromResources("TheOtherRoles.Resources.PlusButton.png", 75f) : Helpers.loadSpriteFromResources("TheOtherRoles.Resources.MinusButton.png", 150f);
             HudManagerStartPatch.zoomOutButton.PositionOffset = zoomOutStatus ? new Vector3(0f, 3f, 0) : new Vector3(0.4f, 2.8f, 0);
             ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height); // This will move button positions to the correct position.
+        }
+
+        public static void checkBeta() {
+            if (TheOtherRolesPlugin.betaDays > 0) {
+                var compileTime = new DateTime(Builtin.CompileTime, DateTimeKind.Utc);  // This may show as an error, but it is not, compilation will work!
+                DateTime now;
+                // Get time from the internet, so no-one can cheat it.
+                try {
+                    using (var response =
+                      WebRequest.Create("http://www.google.com").GetResponse())
+                        now = DateTime.ParseExact(response.Headers["date"], "ddd, dd MMM yyyy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal);
+                } catch (WebException e) {
+                    TheOtherRolesPlugin.Logger.LogMessage($"{e}");
+                    now = DateTime.Now; //In case something goes wrong. 
+                }
+                if ((now - compileTime).TotalDays > TheOtherRolesPlugin.betaDays) {
+                    TheOtherRolesPlugin.Logger.LogMessage($"Beta expired!");
+                    BepInExUpdater.MessageBox(IntPtr.Zero, "BETA is expired. You cannot play this version anymore.", "The Other Roles Beta", 1);
+                    Application.Quit();
+
+                } else TheOtherRolesPlugin.Logger.LogMessage($"Beta will remain runnable for {(DateTime.Now - compileTime).TotalDays - TheOtherRolesPlugin.betaDays} days!");
+            }
         }
         
         public static object TryCast(this Il2CppObjectBase self, Type type)

@@ -146,7 +146,7 @@ namespace TheOtherRoles
             // Modifier
             if (showModifier) {
                 // after dead modifier
-                if (!CustomOptionHolder.modifiersAreHidden.getBool() || PlayerControl.LocalPlayer.Data.IsDead)
+                if (!CustomOptionHolder.modifiersAreHidden.getBool() || PlayerControl.LocalPlayer.Data.IsDead || AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Ended)
                 {
                     if (Bait.bait.Any(x => x.PlayerId == p.PlayerId)) infos.Add(bait);
                     if (Bloody.bloody.Any(x => x.PlayerId == p.PlayerId)) infos.Add(bloody);
@@ -159,6 +159,8 @@ namespace TheOtherRoles
                 if (p == Mini.mini) infos.Add(mini);
                 if (Invert.invert.Any(x => x.PlayerId == p.PlayerId)) infos.Add(invert);
             }
+
+            int count = infos.Count;  // Save count after modifiers are added so that the role count can be checked
 
             // Special roles
             int count = infos.Count;  // Save list length in order to know if it has changed for the role

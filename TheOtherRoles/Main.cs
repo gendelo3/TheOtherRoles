@@ -23,7 +23,8 @@ namespace TheOtherRoles
     public class TheOtherRolesPlugin : BasePlugin
     {
         public const string Id = "me.eisbison.theotherroles";
-        public const string VersionString = "4.1.6";
+        public const string VersionString = "4.2.0";
+        public static uint betaDays = 0;  // amount of days for the build to be usable (0 for infinite!)
 
         public static Version Version = Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -55,7 +56,7 @@ namespace TheOtherRoles
         public static void UpdateRegions() {
             ServerManager serverManager = FastDestroyableSingleton<ServerManager>.Instance;
             var regions = new IRegionInfo[] {
-                new DnsRegionInfo("mods.hopto.org", "Modded NA (MNA)", StringNames.NoTranslation, "mods.hopto.org", 443, false).CastFast<IRegionInfo>(),
+                new DnsRegionInfo("aumods.one", "Modded NA (MNA)", StringNames.NoTranslation, "aumods.one", 443, false).CastFast<IRegionInfo>(),
                 new DnsRegionInfo("au-eu.duikbo.at", "Modded EU (MEU)", StringNames.NoTranslation, "au-eu.duikbo.at", 22023, false).CastFast<IRegionInfo>(),
                 new DnsRegionInfo(Ip.Value, "Custom", StringNames.NoTranslation, Ip.Value, Port.Value, false).CastFast<IRegionInfo>()
             };
@@ -82,6 +83,8 @@ namespace TheOtherRoles
         public override void Load() {
             Logger = Log;
             Instance = this;
+
+            Helpers.checkBeta(); // Exit if running an expired beta
 
             DebugMode = Config.Bind("Custom", "Enable Debug Mode", false);
             GhostsSeeTasks = Config.Bind("Custom", "Ghosts See Remaining Tasks", true);

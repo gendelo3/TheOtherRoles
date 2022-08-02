@@ -187,7 +187,7 @@ namespace TheOtherRoles {
         }
 
         public static bool hasFakeTasks(this PlayerControl player) {
-            return (player == Jester.jester || player == Jackal.jackal || player == Sidekick.sidekick || player == Arsonist.arsonist || player == Vulture.vulture || Jackal.formerJackals.Contains(player));
+            return (player == Jester.jester || player == Jackal.jackal || player == Sidekick.sidekick || player == Arsonist.arsonist || player == Vulture.vulture || Jackal.formerJackals.Contains(player) || player == Thief.thief && Thief.murderedCrew && !Thief.becomesCrew);
         }
 
         public static bool canBeErased(this PlayerControl player) {
@@ -386,11 +386,10 @@ namespace TheOtherRoles {
 
             // Thief if hit crew only kill if setting says so, but also kill the thief.
             else if (killer == Thief.thief && !target.Data.Role.IsImpostor && !new List<RoleInfo> {RoleInfo.jackal, RoleInfo.sheriff, RoleInfo.sidekick }.Contains(targetRole)) {
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedMurderPlayer, Hazel.SendOption.Reliable, -1);
                 Thief.murderedCrew = true;
-                if (!Thief.canKillCrew && !targetRole.isNeutral) {
+                if (!Thief.canKillCrew || targetRole.isNeutral) {
                     return MurderAttemptResult.SuppressKill;
-                }
+                } 
             }
             return MurderAttemptResult.PerformKill;
         }

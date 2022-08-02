@@ -57,6 +57,7 @@ namespace TheOtherRoles
         Witch,
         Ninja,
         Thief,
+        Robbed,
         Crewmate,
         Impostor,
         // Modifier ---

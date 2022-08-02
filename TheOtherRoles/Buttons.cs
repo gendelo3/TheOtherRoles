@@ -1588,7 +1588,10 @@ namespace TheOtherRoles
                         writer2.Write(0);
                         RPCProcedure.uncheckedMurderPlayer(thief.PlayerId, thief.PlayerId, 0);
                         AmongUsClient.Instance.FinishRpcImmediately(writer2);
-                        Thief.murderedCrew = false;
+                        // Remove tasks if not becoming Robbed
+                        if (!Thief.becomesCrew) {
+                            Thief.thief.clearAllTasks();
+                        }
                     }
 
                     // Steal role if survived.
@@ -1600,20 +1603,25 @@ namespace TheOtherRoles
                     }
                     // Kill the victim (after becoming their role - so that no win is triggered for other teams)
                     if (result == MurderAttemptResult.PerformKill) {
-                        Helpers.checkMurderAttemptAndKill(thief, target);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedMurderPlayer, Hazel.SendOption.Reliable, -1);
+                        writer.Write(thief.PlayerId);
+                        writer.Write(target.PlayerId);
+                        writer.Write(0);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        RPCProcedure.uncheckedMurderPlayer(thief.PlayerId, target.PlayerId, (byte)0);
                     }
+
+                    
+
                 },
                () => { return Thief.thief != null && CachedPlayer.LocalPlayer.PlayerControl == Thief.thief && !CachedPlayer.LocalPlayer.Data.IsDead; },
-               () => { return Thief.currentTarget != null && (CachedPlayer.LocalPlayer.PlayerControl.CanMove || CachedPlayer.LocalPlayer.PlayerControl.inVent && Thief.canKillOutOfVents); },
+               () => { return Thief.currentTarget != null && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
                () => { thiefKillButton.Timer = thiefKillButton.MaxTimer; },
                __instance.KillButton.graphic.sprite,
                new Vector3(0, 1f, 0),
                __instance,
                KeyCode.Q
                );
-           
-
-
 
             zoomOutButton = new CustomButton(
                 () => { Helpers.toggleZoom();

@@ -1526,8 +1526,8 @@ namespace TheOtherRoles
         public static bool murderedCrew = false;
 
         public static bool hasImpostorVision;
-        public static bool canKillOutOfVents;
         public static bool canUseVents;
+        public static bool becomesCrew;
 
         public static void clearAndReload() {
             thief = null;
@@ -1537,6 +1537,7 @@ namespace TheOtherRoles
             hasImpostorVision = CustomOptionHolder.thiefHasImpVision.getBool();  // todo option and implementation
             cooldown = CustomOptionHolder.thiefCooldown.getFloat();
             canUseVents = CustomOptionHolder.thiefCanUseVents.getBool();
+            becomesCrew = CustomOptionHolder.thiefBecomesCrew.getBool();
         }
     }
 

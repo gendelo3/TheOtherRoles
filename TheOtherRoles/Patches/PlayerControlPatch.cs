@@ -847,6 +847,7 @@ namespace TheOtherRoles.Patches {
                 HudManagerStartPatch.cleanerCleanButton.MaxTimer = Cleaner.cooldown * multiplier;
                 HudManagerStartPatch.witchSpellButton.MaxTimer = (Witch.cooldown + Witch.currentCooldownAddition) * multiplier;
                 HudManagerStartPatch.ninjaButton.MaxTimer = Ninja.cooldown * multiplier;
+                HudManagerStartPatch.thiefKillButton.MaxTimer = Thief.cooldown * multiplier;
             }
         }
     public static void Postfix(PlayerControl __instance) {
@@ -1115,11 +1116,6 @@ namespace TheOtherRoles.Patches {
             // Ninja Button Sync
             if (Ninja.ninja != null && CachedPlayer.LocalPlayer.PlayerControl == Ninja.ninja && __instance == Ninja.ninja && HudManagerStartPatch.ninjaButton != null)
                 HudManagerStartPatch.ninjaButton.Timer = HudManagerStartPatch.ninjaButton.MaxTimer;
-
-            // Thief set suicide if suicided
-            if (Thief.thief != null && __instance == target == Thief.thief)
-                Thief.murderedCrew = true;
-
 
             // Bait
             if (Bait.bait.FindAll(x => x.PlayerId == target.PlayerId).Count > 0) {

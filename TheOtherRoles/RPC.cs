@@ -487,7 +487,7 @@ namespace TheOtherRoles
             Shifter.clearAndReload();
 
             // Suicide (exile) when impostor or impostor variants
-            if (player.Data.Role.IsImpostor || player == Jackal.jackal || player == Sidekick.sidekick || Jackal.formerJackals.Contains(player) || player == Jester.jester || player == Arsonist.arsonist || player == Vulture.vulture || player == Lawyer.lawyer) {
+            if (player.Data.Role.IsImpostor || player == Jackal.jackal || player == Sidekick.sidekick || Jackal.formerJackals.Contains(player) || player == Jester.jester || player == Arsonist.arsonist || player == Vulture.vulture || player == Lawyer.lawyer || player == Thief.thief) {
                 oldShifter.Exiled();
                 return;
             }
@@ -978,38 +978,38 @@ namespace TheOtherRoles
 
         public static void thiefStealsRole(byte playerId) {
             PlayerControl target = Helpers.playerById(playerId);
+            PlayerControl thief = Thief.thief;
             if (target == null) return;
-            if (target == Sheriff.sheriff) Sheriff.sheriff = Thief.thief;
+            if (target == Sheriff.sheriff) Sheriff.sheriff = thief;
             if (target == Jackal.jackal) {
-                Jackal.jackal = Thief.thief;
+                Jackal.jackal = thief;
                 Jackal.formerJackals.Add(target);
             }
             if (target == Sidekick.sidekick) {
-                Sidekick.sidekick = Thief.thief;
+                Sidekick.sidekick = thief;
                 Jackal.formerJackals.Add(target);
             }
-            if (target == Guesser.evilGuesser) Guesser.evilGuesser = Thief.thief;
-            if (target == Godfather.godfather) Godfather.godfather = Thief.thief;
-            if (target == Mafioso.mafioso) Mafioso.mafioso = Thief.thief;
-            if (target == Janitor.janitor) Janitor.janitor = Thief.thief;
-            if (target == Morphling.morphling) Morphling.morphling = Thief.thief;
-            if (target == Camouflager.camouflager) Camouflager.camouflager = Thief.thief;
-            if (target == Vampire.vampire) Vampire.vampire = Thief.thief;
-            if (target == Eraser.eraser) Eraser.eraser = Thief.thief;
-            if (target == Trickster.trickster) Trickster.trickster = Thief.thief;
-            if (target == Cleaner.cleaner) Cleaner.cleaner = Thief.thief;
-            if (target == Warlock.warlock) Warlock.warlock = Thief.thief;
-            if (target == BountyHunter.bountyHunter) BountyHunter.bountyHunter = Thief.thief;
-            if (target == Witch.witch) Witch.witch = Thief.thief;
-            if (target == Ninja.ninja) Ninja.ninja = Thief.thief;
+            if (target == Guesser.evilGuesser) Guesser.evilGuesser = thief;
+            if (target == Godfather.godfather) Godfather.godfather = thief;
+            if (target == Mafioso.mafioso) Mafioso.mafioso = thief;
+            if (target == Janitor.janitor) Janitor.janitor = thief;
+            if (target == Morphling.morphling) Morphling.morphling = thief;
+            if (target == Camouflager.camouflager) Camouflager.camouflager = thief;
+            if (target == Vampire.vampire) Vampire.vampire = thief;
+            if (target == Eraser.eraser) Eraser.eraser = thief;
+            if (target == Trickster.trickster) Trickster.trickster = thief;
+            if (target == Cleaner.cleaner) Cleaner.cleaner = thief;
+            if (target == Warlock.warlock) Warlock.warlock = thief;
+            if (target == BountyHunter.bountyHunter) BountyHunter.bountyHunter = thief;
+            if (target == Witch.witch) Witch.witch = thief;
+            if (target == Ninja.ninja) Ninja.ninja = thief;
             if (target.Data.Role.IsImpostor) {
                 RoleManager.Instance.SetRole(Thief.thief, RoleTypes.Impostor);
                 FastDestroyableSingleton<HudManager>.Instance.KillButton.SetCoolDown(Thief.thief.killTimer, PlayerControl.GameOptions.KillCooldown);
             }
             if (Thief.thief == PlayerControl.LocalPlayer) CustomButton.ResetAllCooldowns();
             Thief.clearAndReload();
-            
-
+            Thief.formerThief = thief;  // After clearAndReload, else it would get reset...
         }
     }   
 

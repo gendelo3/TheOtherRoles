@@ -1519,6 +1519,7 @@ namespace TheOtherRoles
         public static PlayerControl thief;
         public static Color color = new Color32(71, 99, 45, Byte.MaxValue);
         public static PlayerControl currentTarget;
+        public static PlayerControl formerThief;
 
         public static float cooldown = 30f;
 
@@ -1533,11 +1534,15 @@ namespace TheOtherRoles
             thief = null;
             murderedCrew = false;
             currentTarget = null;
+            formerThief = null;
             canKillCrew = CustomOptionHolder.thiefKillsCrew.getBool(); // todo option
             hasImpostorVision = CustomOptionHolder.thiefHasImpVision.getBool();  // todo option and implementation
             cooldown = CustomOptionHolder.thiefCooldown.getFloat();
             canUseVents = CustomOptionHolder.thiefCanUseVents.getBool();
             becomesCrew = CustomOptionHolder.thiefBecomesCrew.getBool();
+        }
+        public static bool isRobbed() {
+            return becomesCrew && thief != null && thief.Data.IsDead; 
         }
     }
 

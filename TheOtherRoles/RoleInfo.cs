@@ -205,7 +205,7 @@ namespace TheOtherRoles
             if (p == Lawyer.lawyer) infos.Add(lawyer);
             if (p == Pursuer.pursuer) infos.Add(pursuer);
             if (p == Thief.thief) {
-                if (Thief.murderedCrew && Thief.becomesCrew)
+                if (Thief.isRobbed())
                     infos.Add(robbed);
                 else
                     infos.Add(thief);

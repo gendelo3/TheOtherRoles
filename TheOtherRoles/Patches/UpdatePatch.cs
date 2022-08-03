@@ -207,6 +207,15 @@ namespace TheOtherRoles.Patches {
                             player.NameText.text += suffix;
             }
 
+            // Former Thief
+            if (Thief.formerThief != null && (Thief.formerThief == CachedPlayer.LocalPlayer.PlayerControl || CachedPlayer.LocalPlayer.PlayerControl.Data.IsDead)) {
+                Thief.formerThief.cosmetics.nameText.text += " $";
+                if (MeetingHud.Instance != null)
+                    foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
+                        if (player.TargetPlayerId == Thief.formerThief.PlayerId)
+                            player.NameText.text += " $";
+            }
+
             // Display lighter / darker color for all alive players
             if (CachedPlayer.LocalPlayer != null && MeetingHud.Instance != null && MapOptions.showLighterDarker) {
                 foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates) {

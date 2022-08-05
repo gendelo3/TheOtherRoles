@@ -1010,6 +1010,9 @@ namespace TheOtherRoles
             if (Thief.thief == PlayerControl.LocalPlayer) CustomButton.ResetAllCooldowns();
             Thief.clearAndReload();
             Thief.formerThief = thief;  // After clearAndReload, else it would get reset...
+
+            if (Lawyer.lawyer != null && target == Lawyer.target)
+                Lawyer.target = thief;
         }
     }   
 

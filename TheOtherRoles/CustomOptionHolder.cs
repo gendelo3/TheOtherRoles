@@ -225,12 +225,11 @@ namespace TheOtherRoles {
         public static CustomOption pursuerCooldown;
         public static CustomOption pursuerBlanksNumber;
 
-        public static CustomOption thiefSpawnRate;
-        public static CustomOption thiefCooldown;
-        public static CustomOption thiefKillsCrew;
-        public static CustomOption thiefHasImpVision;
-        public static CustomOption thiefCanUseVents;
-        public static CustomOption thiefBecomesCrew;
+        public static CustomOption robberSpawnRate;
+        public static CustomOption robberCooldown;
+        public static CustomOption robberHasImpVision;
+        public static CustomOption robberCanUseVents;
+        public static CustomOption robberCanKillSheriff;
 
 
         public static CustomOption modifiersAreHidden;
@@ -519,12 +518,11 @@ namespace TheOtherRoles {
             mediumDuration = CustomOption.Create(362, Types.Crewmate, "Medium Questioning Duration", 3f, 0f, 15f, 1f, mediumSpawnRate);
             mediumOneTimeUse = CustomOption.Create(363, Types.Crewmate, "Each Soul Can Only Be Questioned Once", false, mediumSpawnRate);
 
-            thiefSpawnRate = CustomOption.Create(400, Types.Neutral, cs(Thief.color, "Thief"), rates, null, true);
-            thiefCooldown = CustomOption.Create(401, Types.Neutral, "Thief Cooldown", 30f, 5f, 120f, 5f, thiefSpawnRate);
-            thiefKillsCrew = CustomOption.Create(402, Types.Neutral, "Crewmates Die With Thief", false, thiefSpawnRate);
-            thiefHasImpVision = CustomOption.Create(403, Types.Neutral, "Thief Has Impostor Vision", true, thiefSpawnRate);
-            thiefCanUseVents = CustomOption.Create(404, Types.Neutral, "Thief Can Use Vents", true, thiefSpawnRate);
-            thiefBecomesCrew = CustomOption.Create(405, Types.Neutral, "Thief Becomes Robbed When Dead", true, thiefSpawnRate);
+            robberSpawnRate = CustomOption.Create(400, Types.Neutral, cs(Robber.color, "Robber"), rates, null, true);
+            robberCooldown = CustomOption.Create(401, Types.Neutral, "Robber Cooldown", 30f, 5f, 120f, 5f, robberSpawnRate);
+            robberCanKillSheriff = CustomOption.Create(402, Types.Neutral, "Robber Can Kill Sheriff", true, robberSpawnRate);
+            robberHasImpVision = CustomOption.Create(403, Types.Neutral, "Robber Has Impostor Vision", true, robberSpawnRate);
+            robberCanUseVents = CustomOption.Create(404, Types.Neutral, "Robber Can Use Vents", true, robberSpawnRate);
 
             // Modifier
             modifiersAreHidden = CustomOption.Create(1009, Types.Modifier, cs(Color.yellow, "Hide After Death Modifiers"), true, null, true);

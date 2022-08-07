@@ -187,7 +187,7 @@ namespace TheOtherRoles {
         }
 
         public static bool hasFakeTasks(this PlayerControl player) {
-            return (player == Jester.jester || player == Jackal.jackal || player == Sidekick.sidekick || player == Arsonist.arsonist || player == Vulture.vulture || Jackal.formerJackals.Contains(player) || player == Thief.thief && Thief.thief.Data.IsDead && !Thief.becomesCrew);
+            return (player == Jester.jester || player == Jackal.jackal || player == Sidekick.sidekick || player == Arsonist.arsonist || player == Vulture.vulture || Jackal.formerJackals.Contains(player));
         }
 
         public static bool canBeErased(this PlayerControl player) {
@@ -325,7 +325,7 @@ namespace TheOtherRoles {
                 roleCouldUse = true;
             else if (Vulture.canUseVents && Vulture.vulture != null && Vulture.vulture == player)
                 roleCouldUse = true;
-            else if (Thief.canUseVents &&  Thief.thief != null && Thief.thief == player)
+            else if (Robber.canUseVents &&  Robber.robber != null && Robber.robber == player)
                 roleCouldUse = true;
             else if (player.Data?.Role != null && player.Data.Role.CanVent)  {
                 if (Janitor.janitor != null && Janitor.janitor == CachedPlayer.LocalPlayer.PlayerControl)
@@ -384,13 +384,12 @@ namespace TheOtherRoles {
                 return MurderAttemptResult.SuppressKill;
             }
 
-            // Thief if hit crew only kill if setting says so, but also kill the thief.
-            else if (killer == Thief.thief && !target.Data.Role.IsImpostor && !new List<RoleInfo> {RoleInfo.jackal, RoleInfo.sheriff, RoleInfo.sidekick }.Contains(targetRole)) {
-                Thief.murderedCrew = true;
-                if (!Thief.canKillCrew || targetRole.isNeutral) {
-                    return MurderAttemptResult.SuppressKill;
-                } 
+            // Robber if hit crew only kill if setting says so, but also kill the robber.
+            else if (killer == Robber.robber && !target.Data.Role.IsImpostor && !new List<RoleInfo> {RoleInfo.jackal, Robber.canKillSheriff ? RoleInfo.sheriff : null, RoleInfo.sidekick }.Contains(targetRole)) {
+                Robber.suicideFlag = true;
+                return MurderAttemptResult.SuppressKill;
             }
+
             return MurderAttemptResult.PerformKill;
         }
 

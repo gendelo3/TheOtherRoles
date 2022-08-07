@@ -50,7 +50,7 @@ namespace TheOtherRoles
         public static CustomButton witchSpellButton;
         public static CustomButton ninjaButton;
         public static CustomButton mayorMeetingButton;
-        public static CustomButton thiefKillButton;
+        public static CustomButton robberKillButton;
         public static CustomButton zoomOutButton;
 
         public static Dictionary<byte, List<CustomButton>> deputyHandcuffedButtons = null;
@@ -99,7 +99,7 @@ namespace TheOtherRoles
             trackerTrackCorpsesButton.MaxTimer = Tracker.corpsesTrackingCooldown;
             witchSpellButton.MaxTimer = Witch.cooldown;
             ninjaButton.MaxTimer = Ninja.cooldown;
-            thiefKillButton.MaxTimer = Thief.cooldown;
+            robberKillButton.MaxTimer = Robber.cooldown;
             mayorMeetingButton.MaxTimer = PlayerControl.GameOptions.EmergencyCooldown;
 
             timeMasterShieldButton.EffectDuration = TimeMaster.shieldDuration;
@@ -1570,53 +1570,50 @@ namespace TheOtherRoles
                "Meeting"
            );
 
-            thiefKillButton = new CustomButton(
+            robberKillButton = new CustomButton(
                 () => {
-                    PlayerControl thief = Thief.thief;
-                    PlayerControl target = Thief.currentTarget;
-                    var result = Helpers.checkMuderAttempt(thief, target);
+                    PlayerControl robber = Robber.robber;
+                    PlayerControl target = Robber.currentTarget;
+                    var result = Helpers.checkMuderAttempt(robber, target);
                     if (result == MurderAttemptResult.BlankKill) {
-                        thiefKillButton.Timer = thiefKillButton.MaxTimer;
+                        robberKillButton.Timer = robberKillButton.MaxTimer;
                         return;
                     }
 
-                    if (Thief.murderedCrew) {
+                    if (Robber.suicideFlag) {
                         // Suicide
                         MessageWriter writer2 = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedMurderPlayer, Hazel.SendOption.Reliable, -1);
-                        writer2.Write(thief.PlayerId);
-                        writer2.Write(thief.PlayerId);
+                        writer2.Write(robber.PlayerId);
+                        writer2.Write(robber.PlayerId);
                         writer2.Write(0);
-                        RPCProcedure.uncheckedMurderPlayer(thief.PlayerId, thief.PlayerId, 0);
+                        RPCProcedure.uncheckedMurderPlayer(robber.PlayerId, robber.PlayerId, 0);
                         AmongUsClient.Instance.FinishRpcImmediately(writer2);
-                        // Remove tasks if not becoming Robbed
-                        if (!Thief.becomesCrew) {
-                            Thief.thief.clearAllTasks();
-                        }
+                        Robber.robber.clearAllTasks();
                     }
 
                     // Steal role if survived.
-                    if (!Thief.thief.Data.IsDead) {
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ThiefStealsRole, Hazel.SendOption.Reliable, -1);
+                    if (!Robber.robber.Data.IsDead) {
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.RobberStealsRole, Hazel.SendOption.Reliable, -1);
                         writer.Write(target.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        RPCProcedure.thiefStealsRole(target.PlayerId);
+                        RPCProcedure.robberStealsRole(target.PlayerId);
                     }
                     // Kill the victim (after becoming their role - so that no win is triggered for other teams)
                     if (result == MurderAttemptResult.PerformKill) {
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedMurderPlayer, Hazel.SendOption.Reliable, -1);
-                        writer.Write(thief.PlayerId);
+                        writer.Write(robber.PlayerId);
                         writer.Write(target.PlayerId);
-                        writer.Write(0);
+                        writer.Write(byte.MaxValue);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        RPCProcedure.uncheckedMurderPlayer(thief.PlayerId, target.PlayerId, (byte)0);
+                        RPCProcedure.uncheckedMurderPlayer(robber.PlayerId, target.PlayerId, byte.MaxValue);
                     }
 
                     
 
                 },
-               () => { return Thief.thief != null && CachedPlayer.LocalPlayer.PlayerControl == Thief.thief && !CachedPlayer.LocalPlayer.Data.IsDead; },
-               () => { return Thief.currentTarget != null && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
-               () => { thiefKillButton.Timer = thiefKillButton.MaxTimer; },
+               () => { return Robber.robber != null && CachedPlayer.LocalPlayer.PlayerControl == Robber.robber && !CachedPlayer.LocalPlayer.Data.IsDead; },
+               () => { return Robber.currentTarget != null && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
+               () => { robberKillButton.Timer = robberKillButton.MaxTimer; },
                __instance.KillButton.graphic.sprite,
                new Vector3(0, 1f, 0),
                __instance,

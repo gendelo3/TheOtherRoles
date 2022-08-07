@@ -788,12 +788,12 @@ namespace TheOtherRoles.Patches {
             setPlayerOutline(Ninja.currentTarget, Ninja.color);
         }
 
-        static void thiefSetTarget() {
-            if (Thief.thief == null || Thief.thief != CachedPlayer.LocalPlayer.PlayerControl) return;
+        static void robberSetTarget() {
+            if (Robber.robber == null || Robber.robber != CachedPlayer.LocalPlayer.PlayerControl) return;
             List<PlayerControl> untargetables = new List<PlayerControl>();
             if (Mini.mini != null && !Mini.isGrownUp()) untargetables.Add(Mini.mini);
-            Thief.currentTarget = setTarget(onlyCrewmates: false, untargetablePlayers: untargetables);
-            setPlayerOutline(Thief.currentTarget, Thief.color);
+            Robber.currentTarget = setTarget(onlyCrewmates: false, untargetablePlayers: untargetables);
+            setPlayerOutline(Robber.currentTarget, Robber.color);
         }
 
 
@@ -847,7 +847,7 @@ namespace TheOtherRoles.Patches {
                 HudManagerStartPatch.cleanerCleanButton.MaxTimer = Cleaner.cooldown * multiplier;
                 HudManagerStartPatch.witchSpellButton.MaxTimer = (Witch.cooldown + Witch.currentCooldownAddition) * multiplier;
                 HudManagerStartPatch.ninjaButton.MaxTimer = Ninja.cooldown * multiplier;
-                HudManagerStartPatch.thiefKillButton.MaxTimer = Thief.cooldown * multiplier;
+                HudManagerStartPatch.robberKillButton.MaxTimer = Robber.cooldown * multiplier;
             }
         }
     public static void Postfix(PlayerControl __instance) {
@@ -929,8 +929,8 @@ namespace TheOtherRoles.Patches {
                 ninjaSetTarget();
                 NinjaTrace.UpdateAll();
                 ninjaUpdate();
-                // Thief
-                thiefSetTarget();
+                // Robber
+                robberSetTarget();
 
                 hackerUpdate();
                 swapperUpdate();

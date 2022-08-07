@@ -55,7 +55,7 @@ namespace TheOtherRoles
             Pursuer.clearAndReload();
             Witch.clearAndReload();
             Ninja.clearAndReload();
-            Thief.clearAndReload();
+            Robber.clearAndReload();
 
             // Modifier
             Bait.clearAndReload();
@@ -1515,34 +1515,29 @@ namespace TheOtherRoles
         }
     }
 
-    public static class Thief {
-        public static PlayerControl thief;
+    public static class Robber {
+        public static PlayerControl robber;
         public static Color color = new Color32(71, 99, 45, Byte.MaxValue);
         public static PlayerControl currentTarget;
-        public static PlayerControl formerThief;
+        public static PlayerControl formerRobber;
 
         public static float cooldown = 30f;
 
-        public static bool canKillCrew;
-        public static bool murderedCrew = false;
+        public static bool suicideFlag = false;  // Used as a flag for suicide
 
         public static bool hasImpostorVision;
         public static bool canUseVents;
-        public static bool becomesCrew;
+        public static bool canKillSheriff;
 
         public static void clearAndReload() {
-            thief = null;
-            murderedCrew = false;
+            robber = null;
+            suicideFlag = false;
             currentTarget = null;
-            formerThief = null;
-            canKillCrew = CustomOptionHolder.thiefKillsCrew.getBool(); // todo option
-            hasImpostorVision = CustomOptionHolder.thiefHasImpVision.getBool();  // todo option and implementation
-            cooldown = CustomOptionHolder.thiefCooldown.getFloat();
-            canUseVents = CustomOptionHolder.thiefCanUseVents.getBool();
-            becomesCrew = CustomOptionHolder.thiefBecomesCrew.getBool();
-        }
-        public static bool isRobbed() {
-            return becomesCrew && thief != null && thief.Data.IsDead; 
+            formerRobber = null;
+            hasImpostorVision = CustomOptionHolder.robberHasImpVision.getBool();  // todo option and implementation
+            cooldown = CustomOptionHolder.robberCooldown.getFloat();
+            canUseVents = CustomOptionHolder.robberCanUseVents.getBool();
+            canKillSheriff = CustomOptionHolder.robberCanKillSheriff.getBool();
         }
     }
 

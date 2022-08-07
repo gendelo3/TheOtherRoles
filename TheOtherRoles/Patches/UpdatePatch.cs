@@ -207,13 +207,14 @@ namespace TheOtherRoles.Patches {
                             player.NameText.text += suffix;
             }
 
-            // Former Thief
-            if (Thief.formerThief != null && (Thief.formerThief == CachedPlayer.LocalPlayer.PlayerControl || CachedPlayer.LocalPlayer.PlayerControl.Data.IsDead)) {
-                Thief.formerThief.cosmetics.nameText.text += " $";
+            // Former Robber
+            if (Robber.formerRobber != null && (Robber.formerRobber == CachedPlayer.LocalPlayer.PlayerControl || CachedPlayer.LocalPlayer.PlayerControl.Data.IsDead)) {
+                string suffix = Helpers.cs(Robber.color, " $");
+                Robber.formerRobber.cosmetics.nameText.text += suffix;
                 if (MeetingHud.Instance != null)
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                        if (player.TargetPlayerId == Thief.formerThief.PlayerId)
-                            player.NameText.text += " $";
+                        if (player.TargetPlayerId == Robber.formerRobber.PlayerId)
+                            player.NameText.text += suffix;
             }
 
             // Display lighter / darker color for all alive players

@@ -21,7 +21,7 @@ namespace TheOtherRoles.Patches {
                 || (Sidekick.sidekick != null && Sidekick.sidekick.PlayerId == player.PlayerId && Sidekick.hasImpostorVision)
                 || (Spy.spy != null && Spy.spy.PlayerId == player.PlayerId && Spy.hasImpostorVision)
                 || (Jester.jester != null && Jester.jester.PlayerId == player.PlayerId && Jester.hasImpostorVision)
-                || (Thief.thief != null && Thief.thief.PlayerId == player.PlayerId && Thief.hasImpostorVision)) {
+                || (Robber.robber != null && Robber.robber.PlayerId == player.PlayerId && Robber.hasImpostorVision)) {
                 //__result = __instance.MaxLightRadius * PlayerControl.GameOptions.ImpostorLightMod;
                 __result = GetNeutralLightRadius(__instance, true);
                 return false;

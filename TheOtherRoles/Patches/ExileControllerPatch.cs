@@ -133,7 +133,10 @@ namespace TheOtherRoles.Patches {
             // Jester win condition
             else if (exiled != null && Jester.jester != null && Jester.jester.PlayerId == exiled.PlayerId) {
                 Jester.triggerJesterWin = true;
-            } 
+            }
+            // Prosecutor win condition
+            else if (exiled != null && Lawyer.lawyer != null && Lawyer.target != null && Lawyer.isProsecutor && Lawyer.target.PlayerId == exiled.PlayerId && !Lawyer.lawyer.Data.IsDead)
+                Lawyer.triggerProsecutorWin = true;
 
             // Reset custom button timers where necessary
             CustomButton.MeetingEndedUpdate();
@@ -226,6 +229,11 @@ namespace TheOtherRoles.Patches {
 
             // Invert add meeting
             if (Invert.meetings > 0) Invert.meetings--;
+
+            foreach (Trap trap in Trap.traps) trap.triggerable = false;
+            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(PlayerControl.GameOptions.KillCooldown / 2 + 2, new Action<float>((p) => {
+            if (p == 1f) foreach (Trap trap in Trap.traps) trap.triggerable = true;
+            })));
         }
     }
 

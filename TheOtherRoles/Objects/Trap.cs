@@ -1,6 +1,7 @@
 using Hazel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
 using UnityEngine;
@@ -10,10 +11,13 @@ namespace TheOtherRoles.Objects {
         public static List<Trap> traps = new List<Trap>();
 
         private static int instanceCounter = 0;
-        private int instanceId = 0;
+        public int instanceId = 0;
         public GameObject trap;
-        private bool revealed = false;
-        private bool triggerable = false;
+        public bool revealed = false;
+        public bool triggerable = false;
+        private int usedCount = 0;
+        private int neededCount = Trapper.trapCountToReveal;
+        public List<PlayerControl> trappedPlayer = new List<PlayerControl>();
 
         private static Sprite trapSprite;
         public static Sprite getTrapSprite() {
@@ -33,8 +37,6 @@ namespace TheOtherRoles.Objects {
             trap.SetActive(false);
             if (CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) trap.SetActive(true);
             this.instanceId = ++instanceCounter;
-            TheOtherRolesPlugin.Logger.LogError("instanceId " + instanceId);
-            TheOtherRolesPlugin.Logger.LogError("instanceCounter " + instanceCounter);
             traps.Add(this);
             FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((x) => {
                 if (x == 1f) {
@@ -58,22 +60,41 @@ namespace TheOtherRoles.Objects {
         }
 
         public static void triggerTrap(byte playerId, byte trapId) {
-            Trap t = traps.FindLast(x => x.instanceId == (int)trapId);
+            
+            Trap t = traps.FirstOrDefault(x => x.instanceId == (int)trapId);
             PlayerControl player = Helpers.playerById(playerId);
-            t.trap.SetActive(true);
-            t.revealed = true;
-            SoundEffectsManager.play("mediumAsk");
+            if (Trapper.trapper == null || t == null || player == null) return;
+            t.usedCount ++;
+            t.triggerable = false;
+            if (playerId == CachedPlayer.LocalPlayer.PlayerId || playerId == Trapper.trapper.PlayerId) {
+                t.trap.SetActive(true);
+                SoundEffectsManager.play("mediumAsk", 0.25f);
+            }
             player.moveable = false;
             player.NetTransform.Halt();
-            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(3, new Action<float>((p) => { 
+            Trapper.playersOnMap.Add(player); 
+            if (CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) {
+                DestroyableSingleton<HudManager>.Instance.ShowMap((Action<MapBehaviour>)delegate (MapBehaviour m) {
+                    m.Close();
+                    m.ShowNormalMap();
+                });
+            }
+
+            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => { 
                 if (p == 1f) {
                     player.moveable = true;
+                    Trapper.playersOnMap.Remove(player);
+                    if (CachedPlayer.LocalPlayer.PlayerId != Trapper.trapper.PlayerId && !t.revealed) t.trap.SetActive(false);
                 }
             })));
-            Trapper.trappedRoles.Add(RoleInfo.GetRolesString(player, false, false));
-            if (CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) {
-                Helpers.showFlash(Trapper.color);
+
+            if (t.usedCount == t.neededCount) {
+                t.trap.SetActive(true);
+                t.revealed = true;
             }
+
+            t.trappedPlayer.Add(player);
+            t.triggerable = true;
 
         }
 
@@ -87,14 +108,14 @@ namespace TheOtherRoles.Objects {
             float ud = vent.UsableDistance / 2;
             Trap target = null;
             foreach (Trap trap in traps) {
-                if (trap.revealed || !trap.triggerable) continue;
+                if (trap.revealed || !trap.triggerable || trap.trappedPlayer.Contains(player.PlayerControl)) continue;
                 float distance = Vector2.Distance(trap.trap.transform.position, player.PlayerControl.GetTruePosition());
                 if (distance <= ud && distance < closestDistance) {
                     closestDistance = distance;
                     target = trap;
                 }
             }
-            if (target != null && player.PlayerId != Trapper.trapper.PlayerId) {
+            if (target != null && player.PlayerId != Trapper.trapper.PlayerId && !player.Data.IsDead) {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.TriggerTrap, Hazel.SendOption.Reliable, -1);
                 writer.Write(player.PlayerId);
                 writer.Write(target.instanceId);

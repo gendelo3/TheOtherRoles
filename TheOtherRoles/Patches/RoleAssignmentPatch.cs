@@ -42,7 +42,7 @@ namespace TheOtherRoles.Patches {
             assignChanceRoles(data); // Assign roles that may or may not be in the game last
             assignRoleTargets(data); // Assign targets for Lawyer & Prosecutor
             if (isGuesserGamemode) assignGuesserGamemode();
-            assignModifiers();// Assign modifier
+            assignModifiers(); // Assign modifier
             setRolesAgain();
         }
 
@@ -279,6 +279,8 @@ namespace TheOtherRoles.Patches {
                 } else if (CustomOptionHolder.deputySpawnRate.getSelection() < 10) // Dont force, add Deputy to the ticket system
                     data.crewSettings.Add((byte)RoleId.Deputy, CustomOptionHolder.deputySpawnRate.getSelection());
             }
+
+            if (!data.crewSettings.ContainsKey((byte)RoleId.Sheriff)) data.crewSettings.Add((byte)RoleId.Sheriff, 0);
 
             if (!isGuesserGamemode) {
                 if (!isEvilGuesser && Guesser.niceGuesser != null) { // Other Guesser (evil)
@@ -591,7 +593,6 @@ namespace TheOtherRoles.Patches {
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
         }
-
 
         public class RoleAssignmentData {
             public List<PlayerControl> crewmates {get;set;}

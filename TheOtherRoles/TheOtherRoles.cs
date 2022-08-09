@@ -1511,7 +1511,9 @@ namespace TheOtherRoles
         public static int rechargeTasksNumber = 3;
         public static int rechargedTasks = 3;
         public static int charges = 1;
-        public static List<string> trappedRoles = new List<string>();
+        public static int trapCountToReveal = 2;
+        public static List<PlayerControl> playersOnMap = new List<PlayerControl>();
+        public static bool anonymousMap = false;
 
         private static Sprite trapButtonSprite;
 
@@ -1528,7 +1530,9 @@ namespace TheOtherRoles
             rechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.trapperRechargeTasksNumber.getFloat());
             rechargedTasks = Mathf.RoundToInt(CustomOptionHolder.trapperRechargeTasksNumber.getFloat());
             charges = Mathf.RoundToInt(CustomOptionHolder.trapperMaxCharges.getFloat()) / 2;
-            trappedRoles = new List<string>();
+            trapCountToReveal = Mathf.RoundToInt(CustomOptionHolder.trapperTrapNeededTriggerToReveal.getFloat());
+            playersOnMap = new List<PlayerControl>();
+            anonymousMap = CustomOptionHolder.trapperAnonymousMap.getBool();
         }
     }
 

@@ -988,10 +988,12 @@ namespace TheOtherRoles
             Tiebreaker.isTiebreak = true;
         }
         
-        public static void setTrap() {
+        public static void setTrap(byte[] buff) {
             if (Trapper.trapper == null) return;
             Trapper.charges -= 1;
-            Vector3 position = Trapper.trapper.transform.position;
+            Vector3 position = Vector3.zero;
+            position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
+            position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
             new Trap(position);
         }
 
@@ -1225,7 +1227,7 @@ namespace TheOtherRoles
                     RPCProcedure.setInvisible(invisiblePlayer, invisibleFlag);
                     break;
                 case (byte)CustomRPC.SetTrap:
-                    RPCProcedure.setTrap();
+                    RPCProcedure.setTrap(reader.ReadBytesAndSize());
                     break;
                 case (byte)CustomRPC.TriggerTrap:
                     byte trappedPlayer = reader.ReadByte();

@@ -229,6 +229,8 @@ namespace TheOtherRoles {
         public static CustomOption trapperCooldown;
         public static CustomOption trapperMaxCharges;
         public static CustomOption trapperRechargeTasksNumber;
+        public static CustomOption trapperTrapNeededTriggerToReveal;
+        public static CustomOption trapperAnonymousMap;
 
         public static CustomOption modifiersAreHidden;
 
@@ -531,6 +533,8 @@ namespace TheOtherRoles {
             trapperCooldown = CustomOption.Create(420, Types.Crewmate, "Trapper Cooldown", 30f, 5f, 120f, 5f, trapperSpawnRate);
             trapperMaxCharges = CustomOption.Create(440, Types.Crewmate, "Max Traps Charges", 5f, 1f, 15f, 1f, trapperSpawnRate);
             trapperRechargeTasksNumber = CustomOption.Create(450, Types.Crewmate, "Number Of Tasks Needed For Recharging", 2f, 1f, 15f, 1f, trapperSpawnRate);
+            trapperTrapNeededTriggerToReveal = CustomOption.Create(451, Types.Crewmate, "Trap Needed Trigger To Reveal", 2f, 1f, 3f, 1f, trapperSpawnRate);
+            trapperAnonymousMap = CustomOption.Create(452, Types.Crewmate, "Show Anonymous Map", false, trapperSpawnRate);
 
             // Modifier
             modifiersAreHidden = CustomOption.Create(1009, Types.Modifier, cs(Color.yellow, "Hide After Death Modifiers"), true, null, true);

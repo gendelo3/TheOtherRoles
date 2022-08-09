@@ -200,9 +200,6 @@ namespace TheOtherRoles.Patches {
                 Swapper.playerId1 = Byte.MaxValue;
                 Swapper.playerId2 = Byte.MaxValue;
 
-                if (Lawyer.lawyer != null && Lawyer.target != null && exiled != null && Lawyer.isProsecutor && Lawyer.target.PlayerId == exiled.PlayerId && !Lawyer.lawyer.Data.IsDead)
-                    Lawyer.triggerProsecutorWin = true;
-
                 // Lovers, Lawyer & Pursuer save next to be exiled, because RPC of ending game comes before RPC of exiled
                 Lovers.notAckedExiledIsLover = false;
                 Pursuer.notAckedExiled = false;
@@ -320,8 +317,6 @@ namespace TheOtherRoles.Patches {
                 if (HandleGuesser.isGuesserGm && CachedPlayer.LocalPlayer.PlayerControl.Data.Role.IsImpostor && !HandleGuesser.evilGuesserCanGuessSpy && roleInfo.roleId == RoleId.Spy) continue;
                 // remove all roles that cannot spawn due to the settings from the ui.
                 RoleManagerSelectRolesPatch.RoleAssignmentData roleData = RoleManagerSelectRolesPatch.getRoleAssignmentData();
-                if (roleInfo.roleId != RoleId.Lawyer && roleInfo.roleId != RoleId.Prosecutor)
-                    if (!roleData.neutralSettings.ContainsKey((byte)roleInfo.roleId) && !roleData.crewSettings.ContainsKey((byte)roleInfo.roleId) && !roleData.impSettings.ContainsKey((byte)roleInfo.roleId) && roleInfo.roleId != RoleId.Crewmate && roleInfo.roleId != RoleId.Impostor) continue;
                 if (roleData.neutralSettings.ContainsKey((byte)roleInfo.roleId) && roleData.neutralSettings[(byte)roleInfo.roleId] == 0) continue;
                 else if (roleData.impSettings.ContainsKey((byte)roleInfo.roleId) && roleData.impSettings[(byte)roleInfo.roleId] == 0) continue;
                 else if (roleData.crewSettings.ContainsKey((byte)roleInfo.roleId) && roleData.crewSettings[(byte)roleInfo.roleId] == 0) continue;
@@ -355,7 +350,7 @@ namespace TheOtherRoles.Patches {
                 int copiedIndex = i;
 
                 button.GetComponent<PassiveButton>().OnClick.RemoveAllListeners();
-                if (!CachedPlayer.LocalPlayer.Data.IsDead) button.GetComponent<PassiveButton>().OnClick.AddListener((System.Action)(() => {
+                if (!CachedPlayer.LocalPlayer.Data.IsDead && !Helpers.playerById((byte)__instance.playerStates[buttonTarget].TargetPlayerId).Data.IsDead) button.GetComponent<PassiveButton>().OnClick.AddListener((System.Action)(() => {
                     if (selectedButton != button) {
                         selectedButton = button;
                         buttons.ForEach(x => x.GetComponent<SpriteRenderer>().color = x == selectedButton ? Color.red : Color.white);
@@ -574,20 +569,26 @@ namespace TheOtherRoles.Patches {
                         FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(CachedPlayer.LocalPlayer.PlayerControl, $"{msg}");
                     }
                 }
+
                 // Add trapped Info into Trapper chat
-                if (CachedPlayer.LocalPlayer.PlayerControl == Trapper.trapper && Trapper.trappedRoles.Count > 0) {
-                    Trapper.trappedRoles.OrderBy(x => rnd.Next()).ToList();
-                    string msg = $"Trapped roles: ";
-                    int i = 1;
-                    string postfix = ", ";
-                    foreach (string s in Trapper.trappedRoles) {
-                        if (i == Trapper.trappedRoles.Count) postfix = "";
-                        msg += s + postfix;
-                        i++;
+                string message = $"";
+                foreach (Trap trap in Trap.traps) {
+                    if (!trap.revealed) continue;
+                    trap.trappedPlayer = trap.trappedPlayer.OrderBy(x => rnd.Next()).ToList();
+                    if (Trapper.trapCountToReveal == 1) {
+                        message += trap.trappedPlayer.FirstOrDefault() + "\n"; 
+                        continue;
                     }
-                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(CachedPlayer.LocalPlayer.PlayerControl, $"{msg}");
+                    message = $"Tr@p {trap.instanceId}: \n";
+                    foreach (PlayerControl p in trap.trappedPlayer) 
+                        message += RoleInfo.GetRolesString(p, false, false) + "\n";
+                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(CachedPlayer.LocalPlayer.PlayerControl, $"{message}");
+                    message = "";
                 }
-                Trapper.trappedRoles = new List<string>();
+
+                if (message != "") FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(CachedPlayer.LocalPlayer.PlayerControl, $"{message}");
+
+                Trapper.playersOnMap = new List<PlayerControl>();
 
                 // Remove revealed traps
                 Trap.clearRevealedTraps();

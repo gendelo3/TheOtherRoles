@@ -35,11 +35,9 @@ namespace TheOtherRoles.Patches {
                         player.transform.localScale = Vector3.one * 0.2f;
                         player.setSemiTransparent(true);
                         player.gameObject.SetActive(true);
-                    } else if (CachedPlayer.LocalPlayer.PlayerControl == BountyHunter.bountyHunter) {
+                    } else {   //  This can be done for all players not just for the bounty hunter as it was before. Allows the robber to have the correct position and scaling
                         player.transform.localPosition = bottomLeft + new Vector3(-0.25f, 0f, 0);
                         player.transform.localScale = Vector3.one * 0.4f;
-                        player.gameObject.SetActive(false);
-                    } else {
                         player.gameObject.SetActive(false);
                     }
                 }

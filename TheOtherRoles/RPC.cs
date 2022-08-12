@@ -59,6 +59,7 @@ namespace TheOtherRoles
         Pursuer,
         Witch,
         Ninja,
+        Robber,
         Crewmate,
         Impostor,
         // Modifier ---
@@ -136,6 +137,7 @@ namespace TheOtherRoles
         Invert,
         SetTiebreak,
         SetInvisible,
+        RobberStealsRole,
         SetTrap,
         TriggerTrap,
         SetGuesserGm
@@ -334,8 +336,11 @@ namespace TheOtherRoles
                     case RoleId.Ninja:
                         Ninja.ninja = player;
                         break;
-                    }
+                    case RoleId.Robber:
+                        Robber.robber = player;
+                    break;
                 }
+        }
         }
 
         public static void setModifier(byte modifierId, byte playerId, byte flag) {
@@ -500,7 +505,7 @@ namespace TheOtherRoles
             Shifter.clearAndReload();
 
             // Suicide (exile) when impostor or impostor variants
-            if (player.Data.Role.IsImpostor || player == Jackal.jackal || player == Sidekick.sidekick || Jackal.formerJackals.Contains(player) || player == Jester.jester || player == Arsonist.arsonist || player == Vulture.vulture || player == Lawyer.lawyer) {
+            if (player.Data.Role.IsImpostor || player == Jackal.jackal || player == Sidekick.sidekick || Jackal.formerJackals.Contains(player) || player == Jester.jester || player == Arsonist.arsonist || player == Vulture.vulture || player == Lawyer.lawyer || player == Robber.robber) {
                 oldShifter.Exiled();
                 return;
             }
@@ -733,6 +738,7 @@ namespace TheOtherRoles
             if (player == Vulture.vulture) Vulture.clearAndReload();
             if (player == Lawyer.lawyer) Lawyer.clearAndReload();
             if (player == Pursuer.pursuer) Pursuer.clearAndReload();
+            if (player == Robber.robber) Robber.clearAndReload();
 
             // Modifier
             if (!ignoreModifier)
@@ -987,6 +993,45 @@ namespace TheOtherRoles
         public static void setTiebreak() {
             Tiebreaker.isTiebreak = true;
         }
+
+        public static void robberStealsRole(byte playerId) {
+            PlayerControl target = Helpers.playerById(playerId);
+            PlayerControl robber = Robber.robber;
+            if (target == null) return;
+            if (target == Sheriff.sheriff) Sheriff.sheriff = robber;
+            if (target == Jackal.jackal) {
+                Jackal.jackal = robber;
+                Jackal.formerJackals.Add(target);
+            }
+            if (target == Sidekick.sidekick) {
+                Sidekick.sidekick = robber;
+                Jackal.formerJackals.Add(target);
+            }
+            if (target == Guesser.evilGuesser) Guesser.evilGuesser = robber;
+            if (target == Godfather.godfather) Godfather.godfather = robber;
+            if (target == Mafioso.mafioso) Mafioso.mafioso = robber;
+            if (target == Janitor.janitor) Janitor.janitor = robber;
+            if (target == Morphling.morphling) Morphling.morphling = robber;
+            if (target == Camouflager.camouflager) Camouflager.camouflager = robber;
+            if (target == Vampire.vampire) Vampire.vampire = robber;
+            if (target == Eraser.eraser) Eraser.eraser = robber;
+            if (target == Trickster.trickster) Trickster.trickster = robber;
+            if (target == Cleaner.cleaner) Cleaner.cleaner = robber;
+            if (target == Warlock.warlock) Warlock.warlock = robber;
+            if (target == BountyHunter.bountyHunter) BountyHunter.bountyHunter = robber;
+            if (target == Witch.witch) Witch.witch = robber;
+            if (target == Ninja.ninja) Ninja.ninja = robber;
+            if (target.Data.Role.IsImpostor) {
+                RoleManager.Instance.SetRole(Robber.robber, RoleTypes.Impostor);
+                FastDestroyableSingleton<HudManager>.Instance.KillButton.SetCoolDown(Robber.robber.killTimer, PlayerControl.GameOptions.KillCooldown);
+            }
+            if (Robber.robber == PlayerControl.LocalPlayer) CustomButton.ResetAllCooldowns();
+            Robber.clearAndReload();
+            Robber.formerRobber = robber;  // After clearAndReload, else it would get reset...
+
+            if (Lawyer.lawyer != null && target == Lawyer.target)
+                Lawyer.target = robber;
+        }
         
         public static void setTrap(byte[] buff) {
             if (Trapper.trapper == null) return;
@@ -1225,6 +1270,12 @@ namespace TheOtherRoles
                     byte invisiblePlayer = reader.ReadByte();
                     byte invisibleFlag = reader.ReadByte();
                     RPCProcedure.setInvisible(invisiblePlayer, invisibleFlag);
+                    break;
+                case (byte)CustomRPC.RobberStealsRole:
+                    byte robberTargetId = reader.ReadByte();
+                    RPCProcedure.robberStealsRole(robberTargetId);
+                    break;
+
                     break;
                 case (byte)CustomRPC.SetTrap:
                     RPCProcedure.setTrap(reader.ReadBytesAndSize());

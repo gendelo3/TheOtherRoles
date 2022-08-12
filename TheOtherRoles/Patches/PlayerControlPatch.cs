@@ -788,6 +788,17 @@ namespace TheOtherRoles.Patches {
             setPlayerOutline(Ninja.currentTarget, Ninja.color);
         }
 
+        static void robberSetTarget() {
+            if (Robber.robber == null || Robber.robber != CachedPlayer.LocalPlayer.PlayerControl) return;
+            List<PlayerControl> untargetables = new List<PlayerControl>();
+            if (Mini.mini != null && !Mini.isGrownUp()) untargetables.Add(Mini.mini);
+            Robber.currentTarget = setTarget(onlyCrewmates: false, untargetablePlayers: untargetables);
+            setPlayerOutline(Robber.currentTarget, Robber.color);
+        }
+
+
+
+
         static void baitUpdate() {
             if (!Bait.active.Any()) return;
 
@@ -836,6 +847,7 @@ namespace TheOtherRoles.Patches {
                 HudManagerStartPatch.cleanerCleanButton.MaxTimer = Cleaner.cooldown * multiplier;
                 HudManagerStartPatch.witchSpellButton.MaxTimer = (Witch.cooldown + Witch.currentCooldownAddition) * multiplier;
                 HudManagerStartPatch.ninjaButton.MaxTimer = Ninja.cooldown * multiplier;
+                HudManagerStartPatch.robberKillButton.MaxTimer = Robber.cooldown * multiplier;
             }
         }
 
@@ -927,6 +939,10 @@ namespace TheOtherRoles.Patches {
                 ninjaSetTarget();
                 NinjaTrace.UpdateAll();
                 ninjaUpdate();
+                // Robber
+                robberSetTarget();
+
+                hackerUpdate();
                 swapperUpdate();
                 // Hacker
                 hackerUpdate();
@@ -1111,7 +1127,6 @@ namespace TheOtherRoles.Patches {
             // Ninja Button Sync
             if (Ninja.ninja != null && CachedPlayer.LocalPlayer.PlayerControl == Ninja.ninja && __instance == Ninja.ninja && HudManagerStartPatch.ninjaButton != null)
                 HudManagerStartPatch.ninjaButton.Timer = HudManagerStartPatch.ninjaButton.MaxTimer;
-
 
             // Bait
             if (Bait.bait.FindAll(x => x.PlayerId == target.PlayerId).Count > 0) {

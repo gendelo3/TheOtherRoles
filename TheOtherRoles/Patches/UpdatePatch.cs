@@ -66,10 +66,12 @@ namespace TheOtherRoles.Patches {
                         player.NameText.color = color;
         }
 
-        static void setNameColors()
-        {
+        static void setNameColors() {
             var localPlayer = CachedPlayer.LocalPlayer.PlayerControl;
-            if (Jester.jester != null && Jester.jester == localPlayer)
+            var localRole = RoleInfo.getRoleInfoForPlayer(localPlayer, false).FirstOrDefault();
+            setPlayerNameColor(localPlayer, localRole.color);
+
+            /*if (Jester.jester != null && Jester.jester == localPlayer)
                 setPlayerNameColor(Jester.jester, Jester.color);
             else if (Mayor.mayor != null && Mayor.mayor == localPlayer)
                 setPlayerNameColor(Mayor.mayor, Mayor.color);
@@ -80,12 +82,13 @@ namespace TheOtherRoles.Patches {
                 if (Deputy.deputy != null && Deputy.knowsSheriff) {
                     setPlayerNameColor(Deputy.deputy, Deputy.color);
                 }
-            } else if (Deputy.deputy != null && Deputy.deputy == localPlayer) {
+            } else*/
+            if (Deputy.deputy != null && Deputy.deputy == localPlayer) {
                 setPlayerNameColor(Deputy.deputy, Deputy.color);
                 if (Sheriff.sheriff != null && Deputy.knowsSheriff) {
                     setPlayerNameColor(Sheriff.sheriff, Sheriff.color);
                 }
-            } else if (Portalmaker.portalmaker != null && Portalmaker.portalmaker == localPlayer)
+            } /*else if (Portalmaker.portalmaker != null && Portalmaker.portalmaker == localPlayer)
                 setPlayerNameColor(Portalmaker.portalmaker, Portalmaker.color);
             else if (Lighter.lighter != null && Lighter.lighter == localPlayer)
                 setPlayerNameColor(Lighter.lighter, Lighter.color);
@@ -106,7 +109,7 @@ namespace TheOtherRoles.Patches {
             else if (Tracker.tracker != null && Tracker.tracker == localPlayer)
                 setPlayerNameColor(Tracker.tracker, Tracker.color);
             else if (Snitch.snitch != null && Snitch.snitch == localPlayer)
-                setPlayerNameColor(Snitch.snitch, Snitch.color);
+                setPlayerNameColor(Snitch.snitch, Snitch.color);*/
             else if (Jackal.jackal != null && Jackal.jackal == localPlayer) {
                 // Jackal can see his sidekick
                 setPlayerNameColor(Jackal.jackal, Jackal.color);
@@ -117,7 +120,7 @@ namespace TheOtherRoles.Patches {
                     setPlayerNameColor(Jackal.fakeSidekick, Jackal.color);
                 }
             }
-            else if (Spy.spy != null && Spy.spy == localPlayer) {
+            /*else if (Spy.spy != null && Spy.spy == localPlayer) {
                 setPlayerNameColor(Spy.spy, Spy.color);
             } else if (SecurityGuard.securityGuard != null && SecurityGuard.securityGuard == localPlayer) {
                 setPlayerNameColor(SecurityGuard.securityGuard, SecurityGuard.color);
@@ -137,7 +140,7 @@ namespace TheOtherRoles.Patches {
                 setPlayerNameColor(Lawyer.lawyer, Lawyer.color);
             } else if (Pursuer.pursuer != null && Pursuer.pursuer == localPlayer) {
                 setPlayerNameColor(Pursuer.pursuer, Pursuer.color);
-            }
+            }*/
 
             // No else if here, as a Lover of team Jackal needs the colors
             if (Sidekick.sidekick != null && Sidekick.sidekick == localPlayer) {
@@ -205,6 +208,16 @@ namespace TheOtherRoles.Patches {
                 if (MeetingHud.Instance != null)
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
                         if (player.TargetPlayerId == target.PlayerId)
+                            player.NameText.text += suffix;
+            }
+
+            // Former Robber
+            if (Robber.formerRobber != null && (Robber.formerRobber == CachedPlayer.LocalPlayer.PlayerControl || CachedPlayer.LocalPlayer.PlayerControl.Data.IsDead)) {
+                string suffix = Helpers.cs(Robber.color, " $");
+                Robber.formerRobber.cosmetics.nameText.text += suffix;
+                if (MeetingHud.Instance != null)
+                    foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
+                        if (player.TargetPlayerId == Robber.formerRobber.PlayerId)
                             player.NameText.text += suffix;
             }
 

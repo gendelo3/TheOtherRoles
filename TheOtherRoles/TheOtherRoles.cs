@@ -54,6 +54,7 @@ namespace TheOtherRoles
             Pursuer.clearAndReload();
             Witch.clearAndReload();
             Ninja.clearAndReload();
+            Robber.clearAndReload();
             Trapper.clearAndReload();
 
             // Modifier
@@ -1499,6 +1500,32 @@ namespace TheOtherRoles
             if (arrow?.arrow != null) UnityEngine.Object.Destroy(arrow.arrow);
             arrow = new Arrow(Color.black);
             if (arrow.arrow != null) arrow.arrow.SetActive(false);
+        }
+    }
+
+    public static class Robber {
+        public static PlayerControl robber;
+        public static Color color = new Color32(71, 99, 45, Byte.MaxValue);
+        public static PlayerControl currentTarget;
+        public static PlayerControl formerRobber;
+
+        public static float cooldown = 30f;
+
+        public static bool suicideFlag = false;  // Used as a flag for suicide
+
+        public static bool hasImpostorVision;
+        public static bool canUseVents;
+        public static bool canKillSheriff;
+
+        public static void clearAndReload() {
+            robber = null;
+            suicideFlag = false;
+            currentTarget = null;
+            formerRobber = null;
+            hasImpostorVision = CustomOptionHolder.robberHasImpVision.getBool();  // todo option and implementation
+            cooldown = CustomOptionHolder.robberCooldown.getFloat();
+            canUseVents = CustomOptionHolder.robberCanUseVents.getBool();
+            canKillSheriff = CustomOptionHolder.robberCanKillSheriff.getBool();
         }
     }
 

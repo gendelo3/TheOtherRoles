@@ -71,6 +71,7 @@ namespace TheOtherRoles
         public static RoleInfo crewmate = new RoleInfo("Crewmate", Color.white, "Find the Impostors", "Find the Impostors", RoleId.Crewmate);
         public static RoleInfo witch = new RoleInfo("Witch", Witch.color, "Cast a spell upon your foes", "Cast a spell upon your foes", RoleId.Witch);
         public static RoleInfo ninja = new RoleInfo("Ninja", Ninja.color, "Surprise and assassinate your foes", "Surprise and assassinate your foes", RoleId.Ninja);
+        public static RoleInfo robber = new RoleInfo("Robber", Robber.color, "Steal a killers role by killing them", "Steal a killers role", RoleId.Robber, true);
 
 
 
@@ -111,6 +112,7 @@ namespace TheOtherRoles
             vulture,
             pursuer,
             lawyer,
+            robber,
             prosecutor,
             crewmate,
             shifter,
@@ -149,7 +151,7 @@ namespace TheOtherRoles
             // Modifier
             if (showModifier) {
                 // after dead modifier
-                if (!CustomOptionHolder.modifiersAreHidden.getBool() || PlayerControl.LocalPlayer.Data.IsDead)
+                if (!CustomOptionHolder.modifiersAreHidden.getBool() || PlayerControl.LocalPlayer.Data.IsDead || AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Ended)
                 {
                     if (Bait.bait.Any(x => x.PlayerId == p.PlayerId)) infos.Add(bait);
                     if (Bloody.bloody.Any(x => x.PlayerId == p.PlayerId)) infos.Add(bloody);
@@ -162,6 +164,8 @@ namespace TheOtherRoles
                 if (p == Mini.mini) infos.Add(mini);
                 if (Invert.invert.Any(x => x.PlayerId == p.PlayerId)) infos.Add(invert);
             }
+
+            int count = infos.Count;  // Save count after modifiers are added so that the role count can be checked
 
             // Special roles
             if (p == Jester.jester) infos.Add(jester);
@@ -206,10 +210,11 @@ namespace TheOtherRoles
             if (p == Lawyer.lawyer && Lawyer.isProsecutor) infos.Add(prosecutor);
             if (p == Trapper.trapper) infos.Add(trapper);
             if (p == Pursuer.pursuer) infos.Add(pursuer);
+            if (p == Robber.robber) infos.Add(robber);
 
             // Default roles
-            if (infos.Count == 0 && p.Data.Role.IsImpostor) infos.Add(impostor); // Just Impostor
-            if (infos.Count == 0 && !p.Data.Role.IsImpostor) infos.Add(crewmate); // Just Crewmate
+            if (infos.Count == count && p.Data.Role.IsImpostor) infos.Add(impostor); // Just Impostor
+            if (infos.Count == count && !p.Data.Role.IsImpostor) infos.Add(crewmate); // Just Crewmate
 
             return infos;
         }

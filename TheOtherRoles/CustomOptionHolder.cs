@@ -225,6 +225,13 @@ namespace TheOtherRoles {
         public static CustomOption pursuerCooldown;
         public static CustomOption pursuerBlanksNumber;
 
+        public static CustomOption robberSpawnRate;
+        public static CustomOption robberCooldown;
+        public static CustomOption robberHasImpVision;
+        public static CustomOption robberCanUseVents;
+        public static CustomOption robberCanKillSheriff;
+
+
         public static CustomOption trapperSpawnRate;
         public static CustomOption trapperCooldown;
         public static CustomOption trapperMaxCharges;
@@ -529,6 +536,12 @@ namespace TheOtherRoles {
             mediumDuration = CustomOption.Create(362, Types.Crewmate, "Medium Questioning Duration", 3f, 0f, 15f, 1f, mediumSpawnRate);
             mediumOneTimeUse = CustomOption.Create(363, Types.Crewmate, "Each Soul Can Only Be Questioned Once", false, mediumSpawnRate);
 
+            robberSpawnRate = CustomOption.Create(400, Types.Neutral, cs(Robber.color, "Robber"), rates, null, true);
+            robberCooldown = CustomOption.Create(401, Types.Neutral, "Robber Cooldown", 30f, 5f, 120f, 5f, robberSpawnRate);
+            robberCanKillSheriff = CustomOption.Create(402, Types.Neutral, "Robber Can Kill Sheriff", true, robberSpawnRate);
+            robberHasImpVision = CustomOption.Create(403, Types.Neutral, "Robber Has Impostor Vision", true, robberSpawnRate);
+            robberCanUseVents = CustomOption.Create(404, Types.Neutral, "Robber Can Use Vents", true, robberSpawnRate);
+
             trapperSpawnRate = CustomOption.Create(410, Types.Crewmate, cs(Trapper.color, "Trapper"), rates, null, true);
             trapperCooldown = CustomOption.Create(420, Types.Crewmate, "Trapper Cooldown", 30f, 5f, 120f, 5f, trapperSpawnRate);
             trapperMaxCharges = CustomOption.Create(440, Types.Crewmate, "Max Traps Charges", 5f, 1f, 15f, 1f, trapperSpawnRate);
@@ -599,7 +612,6 @@ namespace TheOtherRoles {
             dynamicMapEnableMira = CustomOption.Create(502, Types.General, "Enable Mira Rotation", true, dynamicMap, false);
             dynamicMapEnablePolus = CustomOption.Create(503, Types.General, "Enable Polus Rotation", true, dynamicMap, false);
             dynamicMapEnableAirShip = CustomOption.Create(504, Types.General, "Enable Airship Rotation", true, dynamicMap, false);
-
             dynamicMapEnableSubmerged = CustomOption.Create(505, Types.General, "Enable Submerged Rotation", true, dynamicMap, false);
 
             blockedRolePairings.Add((byte)RoleId.Vampire, new [] { (byte)RoleId.Warlock});

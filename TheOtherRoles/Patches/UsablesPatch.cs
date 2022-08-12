@@ -9,7 +9,7 @@ using static TheOtherRoles.MapOptions;
 using System.Collections.Generic;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
-
+using TheOtherRoles.Objects;
 
 namespace TheOtherRoles.Patches {
 
@@ -99,11 +99,12 @@ namespace TheOtherRoles.Patches {
                 Deputy.setHandcuffedKnows();
                 return false;
             }
+            if (Trapper.playersOnMap.Contains(CachedPlayer.LocalPlayer.PlayerControl)) return false;
 
             bool canUse;
             bool couldUse;
             __instance.CanUse(CachedPlayer.LocalPlayer.Data, out canUse, out couldUse);
-            bool canMoveInVents = CachedPlayer.LocalPlayer.PlayerControl != Spy.spy;
+            bool canMoveInVents = CachedPlayer.LocalPlayer.PlayerControl != Spy.spy && !Trapper.playersOnMap.Contains(CachedPlayer.LocalPlayer.PlayerControl);
             if (!canUse) return false; // No need to execute the native method as using is disallowed anyways
 
             bool isEnter = !CachedPlayer.LocalPlayer.PlayerControl.inVent;
@@ -127,6 +128,13 @@ namespace TheOtherRoles.Patches {
             }
             __instance.SetButtons(isEnter && canMoveInVents);
             return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(Vent), nameof(Vent.MoveToVent))]
+    public static class MoveToVentPatch {
+        public static bool Prefix(Vent otherVent) {
+            return !Trapper.playersOnMap.Contains(CachedPlayer.LocalPlayer.PlayerControl);
         }
     }
 

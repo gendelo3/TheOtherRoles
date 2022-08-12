@@ -1531,7 +1531,7 @@ namespace TheOtherRoles
 
     public static class Trapper {
         public static PlayerControl trapper;
-        public static Color color = new Color32(238, 112, 46, byte.MaxValue);
+        public static Color color = new Color32(110, 57, 105, byte.MaxValue);
 
         public static float cooldown = 30f;
         public static int maxCharges = 5;
@@ -1541,6 +1541,8 @@ namespace TheOtherRoles
         public static int trapCountToReveal = 2;
         public static List<PlayerControl> playersOnMap = new List<PlayerControl>();
         public static bool anonymousMap = false;
+        public static int infoType = 0; // 0 = Role, 1 = Good/Evil, 2 = Name
+        public static float trapDuration = 5f; 
 
         private static Sprite trapButtonSprite;
 
@@ -1560,6 +1562,8 @@ namespace TheOtherRoles
             trapCountToReveal = Mathf.RoundToInt(CustomOptionHolder.trapperTrapNeededTriggerToReveal.getFloat());
             playersOnMap = new List<PlayerControl>();
             anonymousMap = CustomOptionHolder.trapperAnonymousMap.getBool();
+            infoType = CustomOptionHolder.trapperInfoType.getSelection();
+            trapDuration = CustomOptionHolder.trapperTrapDuration.getFloat();
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
+using TheOtherRoles.Objects;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
 using UnityEngine;
@@ -32,7 +33,7 @@ namespace TheOtherRoles.Patches {
 			if (CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) {
 				foreach (PlayerControl player in Trapper.playersOnMap) {
 					if (herePoints.ContainsKey(player)) continue;
-					Vector3 v = player.transform.position;
+					Vector3 v = Trap.trapPlayerIdMap[player.PlayerId].trap.transform.position;
 					v /= MapUtilities.CachedShipStatus.MapScale;
 					v.x *= Mathf.Sign(MapUtilities.CachedShipStatus.transform.localScale.x);
 					v.z = -1f;

@@ -647,7 +647,7 @@ namespace TheOtherRoles
         public static void jackalCreatesSidekick(byte targetId) {
             PlayerControl player = Helpers.playerById(targetId);
             if (player == null) return;
-            if (Lawyer.target == player && Lawyer.isProsecutor) Lawyer.isProsecutor = false;
+            if (Lawyer.target == player && Lawyer.isProsecutor && Lawyer.lawyer != null && !Lawyer.lawyer.Data.IsDead) Lawyer.isProsecutor = false;
 
             if (!Jackal.canCreateSidekickFromImpostor && player.Data.Role.IsImpostor) {
                 Jackal.fakeSidekick = player;
@@ -1274,8 +1274,6 @@ namespace TheOtherRoles
                 case (byte)CustomRPC.RobberStealsRole:
                     byte robberTargetId = reader.ReadByte();
                     RPCProcedure.robberStealsRole(robberTargetId);
-                    break;
-
                     break;
                 case (byte)CustomRPC.SetTrap:
                     RPCProcedure.setTrap(reader.ReadBytesAndSize());

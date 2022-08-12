@@ -446,7 +446,8 @@ namespace TheOtherRoles {
                 Pursuer.pursuer == player ||
                 Jackal.jackal == player ||
                 Jackal.formerJackals.Contains(player) ||
-                Sidekick.sidekick == player;
+                Sidekick.sidekick == player ||
+                Robber.robber == player;
         }
 
 

@@ -1228,12 +1228,12 @@ namespace TheOtherRoles.Patches {
             }
 
             // Pursuer promotion trigger on exile & suicide (the host sends the call such that everyone recieves the update before a possible game End)
-            if (__instance == Lawyer.target && Lawyer.target != Jester.jester && AmongUsClient.Instance.AmHost) {
+            if (__instance == Lawyer.target && Lawyer.target != Jester.jester && AmongUsClient.Instance.AmHost && !Lawyer.isProsecutor) {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.lawyerPromotesToPursuer();
             }
-            if (__instance == Lawyer.target && !Lawyer.targetWasGuessed)
+            if (__instance == Lawyer.target && !Lawyer.targetWasGuessed && !Lawyer.isProsecutor)
             {
                 if (Lawyer.lawyer != null) Lawyer.lawyer.Exiled();
                 if (Pursuer.pursuer != null) Pursuer.pursuer.Exiled();

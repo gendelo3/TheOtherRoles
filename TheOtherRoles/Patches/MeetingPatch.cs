@@ -571,22 +571,22 @@ namespace TheOtherRoles.Patches {
                 }
 
                 // Add trapped Info into Trapper chat
-                string message = $"";
-                foreach (Trap trap in Trap.traps) {
-                    if (!trap.revealed) continue;
-                    trap.trappedPlayer = trap.trappedPlayer.OrderBy(x => rnd.Next()).ToList();
-                    if (Trapper.trapCountToReveal == 1) {
-                        message += trap.trappedPlayer.FirstOrDefault() + "\n"; 
-                        continue;
+                if (Trapper.trapper != null && CachedPlayer.LocalPlayer.PlayerControl == Trapper.trapper) {
+                    foreach (Trap trap in Trap.traps) {
+                        if (!trap.revealed) continue;
+                        string message = $"Trap {trap.instanceId}: \n";
+                        trap.trappedPlayer = trap.trappedPlayer.OrderBy(x => rnd.Next()).ToList();
+                        foreach (PlayerControl p in trap.trappedPlayer) {
+                            if (Trapper.infoType == 0) message += RoleInfo.GetRolesString(p, false, false) + "\n";
+                            else if (Trapper.infoType == 1) {
+                                if (Helpers.isNeutral(p) || p.Data.Role.IsImpostor) message += "Evil Role \n";
+                                else message += "Good Role \n";
+                            }
+                            else message += p.Data.PlayerName + "\n";
+                        }
+                        FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(CachedPlayer.LocalPlayer.PlayerControl, $"{message}");
                     }
-                    message = $"Tr@p {trap.instanceId}: \n";
-                    foreach (PlayerControl p in trap.trappedPlayer) 
-                        message += RoleInfo.GetRolesString(p, false, false) + "\n";
-                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(CachedPlayer.LocalPlayer.PlayerControl, $"{message}");
-                    message = "";
                 }
-
-                if (message != "") FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(CachedPlayer.LocalPlayer.PlayerControl, $"{message}");
 
                 Trapper.playersOnMap = new List<PlayerControl>();
 

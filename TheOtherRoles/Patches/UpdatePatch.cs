@@ -309,6 +309,11 @@ namespace TheOtherRoles.Patches {
             if (MeetingHud.Instance) __instance.SabotageButton.Hide();
         }
 
+        static void updateMapButton(HudManager __instance) {
+            if (!(CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) || __instance == null || __instance.MapButton == null) return;
+            __instance.MapButton.color = Trapper.playersOnMap.Any() ? Trapper.color : Color.white;
+        }
+
         static void Postfix(HudManager __instance)
         {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
@@ -332,6 +337,7 @@ namespace TheOtherRoles.Patches {
             // Meeting hide buttons if needed (used for the map usage, because closing the map would show buttons)
             updateSabotageButton(__instance);
             updateUseButton(__instance);
+            updateMapButton(__instance);
 
         }
     }

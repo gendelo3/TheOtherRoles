@@ -51,6 +51,7 @@ namespace TheOtherRoles.Patches {
             public List<RoleInfo> Roles {get;set;}
             public int TasksCompleted  {get;set;}
             public int TasksTotal  {get;set;}
+            public bool IsGuesser {get; set;}
         }
     }
 
@@ -72,7 +73,8 @@ namespace TheOtherRoles.Patches {
             foreach(var playerControl in CachedPlayer.AllPlayers) {
                 var roles = RoleInfo.getRoleInfoForPlayer(playerControl);
                 var (tasksCompleted, tasksTotal) = TasksHandler.taskInfo(playerControl.Data);
-                AdditionalTempData.playerRoles.Add(new AdditionalTempData.PlayerRoleInfo() { PlayerName = playerControl.Data.PlayerName, Roles = roles, TasksTotal = tasksTotal, TasksCompleted = tasksCompleted });
+                bool isGuesser = HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(playerControl.PlayerId);
+                AdditionalTempData.playerRoles.Add(new AdditionalTempData.PlayerRoleInfo() { PlayerName = playerControl.Data.PlayerName, Roles = roles, TasksTotal = tasksTotal, TasksCompleted = tasksCompleted, IsGuesser = isGuesser });
             }
 
             // Remove Jester, Arsonist, Vulture, Jackal, former Jackals and Sidekick from winners (if they win, they'll be readded)
@@ -325,6 +327,7 @@ namespace TheOtherRoles.Patches {
                 roleSummaryText.AppendLine("Players and roles at the end of the game:");
                 foreach(var data in AdditionalTempData.playerRoles) {
                     var roles = string.Join(" ", data.Roles.Select(x => Helpers.cs(x.color, x.name)));
+                    if (data.IsGuesser) roles += " (Guesser)";
                     var taskInfo = data.TasksTotal > 0 ? $" - <color=#FAD934FF>({data.TasksCompleted}/{data.TasksTotal})</color>" : "";
                     roleSummaryText.AppendLine($"{data.PlayerName} - {roles}{taskInfo}");
                 }

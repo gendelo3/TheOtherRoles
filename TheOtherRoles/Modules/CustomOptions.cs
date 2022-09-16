@@ -10,6 +10,7 @@ using System.Text;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
 using static TheOtherRoles.TheOtherRoles;
+using static TheOtherRoles.CustomOption;
 
 namespace TheOtherRoles {
     public class CustomOption {
@@ -252,7 +253,7 @@ namespace TheOtherRoles {
             crewmateTab.transform.localPosition = Vector3.right * 1f;
             modifierTab.transform.localPosition = Vector3.right * 1f;
 
-            var tabs = new GameObject[] { gameTab, roleTab, torTab, impostorTab, neutralTab, crewmateTab, modifierTab};
+            var tabs = new GameObject[] { gameTab, roleTab, torTab, impostorTab, neutralTab, crewmateTab, modifierTab };
             for (int i = 0; i < tabs.Length; i++) {
                 var button = tabs[i].GetComponentInChildren<PassiveButton>();
                 if (button == null) continue;
@@ -319,11 +320,12 @@ namespace TheOtherRoles {
             List<OptionBehaviour> modifierOptions = new List<OptionBehaviour>();
 
 
-            List<Transform> menus = new List<Transform>() {torMenu.transform, impostorMenu.transform, neutralMenu.transform, crewmateMenu.transform, modifierMenu.transform};
+            List<Transform> menus = new List<Transform>() { torMenu.transform, impostorMenu.transform, neutralMenu.transform, crewmateMenu.transform, modifierMenu.transform };
             List<List<OptionBehaviour>> optionBehaviours = new List<List<OptionBehaviour>>() { torOptions, impostorOptions, neutralOptions, crewmateOptions, modifierOptions };
 
             for (int i = 0; i < CustomOption.options.Count; i++) {
                 CustomOption option = CustomOption.options[i];
+                if (option.type == CustomOptionType.Guesser) continue;
                 if (option.optionBehaviour == null) {
                     StringOption stringOption = UnityEngine.Object.Instantiate(template, menus[(int)option.type]);
                     optionBehaviours[(int)option.type].Add(stringOption);
@@ -452,27 +454,27 @@ namespace TheOtherRoles {
             modifierTab.transform.localPosition = Vector3.right * 1f;
 
             var tabs = new GameObject[] { gameTab, torTab, impostorTab, neutralTab, crewmateTab, modifierTab, guesserTab };
-            for (int i = 0; i < tabs.Length; i++) {
+            for (int i = 0; i < tabs.Length; i++) {               
                 var button = tabs[i].GetComponentInChildren<PassiveButton>();
                 if (button == null) continue;
                 int copiedIndex = i;
                 button.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
-                button.OnClick.AddListener((System.Action)(() => {
+                button.OnClick.AddListener((System.Action)(() => {                   
                     gameSettingMenu.RegularGameSettings.SetActive(false);
-                    torSettings.gameObject.SetActive(false);
+                    torSettings.gameObject.SetActive(false);                    
                     impostorSettings.gameObject.SetActive(false);
                     guesserSettings.gameObject.SetActive(false);
                     neutralSettings.gameObject.SetActive(false);
                     crewmateSettings.gameObject.SetActive(false);
-                    modifierSettings.gameObject.SetActive(false);
+                    modifierSettings.gameObject.SetActive(false);                   
                     gameSettingMenu.GameSettingsHightlight.enabled = false;
-                    torTabHighlight.enabled = false;
+                    torTabHighlight.enabled = false;                    
                     guesserTabHighlight.enabled = false;
                     impostorTabHighlight.enabled = false;
                     neutralTabHighlight.enabled = false;
                     crewmateTabHighlight.enabled = false;
-                    modifierTabHighlight.enabled = false;
-
+                    modifierTabHighlight.enabled = false;                    
+                    
                     if (copiedIndex == 0) {
                         gameSettingMenu.RegularGameSettings.SetActive(true);
                         gameSettingMenu.GameSettingsHightlight.enabled = true;
@@ -500,7 +502,7 @@ namespace TheOtherRoles {
                     else if (copiedIndex == 6) {
                         guesserSettings.gameObject.SetActive(true);
                         guesserTabHighlight.enabled = true;
-                    }
+                    }                     
                 }));
             }
 

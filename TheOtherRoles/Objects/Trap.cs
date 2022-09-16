@@ -89,7 +89,6 @@ namespace TheOtherRoles.Objects {
                 if (p == 1f) {
                     player.moveable = true;
                     Trapper.playersOnMap.Remove(player);
-                    if (localIsTrapper) t.trap.SetActive(false);
                     trapPlayerIdMap.Remove(playerId);
                     t.arrow.arrow.SetActive(false);
                 }

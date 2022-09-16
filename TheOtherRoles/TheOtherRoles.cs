@@ -1360,6 +1360,7 @@ namespace TheOtherRoles
         public static Sprite targetSprite;
         public static bool triggerProsecutorWin = false;
         public static bool isProsecutor = false;
+        public static bool canCallEmergency = true;
 
         public static float vision = 1f;
         public static bool lawyerKnowsRole = false;
@@ -1383,6 +1384,7 @@ namespace TheOtherRoles
             vision = CustomOptionHolder.lawyerVision.getFloat();
             lawyerKnowsRole = CustomOptionHolder.lawyerKnowsRole.getBool();
             targetCanBeJester = CustomOptionHolder.lawyerTargetCanBeJester.getBool();
+            canCallEmergency = CustomOptionHolder.jesterCanCallEmergency.getBool();
         }
     }
 

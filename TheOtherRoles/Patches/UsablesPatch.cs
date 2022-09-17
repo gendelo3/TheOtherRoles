@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
 using TheOtherRoles.Objects;
+using TheOtherRoles.CustomGameModes;
 
 namespace TheOtherRoles.Patches {
 
@@ -560,6 +561,16 @@ namespace TheOtherRoles.Patches {
                 __instance.medscan.CurrentUser = CachedPlayer.LocalPlayer.PlayerId;
                 __instance.medscan.UsersList.Clear();
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.ShowSabotageMap))]
+    class ShowSabotageMapPatch {
+        static bool Prefix(MapBehaviour __instance) {
+            if (HideNSeek.isHideNSeekGM) 
+                return HideNSeek.canSabotage;
+
+            return true;
         }
     }
 

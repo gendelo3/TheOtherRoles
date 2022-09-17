@@ -9,6 +9,7 @@ using TheOtherRoles.Objects;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
 using UnityEngine;
+using TheOtherRoles.CustomGameModes;
 
 namespace TheOtherRoles.Patches {
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
@@ -859,6 +860,69 @@ namespace TheOtherRoles.Patches {
                 if (Trapper.maxCharges > Trapper.charges) Trapper.charges++;
             }
         }
+
+        static void hunterUpdater() {
+            if (!HideNSeek.isHideNSeekGM) return;
+            int minutes = (int)HideNSeek.timer / 60;
+            int seconds = (int)HideNSeek.timer % 60;
+            string suffix = $" {minutes:00}:{seconds:00}";
+
+            if (HideNSeek.timerText == null) {
+                RoomTracker roomTracker = FastDestroyableSingleton<HudManager>.Instance?.roomTracker;
+                if (roomTracker != null) {
+                    GameObject gameObject = UnityEngine.Object.Instantiate(roomTracker.gameObject);
+
+                    gameObject.transform.SetParent(FastDestroyableSingleton<HudManager>.Instance.transform);
+                    UnityEngine.Object.DestroyImmediate(gameObject.GetComponent<RoomTracker>());
+                    HideNSeek.timerText = gameObject.GetComponent<TMPro.TMP_Text>();
+
+                    // Use local position to place it in the player's view instead of the world location
+                    gameObject.transform.localPosition = new Vector3(0, -1.8f, gameObject.transform.localPosition.z);
+                }
+            } else {
+                if (HideNSeek.isWaitingTimer) {
+                    HideNSeek.timerText.text = "<color=#0000cc>" + suffix + "</color>";
+                    HideNSeek.timerText.color = Color.blue;
+                } else {
+                    HideNSeek.timerText.text = "<color=#FF0000FF>" + suffix + "</color>";
+                    HideNSeek.timerText.color = Color.red;
+                }
+            }
+            if (HideNSeek.isHunted() && !Hunted.taskPunish) {
+                var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);
+                int numberOfTasks = playerTotal - playerCompleted;
+
+                if (numberOfTasks == 0) {
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.HuntedShield, Hazel.SendOption.Reliable, -1);
+                    writer.Write(CachedPlayer.LocalPlayer.PlayerId);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.huntedShield(CachedPlayer.LocalPlayer.PlayerId);
+
+                    Hunted.taskPunish = true;
+                }
+            }
+
+            if (!HideNSeek.isHunter()) return;
+
+            byte playerId = CachedPlayer.LocalPlayer.PlayerId;
+            foreach (Arrow arrow in Hunter.getLocalArrows(playerId)) arrow.arrow.SetActive(false);
+            if (Hunter.isArrowActive(playerId)) {
+                int arrowIndex = 0;
+                foreach (PlayerControl p in CachedPlayer.AllPlayers) {
+                    if (!p.Data.IsDead && playerId != p.PlayerId) {
+                        if (arrowIndex >= Hunter.getLocalArrows(playerId).Count) {
+                            Hunter.getLocalArrows(playerId).Add(new Arrow(Color.blue));
+                        }
+                        if (arrowIndex < Hunter.getLocalArrows(playerId).Count && Hunter.getLocalArrows(playerId)[arrowIndex] != null) {
+                            Hunter.getLocalArrows(playerId)[arrowIndex].arrow.SetActive(true);
+                            Hunter.getLocalArrows(playerId)[arrowIndex].Update(p.transform.position, Color.blue);
+                        }
+                        arrowIndex++;
+                    }
+                }
+            }
+        }
+
         public static void Postfix(PlayerControl __instance) {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
 
@@ -949,13 +1013,16 @@ namespace TheOtherRoles.Patches {
                 // Trapper
                 trapperUpdate();
 
-                // --MODIFIER--
+                // -- MODIFIER--
                 // Bait
                 baitUpdate();
                 // Bloody
                 bloodyUpdate();
                 // mini (for the cooldowns)
                 miniCooldownUpdate();
+
+                // -- GAME MODE --
+                hunterUpdater();
             } 
         }
     }
@@ -975,8 +1042,10 @@ namespace TheOtherRoles.Patches {
 
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
     class PlayerControlCmdReportDeadBodyPatch {
-        public static void Prefix(PlayerControl __instance) {
+        public static bool Prefix(PlayerControl __instance) {
+            if (HideNSeek.isHideNSeekGM) return false;
             Helpers.handleVampireBiteOnBodyReport();
+            return true;
         }
     }
 

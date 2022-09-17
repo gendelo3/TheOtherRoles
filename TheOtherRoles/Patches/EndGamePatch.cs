@@ -8,6 +8,7 @@ using System;
 using System.Text;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
+using TheOtherRoles.CustomGameModes;
 
 namespace TheOtherRoles.Patches {
     enum CustomGameOverReason {
@@ -430,6 +431,7 @@ namespace TheOtherRoles.Patches {
         }
 
         private static bool CheckAndEndGameForTaskWin(ShipStatus __instance) {
+            if (HideNSeek.isHideNSeekGM && !HideNSeek.taskWinPossible) return false;
             if (GameData.Instance.TotalTasks > 0 && GameData.Instance.TotalTasks <= GameData.Instance.CompletedTasks) {
                 __instance.enabled = false;
                 ShipStatus.RpcEndGame(GameOverReason.HumansByTask, false);
@@ -466,6 +468,9 @@ namespace TheOtherRoles.Patches {
         }
 
         private static bool CheckAndEndGameForImpostorWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (HideNSeek.isHideNSeekGM) 
+                if (!(statistics.TeamImpostorsAlive > statistics.TotalAlive - statistics.TeamImpostorsAlive)) return false;
+
             if (statistics.TeamImpostorsAlive >= statistics.TotalAlive - statistics.TeamImpostorsAlive && statistics.TeamJackalAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
                 __instance.enabled = false;
                 GameOverReason endReason;

@@ -141,11 +141,17 @@ namespace TheOtherRoles.Patches {
                     RPCProcedure.shareGamemode((byte) MapOptions.gameMode);
                 }
 
-                if (MapOptions.gameMode == CustomGamemodes.Guesser) {
-                    __instance.GameStartText.text += $"\n<color=#FFFFFF>GUESSER GAMEMODE\n</color>";
-                    __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 1f;
+                if (MapOptions.gameMode != CustomGamemodes.Classic) {
+                    string text = "";
+                    switch (MapOptions.gameMode) {
+                        case CustomGamemodes.Guesser: text = $"\n<color=#FFFFFF>GUESSER GAMEMODE\n</color>"; break;
+                        case CustomGamemodes.HideNSeek: text = $"\n<color=#FFFFFF>HIDE 'N SEEK\n</color>"; break;
+                    }
+                    if (text != "") {
+                        __instance.GameStartText.text += text;
+                        __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 1f;
+                    }
                 }
-
             }
         }
 
@@ -174,8 +180,15 @@ namespace TheOtherRoles.Patches {
                             break;
                         }
                     }
-
-                    if (CustomOptionHolder.dynamicMap.getBool() && continueStart) {
+                    if (continueStart && MapOptions.gameMode == CustomGamemodes.HideNSeek) {
+                        byte mapId = (byte)CustomOptionHolder.dynamicMapEnableMira.getFloat();
+                        if (mapId >= 3) mapId++;
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.DynamicMapOption, Hazel.SendOption.Reliable, -1);
+                        writer.Write(mapId);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        RPCProcedure.dynamicMapOption(mapId);
+                    }            
+                    else if (CustomOptionHolder.dynamicMap.getBool() && continueStart) {
                         // 0 = Skeld
                         // 1 = Mira HQ
                         // 2 = Polus

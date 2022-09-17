@@ -6,6 +6,7 @@ using UnityEngine;
 using TheOtherRoles.Objects;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
+using TheOtherRoles.CustomGameModes;
 
 namespace TheOtherRoles
 {
@@ -67,8 +68,9 @@ namespace TheOtherRoles
             Vip.clearAndReload();
             Invert.clearAndReload();
 
-            // Handle Guesser
+            // Gamemodes
             HandleGuesser.clearAndReload();
+            HideNSeek.clearAndReload();
         }
 
         public static class Jester {

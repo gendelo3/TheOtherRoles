@@ -4,6 +4,7 @@ using HarmonyLib;
 using TheOtherRoles.Utilities;
 using static TheOtherRoles.TheOtherRoles;
 using UnityEngine;
+using TheOtherRoles.CustomGameModes;
 
 namespace TheOtherRoles.Patches {
 
@@ -15,22 +16,32 @@ namespace TheOtherRoles.Patches {
         public static bool Prefix(ref float __result, ShipStatus __instance, [HarmonyArgument(0)] GameData.PlayerInfo player) {
             if (!__instance.Systems.ContainsKey(SystemTypes.Electrical)) return true;
 
-            // If player is a role which has Impostor vision
-            if (player.Role.IsImpostor
-                || (Jackal.jackal != null && Jackal.jackal.PlayerId == player.PlayerId && Jackal.hasImpostorVision)
-                || (Sidekick.sidekick != null && Sidekick.sidekick.PlayerId == player.PlayerId && Sidekick.hasImpostorVision)
-                || (Spy.spy != null && Spy.spy.PlayerId == player.PlayerId && Spy.hasImpostorVision)
-                || (Jester.jester != null && Jester.jester.PlayerId == player.PlayerId && Jester.hasImpostorVision)
-                || (Robber.robber != null && Robber.robber.PlayerId == player.PlayerId && Robber.hasImpostorVision)) {
-                //__result = __instance.MaxLightRadius * PlayerControl.GameOptions.ImpostorLightMod;
-                __result = GetNeutralLightRadius(__instance, true);
-                return false;
+            
+            if (!HideNSeek.isHideNSeekGM || (HideNSeek.isHideNSeekGM && !Hunter.lightActive.Contains(player.PlayerId))) {
+                // If player is a role which has Impostor vision
+                if (player.Role.IsImpostor
+                    || (Jackal.jackal != null && Jackal.jackal.PlayerId == player.PlayerId && Jackal.hasImpostorVision)
+                    || (Sidekick.sidekick != null && Sidekick.sidekick.PlayerId == player.PlayerId && Sidekick.hasImpostorVision)
+                    || (Spy.spy != null && Spy.spy.PlayerId == player.PlayerId && Spy.hasImpostorVision)
+                    || (Jester.jester != null && Jester.jester.PlayerId == player.PlayerId && Jester.hasImpostorVision)
+                    || (Robber.robber != null && Robber.robber.PlayerId == player.PlayerId && Robber.hasImpostorVision)) {
+                    //__result = __instance.MaxLightRadius * PlayerControl.GameOptions.ImpostorLightMod;
+                    __result = GetNeutralLightRadius(__instance, true);
+                    return false;
+                }
             }
+
 
             // If player is Lighter with ability active
             if (Lighter.lighter != null && Lighter.lighter.PlayerId == player.PlayerId && Lighter.lighterTimer > 0f) {
                 float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                 __result = Mathf.Lerp(__instance.MaxLightRadius * Lighter.lighterModeLightsOffVision, __instance.MaxLightRadius * Lighter.lighterModeLightsOnVision, unlerped);
+            }
+
+            // If Game mode is Hide N Seek and hunter with ability active
+            if (HideNSeek.isHideNSeekGM && Hunter.isLightActive(player.PlayerId)) {
+                float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
+                __result = Mathf.Lerp(__instance.MaxLightRadius * Hunter.lightVision, __instance.MaxLightRadius * Hunter.lightVision, unlerped);
             }
 
             // If there is a Trickster with their ability active

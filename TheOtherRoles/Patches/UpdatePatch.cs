@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
+using TheOtherRoles.CustomGameModes;
 
 namespace TheOtherRoles.Patches {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
@@ -245,6 +246,7 @@ namespace TheOtherRoles.Patches {
             Trickster.lightsOutTimer -= dt;
             Tracker.corpsesTrackingTimer -= dt;
             Ninja.invisibleTimer -= dt;
+            HideNSeek.timer -= dt;
             foreach (byte key in Deputy.handcuffedKnows.Keys)
                 Deputy.handcuffedKnows[key] -= dt;
         }

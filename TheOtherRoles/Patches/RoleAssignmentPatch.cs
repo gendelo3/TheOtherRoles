@@ -17,6 +17,18 @@ namespace TheOtherRoles.Patches {
         }
     }
 
+    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.GetAdjustedNumImpostors))]
+    class GameOptionsDataGetAdjustedNumImpostorsPatch {
+        public static void Postfix(ref int __result) {
+            if (MapOptions.gameMode == CustomGamemodes.HideNSeek) {
+                int impCount = Mathf.RoundToInt(CustomOptionHolder.hideNSeekHunterCount.getFloat());
+                __result = impCount; ; // Set Imp Num
+                PlayerControl.GameOptions.NumImpostors = impCount;
+            }
+           
+        }
+    }
+
     [HarmonyPatch(typeof(RoleManager), nameof(RoleManager.SelectRoles))]
     class RoleManagerSelectRolesPatch {
         private static int crewValues;
@@ -28,7 +40,7 @@ namespace TheOtherRoles.Patches {
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.Reliable, -1);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.resetVariables();
-
+            if (MapOptions.gameMode == CustomGamemodes.HideNSeek) return; // Don't assign Roles in Hide N Seek
             if (CustomOptionHolder.activateRoles.getBool()) // Don't assign Roles in Tutorial or if deactivated
                 assignRoles();
         }

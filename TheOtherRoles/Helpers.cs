@@ -13,6 +13,7 @@ using TheOtherRoles.Utilities;
 using System.Threading.Tasks;
 using System.Net;
 using System.Globalization;
+using TheOtherRoles.CustomGameModes;
 
 namespace TheOtherRoles {
 
@@ -24,7 +25,8 @@ namespace TheOtherRoles {
 
     public enum CustomGamemodes {
         Classic,
-        Guesser
+        Guesser,
+        HideNSeek
     }
     public static class Helpers
     {
@@ -392,6 +394,16 @@ namespace TheOtherRoles {
             // Robber if hit crew only kill if setting says so, but also kill the robber.
             else if (killer == Robber.robber && !target.Data.Role.IsImpostor && !new List<RoleInfo> {RoleInfo.jackal, Robber.canKillSheriff ? RoleInfo.sheriff : null, RoleInfo.sidekick }.Contains(targetRole)) {
                 Robber.suicideFlag = true;
+                return MurderAttemptResult.SuppressKill;
+            }
+
+            // Block hunted with time shield kill
+            else if (Hunted.timeshieldActive.Contains(target.PlayerId)) {
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.HuntedRewindTime, Hazel.SendOption.Reliable, -1);
+                writer.Write(target.PlayerId);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                RPCProcedure.huntedRewindTime(target.PlayerId);
+
                 return MurderAttemptResult.SuppressKill;
             }
 

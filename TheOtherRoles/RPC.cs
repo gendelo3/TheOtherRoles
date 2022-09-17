@@ -140,7 +140,12 @@ namespace TheOtherRoles
         RobberStealsRole,
         SetTrap,
         TriggerTrap,
-        SetGuesserGm
+
+        // Gamemode
+        SetGuesserGm,
+        HuntedShield,
+        HuntedRewindTime,
+        ShareTimer
     }
 
     public static class RPCProcedure {
@@ -1051,6 +1056,41 @@ namespace TheOtherRoles
             if (target == null) return;
             new GuesserGM(target);
         }
+
+        public static void shareTimer(float punish) {
+            HideNSeek.timer -= punish;
+        }
+
+        public static void huntedShield(byte playerId) {
+            if (!Hunted.timeshieldActive.Contains(playerId)) Hunted.timeshieldActive.Add(playerId);
+            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Hunted.shieldDuration, new Action<float>((p) => {
+                if (p == 1f) Hunted.timeshieldActive.Remove(playerId);
+            })));
+        }
+
+        public static void huntedRewindTime(byte playerId) {
+            Hunted.timeshieldActive.Remove(playerId); // Shield is no longer active when rewinding
+            SoundEffectsManager.stop("timemasterShield");  // Shield sound stopped when rewinding
+            if (playerId == CachedPlayer.LocalPlayer.PlayerControl.PlayerId) {
+                resetHuntedRewindButton();
+            }
+            FastDestroyableSingleton<HudManager>.Instance.FullScreen.color = new Color(0f, 0.5f, 0.8f, 0.3f);
+            FastDestroyableSingleton<HudManager>.Instance.FullScreen.enabled = true;
+            FastDestroyableSingleton<HudManager>.Instance.FullScreen.gameObject.SetActive(true);
+            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Hunted.shieldRewindTime, new Action<float>((p) => {
+                if (p == 1f) FastDestroyableSingleton<HudManager>.Instance.FullScreen.enabled = false;
+            })));
+
+            if (!CachedPlayer.LocalPlayer.Data.Role.IsImpostor) return; // only rewind hunter
+
+            TimeMaster.isRewinding = true;
+
+            if (MapBehaviour.Instance)
+                MapBehaviour.Instance.Close();
+            if (Minigame.Instance)
+                Minigame.Instance.ForceClose();
+            CachedPlayer.LocalPlayer.PlayerControl.moveable = false;
+        }
     }   
 
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
@@ -1287,9 +1327,24 @@ namespace TheOtherRoles
                     byte gm = reader.ReadByte();
                     RPCProcedure.shareGamemode(gm);
                     break;
+
+                // Game mode
+
                 case (byte)CustomRPC.SetGuesserGm:
                     byte guesserGm = reader.ReadByte();
                     RPCProcedure.setGuesserGm(guesserGm);
+                    break;
+                case (byte)CustomRPC.ShareTimer:
+                    float punish = reader.ReadSingle();
+                    RPCProcedure.shareTimer(punish);
+                    break;
+                case (byte)CustomRPC.HuntedShield:
+                    byte huntedPlayer = reader.ReadByte();
+                    RPCProcedure.huntedShield(huntedPlayer);
+                    break;
+                case (byte)CustomRPC.HuntedRewindTime:
+                    byte rewindPlayer = reader.ReadByte();
+                    RPCProcedure.huntedRewindTime(rewindPlayer);
                     break;
             }
         }

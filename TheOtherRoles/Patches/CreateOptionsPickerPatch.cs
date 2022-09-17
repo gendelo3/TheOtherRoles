@@ -19,10 +19,12 @@ namespace TheOtherRoles.Patches {
                 // space for max 5 buttons
                 addGamemodeButton(__instance, "Classic", "TheOtherRoles.Resources.GamemodeClassic.png", CustomGamemodes.Classic);
                 addGamemodeButton(__instance, "Guesser", "TheOtherRoles.Resources.GamemodeGuesser.png", CustomGamemodes.Guesser);
+                addGamemodeButton(__instance, "Hide 'N Seek", "TheOtherRoles.Resources.GamemodeClassic.png", CustomGamemodes.HideNSeek);
 
                 switch (MapOptions.gameMode) {
                     case CustomGamemodes.Classic: renderers.FindLast(x => x.name == "Classic").color = Color.white; break;
                     case CustomGamemodes.Guesser: renderers.FindLast(x => x.name == "Guesser").color = Color.white; break;
+                    case CustomGamemodes.HideNSeek: renderers.FindLast(x => x.name == "Hide 'N Seek").color = Color.white; break;
                 }
             }
             else {

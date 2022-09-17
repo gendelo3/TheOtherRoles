@@ -7,6 +7,7 @@ using System.Linq;
 using Hazel;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
+using TheOtherRoles.CustomGameModes;
 
 namespace TheOtherRoles.Patches {
     [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
@@ -34,6 +35,10 @@ namespace TheOtherRoles.Patches {
                         player.transform.localPosition = bottomLeft + new Vector3(-0.25f, -0.25f, 0) + Vector3.right * playerCounter++ * 0.35f;
                         player.transform.localScale = Vector3.one * 0.2f;
                         player.setSemiTransparent(true);
+                        player.gameObject.SetActive(true);
+                    } else if (HideNSeek.isHunted() && p.Data.Role.IsImpostor) {
+                        player.transform.localPosition = bottomLeft + new Vector3(-0.25f, -0.25f, 0) + Vector3.right * playerCounter++ * 0.7f;
+                        player.transform.localScale = Vector3.one * 0.4f;
                         player.gameObject.SetActive(true);
                     } else {   //  This can be done for all players not just for the bounty hunter as it was before. Allows the robber to have the correct position and scaling
                         player.transform.localPosition = bottomLeft + new Vector3(-0.25f, 0f, 0);
@@ -69,6 +74,43 @@ namespace TheOtherRoles.Patches {
                 }
             }
             MapOptions.firstKillName = "";
+
+            if (HideNSeek.isHideNSeekGM) {
+                foreach (PlayerControl player in HideNSeek.getHunters()) {
+                    player.moveable = false;
+                    player.NetTransform.Halt();
+                    HideNSeek.isWaitingTimer = true;
+                    HideNSeek.timer = HideNSeek.hunterWaitingTime;
+                    FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(HideNSeek.hunterWaitingTime, new Action<float>((p) => {
+                        if (p == 1f) {
+                            player.moveable = true;
+                            HideNSeek.isWaitingTimer = false;
+                            HideNSeek.timer = CustomOptionHolder.hideNSeekTimer.getFloat() * 60;
+                        }
+                    })));
+                }
+
+                if (HideNSeek.polusVent == null && PlayerControl.GameOptions.MapId == 2) {
+                    var list = GameObject.FindObjectsOfType<Vent>().ToList();
+                    var adminVent = list.FirstOrDefault(x => x.gameObject.name == "AdminVent");
+                    var bathroomVent = list.FirstOrDefault(x => x.gameObject.name == "BathroomVent");
+                    HideNSeek.polusVent = UnityEngine.Object.Instantiate<Vent>(adminVent);
+                    HideNSeek.polusVent.gameObject.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
+                    HideNSeek.polusVent.transform.position = new Vector3(36.55068f, -21.5168f, -0.0215168f);
+                    HideNSeek.polusVent.Left = adminVent;
+                    HideNSeek.polusVent.Right = bathroomVent;
+                    HideNSeek.polusVent.Center = null;
+                    HideNSeek.polusVent.Id = MapUtilities.CachedShipStatus.AllVents.Select(x => x.Id).Max() + 1; // Make sure we have a unique id
+                    var allVentsList = MapUtilities.CachedShipStatus.AllVents.ToList();
+                    allVentsList.Add(HideNSeek.polusVent);
+                    MapUtilities.CachedShipStatus.AllVents = allVentsList.ToArray();
+                    HideNSeek.polusVent.gameObject.SetActive(true);
+                    HideNSeek.polusVent.name = "newVent_" + HideNSeek.polusVent.Id;
+
+                    adminVent.Center = HideNSeek.polusVent;
+                    bathroomVent.Center = HideNSeek.polusVent;
+                }
+            }
         }
     }
 

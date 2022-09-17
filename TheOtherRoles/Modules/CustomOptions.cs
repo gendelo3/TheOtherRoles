@@ -20,7 +20,9 @@ namespace TheOtherRoles {
             Neutral,
             Crewmate,
             Modifier,
-            Guesser
+            Guesser,
+            HideNSeekMain,
+            HideNSeekRoles
         }
 
         public static List<CustomOption> options = new List<CustomOption>();
@@ -154,6 +156,9 @@ namespace TheOtherRoles {
                     break;
                 case CustomGamemodes.Guesser:
                     createGuesserTabs();
+                    break;
+                case CustomGamemodes.HideNSeek:
+                    createHideNSeekTabs();
                     break;
             }
 
@@ -325,7 +330,7 @@ namespace TheOtherRoles {
 
             for (int i = 0; i < CustomOption.options.Count; i++) {
                 CustomOption option = CustomOption.options[i];
-                if (option.type == CustomOptionType.Guesser) continue;
+                if ((int)option.type > 4) continue;
                 if (option.optionBehaviour == null) {
                     StringOption stringOption = UnityEngine.Object.Instantiate(template, menus[(int)option.type]);
                     optionBehaviours[(int)option.type].Add(stringOption);
@@ -538,6 +543,7 @@ namespace TheOtherRoles {
             for (int i = 0; i < CustomOption.options.Count; i++) {
                 CustomOption option = CustomOption.options[i];
                 if (exludedIds.Contains(option.id)) continue;
+                if ((int)option.type > 5) continue;
                 if (option.optionBehaviour == null) {
                     StringOption stringOption = UnityEngine.Object.Instantiate(template, menus[(int)option.type]);
                     optionBehaviours[(int)option.type].Add(stringOption);
@@ -568,6 +574,113 @@ namespace TheOtherRoles {
 
             guesserMenu.Children = guesserOptions.ToArray();
             guesserSettings.gameObject.SetActive(false);
+        }
+
+        private static void createHideNSeekTabs() {
+            if (GameObject.Find("TORSettings") != null) { // Settings setup has already been performed, fixing the title of the tab and returning
+                GameObject.Find("TORSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("The Other Roles Settings");
+                return;
+            }
+            if (GameObject.Find("HideNSeekSettings") != null) {
+                GameObject.Find("HideNSeekSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Hide 'N Seek Settings");
+                return;
+            }
+
+            // Setup TOR tab
+            var template = UnityEngine.Object.FindObjectsOfType<StringOption>().FirstOrDefault();
+            if (template == null) return;
+            var gameSettings = GameObject.Find("Game Settings");
+            var gameSettingMenu = UnityEngine.Object.FindObjectsOfType<GameSettingMenu>().FirstOrDefault();
+
+            var torSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
+            var torMenu = torSettings.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
+            torSettings.name = "TORSettings";
+
+            var hideNSeekSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
+            var hideNSeekMenu = hideNSeekSettings.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
+            hideNSeekSettings.name = "HideNSeekSettings";
+
+            var roleTab = GameObject.Find("RoleTab");
+            var gameTab = GameObject.Find("GameTab");
+
+            var torTab = UnityEngine.Object.Instantiate(roleTab, gameTab.transform.parent);
+            var torTabHighlight = torTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
+            torTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.TabIcon.png", 100f);
+
+            var hideNSeekTab = UnityEngine.Object.Instantiate(roleTab, torTab.transform);
+            var hideNSeekTabHighlight = hideNSeekTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
+            hideNSeekTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.TabGuesserSettings.png", 100f);
+            hideNSeekTab.name = "HideNSeekTab";
+
+            roleTab.active = false;
+            gameTab.active = false;
+
+            // Position of Tab Icons
+            torTab.transform.position += Vector3.left * 3f;
+            hideNSeekTab.transform.position += Vector3.right * 1f;
+
+            var tabs = new GameObject[] { torTab, hideNSeekTab};
+            for (int i = 0; i < tabs.Length; i++) {
+                var button = tabs[i].GetComponentInChildren<PassiveButton>();
+                if (button == null) continue;
+                int copiedIndex = i;
+                button.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+                button.OnClick.AddListener((System.Action)(() => {
+                    gameSettingMenu.RegularGameSettings.SetActive(false);
+                    torSettings.gameObject.SetActive(false);
+                    hideNSeekSettings.gameObject.SetActive(false);
+                    gameSettingMenu.GameSettingsHightlight.enabled = false;
+                    torTabHighlight.enabled = false;
+                    hideNSeekTabHighlight.enabled = false;
+
+                    if (copiedIndex == 0) {
+                        torSettings.gameObject.SetActive(true);
+                        torTabHighlight.enabled = true;
+                    }
+                    else if (copiedIndex == 1) {
+                        hideNSeekSettings.gameObject.SetActive(true);
+                        hideNSeekTabHighlight.enabled = true;
+                    }
+                }));
+            }
+
+            foreach (OptionBehaviour option in torMenu.GetComponentsInChildren<OptionBehaviour>())
+                UnityEngine.Object.Destroy(option.gameObject);
+            List<OptionBehaviour> torOptions = new List<OptionBehaviour>();
+
+            foreach (OptionBehaviour option in hideNSeekMenu.GetComponentsInChildren<OptionBehaviour>())
+                UnityEngine.Object.Destroy(option.gameObject);
+            List<OptionBehaviour> hideNSeekOptions = new List<OptionBehaviour>();
+
+            List<Transform> menus = new List<Transform>() { torMenu.transform, hideNSeekMenu.transform};
+            List<List<OptionBehaviour>> optionBehaviours = new List<List<OptionBehaviour>>() { torOptions, hideNSeekOptions };
+
+            for (int i = 0; i < CustomOption.options.Count; i++) {
+                CustomOption option = CustomOption.options[i];
+                if (option.type != CustomOptionType.HideNSeekMain && option.type != CustomOptionType.HideNSeekRoles) continue;
+                if (option.optionBehaviour == null) {
+                    int index = (int)option.type - 6;
+                    StringOption stringOption = UnityEngine.Object.Instantiate(template, menus[index]);
+                    optionBehaviours[index].Add(stringOption);
+                    stringOption.OnValueChanged = new Action<OptionBehaviour>((o) => { });
+                    stringOption.TitleText.text = option.name;
+                    stringOption.Value = stringOption.oldValue = option.selection;
+                    stringOption.ValueText.text = option.selections[option.selection].ToString();
+
+                    option.optionBehaviour = stringOption;
+                }
+                option.optionBehaviour.gameObject.SetActive(true);
+            }
+
+            torMenu.Children = torOptions.ToArray();
+            torSettings.gameObject.SetActive(true);
+            torTabHighlight.enabled = true;
+            hideNSeekMenu.Children = hideNSeekOptions.ToArray();
+            hideNSeekSettings.gameObject.SetActive(false);
+
+            gameSettingMenu.RegularGameSettings.SetActive(false);
+            gameSettingMenu.GameSettingsHightlight.enabled = false;
+
         }
     }
 

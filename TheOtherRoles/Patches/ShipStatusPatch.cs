@@ -96,20 +96,38 @@ namespace TheOtherRoles.Patches {
         private static int originalNumCommonTasksOption = 0;
         private static int originalNumShortTasksOption = 0;
         private static int originalNumLongTasksOption = 0;
+        private static float originalNumCrewVisionOption = 0;
+        private static float originalNumImpVisionOption = 0;
+        private static float originalNumKillCooldownOption = 0;
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.Begin))]
         public static bool Prefix(ShipStatus __instance)
         {
-            var commonTaskCount = __instance.CommonTasks.Count;
-            var normalTaskCount = __instance.NormalTasks.Count;
-            var longTaskCount = __instance.LongTasks.Count;
             originalNumCommonTasksOption = PlayerControl.GameOptions.NumCommonTasks;
             originalNumShortTasksOption = PlayerControl.GameOptions.NumShortTasks;
             originalNumLongTasksOption = PlayerControl.GameOptions.NumLongTasks;
-            if(PlayerControl.GameOptions.NumCommonTasks > commonTaskCount) PlayerControl.GameOptions.NumCommonTasks = commonTaskCount;
-            if(PlayerControl.GameOptions.NumShortTasks > normalTaskCount) PlayerControl.GameOptions.NumShortTasks = normalTaskCount;
-            if(PlayerControl.GameOptions.NumLongTasks > longTaskCount) PlayerControl.GameOptions.NumLongTasks = longTaskCount;
+            originalNumCrewVisionOption = PlayerControl.GameOptions.CrewLightMod;
+            originalNumImpVisionOption = PlayerControl.GameOptions.ImpostorLightMod;
+            originalNumKillCooldownOption = PlayerControl.GameOptions.killCooldown;
+
+            if (MapOptions.gameMode != CustomGamemodes.HideNSeek) {
+                var commonTaskCount = __instance.CommonTasks.Count;
+                var normalTaskCount = __instance.NormalTasks.Count;
+                var longTaskCount = __instance.LongTasks.Count;
+
+                if (PlayerControl.GameOptions.NumCommonTasks > commonTaskCount) PlayerControl.GameOptions.NumCommonTasks = commonTaskCount;
+                if (PlayerControl.GameOptions.NumShortTasks > normalTaskCount) PlayerControl.GameOptions.NumShortTasks = normalTaskCount;
+                if (PlayerControl.GameOptions.NumLongTasks > longTaskCount) PlayerControl.GameOptions.NumLongTasks = longTaskCount;
+            } else {
+                PlayerControl.GameOptions.NumCommonTasks = Mathf.RoundToInt(CustomOptionHolder.hideNSeekCommonTasks.getFloat());
+                PlayerControl.GameOptions.NumShortTasks = Mathf.RoundToInt(CustomOptionHolder.hideNSeekShortTasks.getFloat());
+                PlayerControl.GameOptions.NumLongTasks = Mathf.RoundToInt(CustomOptionHolder.hideNSeekLongTasks.getFloat());
+                PlayerControl.GameOptions.ImpostorLightMod = CustomOptionHolder.hideNSeekHunterVision.getFloat();
+                PlayerControl.GameOptions.CrewLightMod = CustomOptionHolder.hideNSeekHuntedVision.getFloat();
+                PlayerControl.GameOptions.KillCooldown = CustomOptionHolder.hideNSeekKillCooldown.getFloat();
+            }
+
             return true;
         }
 
@@ -121,6 +139,12 @@ namespace TheOtherRoles.Patches {
             PlayerControl.GameOptions.NumCommonTasks = originalNumCommonTasksOption;
             PlayerControl.GameOptions.NumShortTasks = originalNumShortTasksOption;
             PlayerControl.GameOptions.NumLongTasks = originalNumLongTasksOption;
+        }
+
+        public static void resetVanillaSettings() {
+            PlayerControl.GameOptions.ImpostorLightMod = originalNumCrewVisionOption;
+            PlayerControl.GameOptions.CrewLightMod = originalNumImpVisionOption;
+            PlayerControl.GameOptions.KillCooldown = originalNumKillCooldownOption;
         }
     }
 }

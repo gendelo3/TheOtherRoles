@@ -24,7 +24,7 @@ namespace TheOtherRoles.CustomGameModes {
         }
 
         public static List<CachedPlayer> getHunters() {
-            List<CachedPlayer> hunters = CachedPlayer.AllPlayers;
+            List<CachedPlayer> hunters = new List<CachedPlayer>(CachedPlayer.AllPlayers);
             hunters.RemoveAll(x => !x.Data.Role.IsImpostor);
             return hunters;
         }
@@ -35,6 +35,7 @@ namespace TheOtherRoles.CustomGameModes {
 
         public static void clearAndReload() {
             isHideNSeekGM = MapOptions.gameMode == CustomGamemodes.HideNSeek;
+            if (timerText != null) UnityEngine.Object.Destroy(timerText);
             timerText = null;
             if (polusVent != null) UnityEngine.Object.Destroy(polusVent);
             polusVent = null;
@@ -61,9 +62,9 @@ namespace TheOtherRoles.CustomGameModes {
     }
 
     public static class Hunter {
-        public static Dictionary<byte, List<Arrow>> playerLocalArrowsMap = new Dictionary<byte, List<Arrow>>();
+        public static List<Arrow> localArrows = new List<Arrow>();
         public static List<byte> lightActive = new List<byte>();
-        public static List<byte> arrowActive = new List<byte>();
+        public static bool arrowActive = false;
 
         public static float lightCooldown = 30f;
         public static float lightDuration = 5f;
@@ -80,27 +81,15 @@ namespace TheOtherRoles.CustomGameModes {
             return lightActive.Contains(playerId);
         }
 
-        public static bool isArrowActive(byte playerId) {
-            return lightActive.Contains(playerId);
-        }
-
-        public static List<Arrow> getLocalArrows(byte playerId) {
-            if (playerLocalArrowsMap.ContainsKey(playerId)) 
-                return playerLocalArrowsMap[playerId];
-
-            return new List<Arrow>();
-        }
-
         public static void clearAndReload() {
-            if (playerLocalArrowsMap != null) {
-                foreach (KeyValuePair<byte, List<Arrow>> entry in playerLocalArrowsMap)
-                    foreach (Arrow arrow in entry.Value)
-                        if (arrow?.arrow != null)
-                            UnityEngine.Object.Destroy(arrow.arrow);
+            if (localArrows != null) {
+                foreach (Arrow arrow in localArrows)
+                    if (arrow?.arrow != null)
+                        UnityEngine.Object.Destroy(arrow.arrow);
             }
-            playerLocalArrowsMap = new Dictionary<byte, List<Arrow>>();
+            localArrows = new List<Arrow>();
             lightActive = new List<byte>();
-            arrowActive = new List<byte>();
+            arrowActive = false;
 
             lightCooldown = CustomOptionHolder.hunterLightCooldown.getFloat();
             lightDuration = CustomOptionHolder.hunterLightDuration.getFloat();

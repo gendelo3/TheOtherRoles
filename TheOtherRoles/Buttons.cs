@@ -1763,7 +1763,7 @@ namespace TheOtherRoles
 
             hunterArrowButton = new CustomButton(
                 () => {
-                    Hunter.arrowActive.Add(CachedPlayer.LocalPlayer.PlayerId);
+                    Hunter.arrowActive = true;
                     SoundEffectsManager.play("fail");
 
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareTimer, Hazel.SendOption.Reliable, -1);
@@ -1785,7 +1785,7 @@ namespace TheOtherRoles
                 true,
                 Hunter.ArrowDuration,
                 () => {
-                    Hunter.arrowActive.Remove(CachedPlayer.LocalPlayer.PlayerId);
+                    Hunter.arrowActive = false;
                     hunterArrowButton.Timer = hunterArrowButton.MaxTimer;
                     SoundEffectsManager.play("fail");
                 }

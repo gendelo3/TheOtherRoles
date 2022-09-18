@@ -30,7 +30,7 @@ namespace TheOtherRoles.Patches {
 		}
 		[HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.FixedUpdate))]
 		static void Postfix(MapBehaviour __instance) {
-			if (CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) {
+			if (Trapper.trapper != null && CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) {
 				foreach (PlayerControl player in Trapper.playersOnMap) {
 					if (herePoints.ContainsKey(player)) continue;
 					Vector3 v = Trap.trapPlayerIdMap[player.PlayerId].trap.transform.position;

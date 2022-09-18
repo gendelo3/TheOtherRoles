@@ -905,17 +905,17 @@ namespace TheOtherRoles.Patches {
             if (!HideNSeek.isHunter()) return;
 
             byte playerId = CachedPlayer.LocalPlayer.PlayerId;
-            foreach (Arrow arrow in Hunter.getLocalArrows(playerId)) arrow.arrow.SetActive(false);
-            if (Hunter.isArrowActive(playerId)) {
+            foreach (Arrow arrow in Hunter.localArrows) arrow.arrow.SetActive(false);
+            if (Hunter.arrowActive) {
                 int arrowIndex = 0;
                 foreach (PlayerControl p in CachedPlayer.AllPlayers) {
-                    if (!p.Data.IsDead && playerId != p.PlayerId) {
-                        if (arrowIndex >= Hunter.getLocalArrows(playerId).Count) {
-                            Hunter.getLocalArrows(playerId).Add(new Arrow(Color.blue));
+                    if (!p.Data.IsDead && !p.Data.Role.IsImpostor) {
+                        if (arrowIndex >= Hunter.localArrows.Count) {
+                            Hunter.localArrows.Add(new Arrow(Color.blue));
                         }
-                        if (arrowIndex < Hunter.getLocalArrows(playerId).Count && Hunter.getLocalArrows(playerId)[arrowIndex] != null) {
-                            Hunter.getLocalArrows(playerId)[arrowIndex].arrow.SetActive(true);
-                            Hunter.getLocalArrows(playerId)[arrowIndex].Update(p.transform.position, Color.blue);
+                        if (arrowIndex < Hunter.localArrows.Count && Hunter.localArrows[arrowIndex] != null) {
+                            Hunter.localArrows[arrowIndex].arrow.SetActive(true);
+                            Hunter.localArrows[arrowIndex].Update(p.transform.position, Color.blue);
                         }
                         arrowIndex++;
                     }

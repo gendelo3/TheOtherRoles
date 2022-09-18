@@ -181,7 +181,7 @@ namespace TheOtherRoles.Patches {
                         }
                     }
                     if (continueStart && MapOptions.gameMode == CustomGamemodes.HideNSeek) {
-                        byte mapId = (byte)CustomOptionHolder.dynamicMapEnableMira.getFloat();
+                        byte mapId = (byte) CustomOptionHolder.hideNSeekMap.getSelection();
                         if (mapId >= 3) mapId++;
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.DynamicMapOption, Hazel.SendOption.Reliable, -1);
                         writer.Write(mapId);

@@ -312,7 +312,7 @@ namespace TheOtherRoles.Patches {
         }
 
         static void updateMapButton(HudManager __instance) {
-            if (!(CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) || __instance == null || __instance.MapButton == null) return;
+            if (Trapper.trapper == null || !(CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) || __instance == null || __instance.MapButton == null) return;
             __instance.MapButton.color = Trapper.playersOnMap.Any() ? Trapper.color : Color.white;
         }
 

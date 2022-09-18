@@ -217,6 +217,8 @@ namespace TheOtherRoles.Patches {
 
             // Reset Settings
             RPCProcedure.resetVariables();
+
+            ShipStatusPatch.resetVanillaSettings();
         }
     }
 
@@ -469,7 +471,7 @@ namespace TheOtherRoles.Patches {
 
         private static bool CheckAndEndGameForImpostorWin(ShipStatus __instance, PlayerStatistics statistics) {
             if (HideNSeek.isHideNSeekGM) 
-                if (!(statistics.TeamImpostorsAlive > statistics.TotalAlive - statistics.TeamImpostorsAlive)) return false;
+                if ((0 != statistics.TotalAlive - statistics.TeamImpostorsAlive)) return false;
 
             if (statistics.TeamImpostorsAlive >= statistics.TotalAlive - statistics.TeamImpostorsAlive && statistics.TeamJackalAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
                 __instance.enabled = false;
@@ -492,6 +494,11 @@ namespace TheOtherRoles.Patches {
         }
 
         private static bool CheckAndEndGameForCrewmateWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (HideNSeek.isHideNSeekGM && HideNSeek.timer <= 0 && !HideNSeek.isWaitingTimer) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame(GameOverReason.HumansByVote, false);
+                return true;
+            }
             if (statistics.TeamImpostorsAlive == 0 && statistics.TeamJackalAlive == 0) {
                 __instance.enabled = false;
                 ShipStatus.RpcEndGame(GameOverReason.HumansByVote, false);

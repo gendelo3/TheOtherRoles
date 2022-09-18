@@ -84,8 +84,8 @@ namespace TheOtherRoles.Patches {
                     FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(HideNSeek.hunterWaitingTime, new Action<float>((p) => {
                         if (p == 1f) {
                             player.moveable = true;
-                            HideNSeek.isWaitingTimer = false;
                             HideNSeek.timer = CustomOptionHolder.hideNSeekTimer.getFloat() * 60;
+                            HideNSeek.isWaitingTimer = false;
                         }
                     })));
                 }

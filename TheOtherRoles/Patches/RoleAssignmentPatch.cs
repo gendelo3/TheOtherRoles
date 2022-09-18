@@ -23,9 +23,7 @@ namespace TheOtherRoles.Patches {
             if (MapOptions.gameMode == CustomGamemodes.HideNSeek) {
                 int impCount = Mathf.RoundToInt(CustomOptionHolder.hideNSeekHunterCount.getFloat());
                 __result = impCount; ; // Set Imp Num
-                PlayerControl.GameOptions.NumImpostors = impCount;
-            }
-           
+            }           
         }
     }
 

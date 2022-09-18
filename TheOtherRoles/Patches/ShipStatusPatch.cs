@@ -19,12 +19,7 @@ namespace TheOtherRoles.Patches {
             
             if (!HideNSeek.isHideNSeekGM || (HideNSeek.isHideNSeekGM && !Hunter.lightActive.Contains(player.PlayerId))) {
                 // If player is a role which has Impostor vision
-                if (player.Role.IsImpostor
-                    || (Jackal.jackal != null && Jackal.jackal.PlayerId == player.PlayerId && Jackal.hasImpostorVision)
-                    || (Sidekick.sidekick != null && Sidekick.sidekick.PlayerId == player.PlayerId && Sidekick.hasImpostorVision)
-                    || (Spy.spy != null && Spy.spy.PlayerId == player.PlayerId && Spy.hasImpostorVision)
-                    || (Jester.jester != null && Jester.jester.PlayerId == player.PlayerId && Jester.hasImpostorVision)
-                    || (Robber.robber != null && Robber.robber.PlayerId == player.PlayerId && Robber.hasImpostorVision)) {
+                if (Helpers.hasImpVision(player)) {
                     //__result = __instance.MaxLightRadius * PlayerControl.GameOptions.ImpostorLightMod;
                     __result = GetNeutralLightRadius(__instance, true);
                     return false;

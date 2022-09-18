@@ -49,6 +49,8 @@ namespace TheOtherRoles.Patches {
         static void setPlayerOutline(PlayerControl target, Color color) {
             if (target == null || target.cosmetics?.currentBodySprite?.BodySprite == null) return;
 
+            color = color.SetAlpha(Chameleon.visibility(target.PlayerId));
+
             target.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 1f);
             target.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", color);
         }
@@ -465,6 +467,7 @@ namespace TheOtherRoles.Patches {
                         playerInfo.transform.localPosition += Vector3.up * 0.5f;
                         playerInfo.fontSize *= 0.75f;
                         playerInfo.gameObject.name = "Info";
+                        playerInfo.color = playerInfo.color.SetAlpha(1f);
                     }
 
                     PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == p.PlayerId);
@@ -785,16 +788,16 @@ namespace TheOtherRoles.Patches {
             if (Mini.mini != null && !Mini.isGrownUp()) untargetables.Add(Mini.mini);
             if (Sidekick.wasTeamRed && !Spy.impostorsCanKillAnyone) untargetables.Add(Sidekick.sidekick);
             if (Jackal.wasTeamRed && !Spy.impostorsCanKillAnyone) untargetables.Add(Jackal.jackal);
-            Ninja.currentTarget = setTarget(onlyCrewmates: true, untargetablePlayers: untargetables);
+            Ninja.currentTarget = setTarget(onlyCrewmates: Spy.spy == null || !Spy.impostorsCanKillAnyone, untargetablePlayers: untargetables);
             setPlayerOutline(Ninja.currentTarget, Ninja.color);
         }
 
-        static void robberSetTarget() {
-            if (Robber.robber == null || Robber.robber != CachedPlayer.LocalPlayer.PlayerControl) return;
+        static void thiefSetTarget() {
+            if (Thief.thief == null || Thief.thief != CachedPlayer.LocalPlayer.PlayerControl) return;
             List<PlayerControl> untargetables = new List<PlayerControl>();
             if (Mini.mini != null && !Mini.isGrownUp()) untargetables.Add(Mini.mini);
-            Robber.currentTarget = setTarget(onlyCrewmates: false, untargetablePlayers: untargetables);
-            setPlayerOutline(Robber.currentTarget, Robber.color);
+            Thief.currentTarget = setTarget(onlyCrewmates: false, untargetablePlayers: untargetables);
+            setPlayerOutline(Thief.currentTarget, Thief.color);
         }
 
 
@@ -848,7 +851,7 @@ namespace TheOtherRoles.Patches {
                 HudManagerStartPatch.cleanerCleanButton.MaxTimer = Cleaner.cooldown * multiplier;
                 HudManagerStartPatch.witchSpellButton.MaxTimer = (Witch.cooldown + Witch.currentCooldownAddition) * multiplier;
                 HudManagerStartPatch.ninjaButton.MaxTimer = Ninja.cooldown * multiplier;
-                HudManagerStartPatch.robberKillButton.MaxTimer = Robber.cooldown * multiplier;
+                HudManagerStartPatch.thiefKillButton.MaxTimer = Thief.cooldown * multiplier;
             }
         }
 
@@ -929,6 +932,11 @@ namespace TheOtherRoles.Patches {
             // Mini and Morphling shrink
             playerSizeUpdate(__instance);
             
+            // set position of colorblind text
+            foreach (var pc in PlayerControl.AllPlayerControls) {
+                pc.cosmetics.colorBlindText.gameObject.transform.localPosition = new Vector3(0, 0, -0.0001f);
+            }
+            
             if (CachedPlayer.LocalPlayer.PlayerControl == __instance) {
                 // Update player outlines
                 setBasePlayerOutlines();
@@ -1003,8 +1011,8 @@ namespace TheOtherRoles.Patches {
                 ninjaSetTarget();
                 NinjaTrace.UpdateAll();
                 ninjaUpdate();
-                // Robber
-                robberSetTarget();
+                // Thief
+                thiefSetTarget();
 
                 hackerUpdate();
                 swapperUpdate();
@@ -1020,6 +1028,8 @@ namespace TheOtherRoles.Patches {
                 bloodyUpdate();
                 // mini (for the cooldowns)
                 miniCooldownUpdate();
+                // Chameleon (invis stuff, timers)
+                Chameleon.update();
 
                 // -- GAME MODE --
                 hunterUpdater();

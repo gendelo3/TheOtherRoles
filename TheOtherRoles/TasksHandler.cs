@@ -37,7 +37,7 @@ namespace TheOtherRoles {
                         && playerInfo.Object.hasAliveKillingLover() // Tasks do not count if a Crewmate has an alive killing Lover
                         || playerInfo.PlayerId == Lawyer.lawyer?.PlayerId // Tasks of the Lawyer do not count
                         || (playerInfo.PlayerId == Pursuer.pursuer?.PlayerId && Pursuer.pursuer.Data.IsDead) // Tasks of the Pursuer only count, if he's alive
-                        || playerInfo.PlayerId == Robber.robber?.PlayerId // Robber's tasks only count after joining crew team as sheriff (and then the robber is not the robber anymore)
+                        || playerInfo.PlayerId == Thief.thief?.PlayerId // Thief's tasks only count after joining crew team as sheriff (and then the thief is not the thief anymore)
                        )
                         continue;
                     var (playerCompleted, playerTotal) = taskInfo(playerInfo);

@@ -691,6 +691,17 @@ namespace TheOtherRoles {
             var modifiers = buildOptionsOfType(CustomOption.CustomOptionType.Modifier, true);
             return impRoles + neutralRoles + crewRoles + modifiers;
         }
+        private static string buildModifierExtras(CustomOption customOption) {
+            // find options children with quantity
+            var children = CustomOption.options.Where(o => o.parent == customOption);
+            var quantity = children.Where(o => o.name.Contains("Quantity")).ToList();
+            if (customOption.getSelection() == 0) return "";
+            if (quantity.Count == 1) return $" ({quantity[0].getQuantity()})";
+            if (customOption == CustomOptionHolder.modifierLover) {
+                return $" (1 Evil: {CustomOptionHolder.modifierLoverImpLoverRate.getSelection() * 10}%)";
+            }
+            return "";
+        }
 
         private static string buildOptionsOfType(CustomOption.CustomOptionType type, bool headerOnly) {
             StringBuilder sb = new StringBuilder("\n");
@@ -707,7 +718,9 @@ namespace TheOtherRoles {
 
             foreach (var option in options) {
                 if (option.parent == null) {
-                    sb.AppendLine($"{option.name}: {option.selections[option.selection].ToString()}");
+                    string line = $"{option.name}: {option.selections[option.selection].ToString()}";
+                    if (type == CustomOption.CustomOptionType.Modifier) line += buildModifierExtras(option);
+                    sb.AppendLine(line);
                 }
                 else if (option.parent.getSelection() > 0) {
                     if (option.id == 103) //Deputy
@@ -725,6 +738,7 @@ namespace TheOtherRoles {
                 if (MapOptions.gameMode == CustomGamemodes.HideNSeek && option.type != CustomOptionType.HideNSeekMain && option.type != CustomOptionType.HideNSeekRoles) continue;
                 if (option.parent != null) {
                     bool isIrrelevant = option.parent.getSelection() == 0 || (option.parent.parent != null && option.parent.parent.getSelection() == 0);
+
                     Color c = isIrrelevant ? Color.grey : Color.white;  // No use for now
                     if (isIrrelevant) continue;
                     sb.AppendLine(Helpers.cs(c, $"{option.name}: {option.selections[option.selection].ToString()}"));
@@ -761,7 +775,7 @@ namespace TheOtherRoles {
                         continue;
                     } else {
                         sb.AppendLine($"\n{option.name}: {option.selections[option.selection].ToString()}");
-                    }                    
+                    }
                 }
             }
             return sb.ToString();

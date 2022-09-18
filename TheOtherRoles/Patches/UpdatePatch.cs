@@ -37,6 +37,7 @@ namespace TheOtherRoles.Patches {
                 
                     nameText.text = Helpers.hidePlayerName(localPlayer, player) ? "" : playerName;
                     nameText.color = color = amImpostor && data.Role.IsImpostor ? Palette.ImpostorRed : Color.white;
+                    nameText.color = nameText.color.SetAlpha(Chameleon.visibility(player.PlayerId));
                 }
                 else
                 {
@@ -60,7 +61,7 @@ namespace TheOtherRoles.Patches {
         }
 
         static void setPlayerNameColor(PlayerControl p, Color color) {
-            p.cosmetics.nameText.color = color;
+            p.cosmetics.nameText.color = color.SetAlpha(Chameleon.visibility(p.PlayerId));
             if (MeetingHud.Instance != null)
                 foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
                     if (player.NameText != null && p.PlayerId == player.TargetPlayerId)
@@ -212,13 +213,13 @@ namespace TheOtherRoles.Patches {
                             player.NameText.text += suffix;
             }
 
-            // Former Robber
-            if (Robber.formerRobber != null && (Robber.formerRobber == CachedPlayer.LocalPlayer.PlayerControl || CachedPlayer.LocalPlayer.PlayerControl.Data.IsDead)) {
-                string suffix = Helpers.cs(Robber.color, " $");
-                Robber.formerRobber.cosmetics.nameText.text += suffix;
+            // Former Thief
+            if (Thief.formerThief != null && (Thief.formerThief == CachedPlayer.LocalPlayer.PlayerControl || CachedPlayer.LocalPlayer.PlayerControl.Data.IsDead)) {
+                string suffix = Helpers.cs(Thief.color, " $");
+                Thief.formerThief.cosmetics.nameText.text += suffix;
                 if (MeetingHud.Instance != null)
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                        if (player.TargetPlayerId == Robber.formerRobber.PlayerId)
+                        if (player.TargetPlayerId == Thief.formerThief.PlayerId)
                             player.NameText.text += suffix;
             }
 

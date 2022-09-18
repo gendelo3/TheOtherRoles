@@ -194,11 +194,11 @@ namespace TheOtherRoles {
         }
 
         public static bool hasFakeTasks(this PlayerControl player) {
-            return (player == Jester.jester || player == Jackal.jackal || player == Sidekick.sidekick || player == Arsonist.arsonist || player == Vulture.vulture || Jackal.formerJackals.Contains(player));
+            return (player == Jester.jester || player == Jackal.jackal || player == Sidekick.sidekick || player == Arsonist.arsonist || player == Vulture.vulture || Jackal.formerJackals.Any(x => x == player));
         }
 
         public static bool canBeErased(this PlayerControl player) {
-            return (player != Jackal.jackal && player != Sidekick.sidekick && !Jackal.formerJackals.Contains(player));
+            return (player != Jackal.jackal && player != Sidekick.sidekick && !Jackal.formerJackals.Any(x => x == player));
         }
 
         public static void clearAllTasks(this PlayerControl player) {
@@ -300,6 +300,8 @@ namespace TheOtherRoles {
             target.cosmetics.currentPet.Source = target;
             target.cosmetics.currentPet.Visible = target.Visible;
             target.SetPlayerMaterialColors(target.cosmetics.currentPet.rend);
+
+            Chameleon.update();  // so that morphling and camo wont make the chameleons visible
         }
 
         public static void showFlash(Color color, float duration=1f) {
@@ -332,7 +334,7 @@ namespace TheOtherRoles {
                 roleCouldUse = true;
             else if (Vulture.canUseVents && Vulture.vulture != null && Vulture.vulture == player)
                 roleCouldUse = true;
-            else if (Robber.canUseVents &&  Robber.robber != null && Robber.robber == player)
+            else if (Thief.canUseVents &&  Thief.thief != null && Thief.thief == player)
                 roleCouldUse = true;
             else if (player.Data?.Role != null && player.Data.Role.CanVent)  {
                 if (Janitor.janitor != null && Janitor.janitor == CachedPlayer.LocalPlayer.PlayerControl)
@@ -391,9 +393,9 @@ namespace TheOtherRoles {
                 return MurderAttemptResult.SuppressKill;
             }
 
-            // Robber if hit crew only kill if setting says so, but also kill the robber.
-            else if (killer == Robber.robber && !target.Data.Role.IsImpostor && !new List<RoleInfo> {RoleInfo.jackal, Robber.canKillSheriff ? RoleInfo.sheriff : null, RoleInfo.sidekick }.Contains(targetRole)) {
-                Robber.suicideFlag = true;
+            // Thief if hit crew only kill if setting says so, but also kill the thief.
+            else if (killer == Thief.thief && !target.Data.Role.IsImpostor && !new List<RoleInfo> {RoleInfo.jackal, Thief.canKillSheriff ? RoleInfo.sheriff : null, RoleInfo.sidekick }.Contains(targetRole)) {
+                Thief.suicideFlag = true;
                 return MurderAttemptResult.SuppressKill;
             }
 
@@ -451,21 +453,15 @@ namespace TheOtherRoles {
         }
 
         public static bool isNeutral(PlayerControl player) {
-            return Arsonist.arsonist == player ||
-                Jester.jester == player ||
-                Vulture.vulture == player ||
-                Lawyer.lawyer == player ||
-                Pursuer.pursuer == player ||
-                Jackal.jackal == player ||
-                Jackal.formerJackals.Contains(player) ||
-                Sidekick.sidekick == player ||
-                Robber.robber == player;
+            RoleInfo roleInfo = RoleInfo.getRoleInfoForPlayer(player, false).FirstOrDefault();
+            if (roleInfo != null)
+                return roleInfo.isNeutral;
+            return false;
         }
 
 
         public static bool zoomOutStatus = false;
         public static void toggleZoom(bool reset=false) {
-            TheOtherRolesPlugin.Logger.LogMessage(Camera.main.orthographicSize);
             float orthographicSize = reset || zoomOutStatus ? 3f : 12f;
 
             zoomOutStatus = !zoomOutStatus && !reset;
@@ -499,6 +495,15 @@ namespace TheOtherRoles {
 
                 } else TheOtherRolesPlugin.Logger.LogMessage($"Beta will remain runnable for {(DateTime.Now - compileTime).TotalDays - TheOtherRolesPlugin.betaDays} days!");
             }
+        }
+
+        public static bool hasImpVision(GameData.PlayerInfo player) {
+            return player.Role.IsImpostor
+                || ((Jackal.jackal != null && Jackal.jackal.PlayerId == player.PlayerId || Jackal.formerJackals.Any(x => x.PlayerId == player.PlayerId)) && Jackal.hasImpostorVision)
+                || (Sidekick.sidekick != null && Sidekick.sidekick.PlayerId == player.PlayerId && Sidekick.hasImpostorVision)
+                || (Spy.spy != null && Spy.spy.PlayerId == player.PlayerId && Spy.hasImpostorVision)
+                || (Jester.jester != null && Jester.jester.PlayerId == player.PlayerId && Jester.hasImpostorVision)
+                || (Thief.thief != null && Thief.thief.PlayerId == player.PlayerId && Thief.hasImpostorVision);
         }
         
         public static object TryCast(this Il2CppObjectBase self, Type type)

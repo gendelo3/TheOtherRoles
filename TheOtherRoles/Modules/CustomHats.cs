@@ -286,7 +286,7 @@ namespace TheOtherRoles.Modules {
                     
                     
                     __instance.PopulateFromHatViewData();
-                    __instance.SpriteColor = Palette.PlayerColors[color];
+                    __instance.SetMaterialColor(color);
                     return false;
                 }     
             }

@@ -121,8 +121,10 @@ namespace TheOtherRoles.Patches {
             if (!SubmergedCompatibility.IsSubmerged) return;
             if (obj.name.Contains("ExileCutscene")) {
                 WrapUpPostfix(ExileControllerBeginPatch.lastExiled);
-            } else if (obj.name.Contains("SpawnInMinigame"))
+            } else if (obj.name.Contains("SpawnInMinigame")) {
                 AntiTeleport.setPosition();
+                Chameleon.lastMoved.Clear();
+            }
         }
 
         static void WrapUpPostfix(GameData.PlayerInfo exiled) {
@@ -230,6 +232,8 @@ namespace TheOtherRoles.Patches {
             // Invert add meeting
             if (Invert.meetings > 0) Invert.meetings--;
 
+            Chameleon.lastMoved.Clear();
+
             foreach (Trap trap in Trap.traps) trap.triggerable = false;
             FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(PlayerControl.GameOptions.KillCooldown / 2 + 2, new Action<float>((p) => {
             if (p == 1f) foreach (Trap trap in Trap.traps) trap.triggerable = true;
@@ -241,6 +245,7 @@ namespace TheOtherRoles.Patches {
     class AirshipSpawnInPatch {
         static void Postfix() {
             AntiTeleport.setPosition();
+            Chameleon.lastMoved.Clear();
         }
     }
 

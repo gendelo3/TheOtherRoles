@@ -76,7 +76,7 @@ namespace TheOtherRoles
             : new RoleInfo("Crewmate", Color.white, "Find the Impostors", "Find the Impostors", RoleId.Crewmate);
         public static RoleInfo witch = new RoleInfo("Witch", Witch.color, "Cast a spell upon your foes", "Cast a spell upon your foes", RoleId.Witch);
         public static RoleInfo ninja = new RoleInfo("Ninja", Ninja.color, "Surprise and assassinate your foes", "Surprise and assassinate your foes", RoleId.Ninja);
-        public static RoleInfo robber = new RoleInfo("Robber", Robber.color, "Steal a killers role by killing them", "Steal a killers role", RoleId.Robber, true);
+        public static RoleInfo thief = new RoleInfo("Thief", Thief.color, "Steal a killers role by killing them", "Steal a killers role", RoleId.Thief, true);
 
 
 
@@ -90,6 +90,7 @@ namespace TheOtherRoles
         public static RoleInfo mini = new RoleInfo("Mini", Color.yellow, "No one will harm you until you grow up", "No one will harm you", RoleId.Mini, false, true);
         public static RoleInfo vip = new RoleInfo("VIP", Color.yellow, "You are the VIP", "Everyone is notified when you die", RoleId.Vip, false, true);
         public static RoleInfo invert = new RoleInfo("Invert", Color.yellow, "Your movement is inverted", "Your movement is inverted", RoleId.Invert, false, true);
+        public static RoleInfo chameleon = new RoleInfo("Chameleon", Color.yellow, "You're hard to see when not moving", "You're hard to see when not moving", RoleId.Chameleon, false, true);
 
 
         public static List<RoleInfo> allRoleInfos = new List<RoleInfo>() {
@@ -117,7 +118,7 @@ namespace TheOtherRoles
             vulture,
             pursuer,
             lawyer,
-            robber,
+            thief,
             prosecutor,
             crewmate,
             shifter,
@@ -146,7 +147,8 @@ namespace TheOtherRoles
             sunglasses,
             mini,
             vip,
-            invert
+            invert,
+            chameleon
         };
 
         public static List<RoleInfo> getRoleInfoForPlayer(PlayerControl p, bool showModifier = true) {
@@ -168,6 +170,7 @@ namespace TheOtherRoles
                 if (Sunglasses.sunglasses.Any(x => x.PlayerId == p.PlayerId)) infos.Add(sunglasses);
                 if (p == Mini.mini) infos.Add(mini);
                 if (Invert.invert.Any(x => x.PlayerId == p.PlayerId)) infos.Add(invert);
+                if (Chameleon.chameleon.Any(x => x.PlayerId == p.PlayerId)) infos.Add(chameleon);
             }
 
             int count = infos.Count;  // Save count after modifiers are added so that the role count can be checked
@@ -215,7 +218,7 @@ namespace TheOtherRoles
             if (p == Lawyer.lawyer && Lawyer.isProsecutor) infos.Add(prosecutor);
             if (p == Trapper.trapper) infos.Add(trapper);
             if (p == Pursuer.pursuer) infos.Add(pursuer);
-            if (p == Robber.robber) infos.Add(robber);
+            if (p == Thief.thief) infos.Add(thief);
 
             // Default roles
             if (infos.Count == count && p.Data.Role.IsImpostor) infos.Add(impostor); // Just Impostor

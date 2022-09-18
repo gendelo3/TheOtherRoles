@@ -1,10 +1,12 @@
-﻿global using UnhollowerBaseLib;
-global using UnhollowerBaseLib.Attributes;
-global using UnhollowerRuntimeLib;
+﻿global using Il2CppInterop.Runtime;
+global using Il2CppInterop.Runtime.Attributes;
+global using Il2CppInterop.Runtime.InteropTypes;
+global using Il2CppInterop.Runtime.InteropTypes.Arrays;
+global using Il2CppInterop.Runtime.Injection;
 
 using BepInEx;
 using BepInEx.Configuration;
-using BepInEx.IL2CPP;
+using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Hazel;
 using System.Collections.Generic;
@@ -14,16 +16,18 @@ using UnityEngine;
 using TheOtherRoles.Modules;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
+using Reactor;
 
 namespace TheOtherRoles
 {
     [BepInPlugin(Id, "The Other Roles", VersionString)]
     [BepInDependency(SubmergedCompatibility.SUBMERGED_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("Among Us.exe")]
+    [ReactorModFlags(ModFlags.RequireOnAllClients)]
     public class TheOtherRolesPlugin : BasePlugin
     {
         public const string Id = "me.eisbison.theotherroles";
-        public const string VersionString = "4.1.7";
+        public const string VersionString = "4.2.0";
         public static uint betaDays = 0;  // amount of days for the build to be usable (0 for infinite!)
 
         public static Version Version = Version.Parse(VersionString);
@@ -112,7 +116,6 @@ namespace TheOtherRoles
 
             CustomOptionHolder.Load();
             CustomColors.Load();
-            Patches.FreeNamePatch.Initialize();
 
             if (BepInExUpdater.UpdateRequired)
             {

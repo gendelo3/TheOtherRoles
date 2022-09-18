@@ -226,11 +226,11 @@ namespace TheOtherRoles {
         public static CustomOption pursuerCooldown;
         public static CustomOption pursuerBlanksNumber;
 
-        public static CustomOption robberSpawnRate;
-        public static CustomOption robberCooldown;
-        public static CustomOption robberHasImpVision;
-        public static CustomOption robberCanUseVents;
-        public static CustomOption robberCanKillSheriff;
+        public static CustomOption thiefSpawnRate;
+        public static CustomOption thiefCooldown;
+        public static CustomOption thiefHasImpVision;
+        public static CustomOption thiefCanUseVents;
+        public static CustomOption thiefCanKillSheriff;
 
 
         public static CustomOption trapperSpawnRate;
@@ -278,7 +278,13 @@ namespace TheOtherRoles {
         public static CustomOption modifierInvert;
         public static CustomOption modifierInvertQuantity;
         public static CustomOption modifierInvertDuration;
-        
+
+        public static CustomOption modifierChameleon;
+        public static CustomOption modifierChameleonQuantity;
+        public static CustomOption modifierChameleonHoldDuration;
+        public static CustomOption modifierChameleonFadeDuration;
+        public static CustomOption modifierChameleonMinVisibility;
+
         public static CustomOption maxNumberOfMeetings;
         public static CustomOption blockSkippingInEmergencyMeetings;
         public static CustomOption noVoteIsSelfVote;
@@ -571,11 +577,11 @@ namespace TheOtherRoles {
             mediumDuration = CustomOption.Create(362, Types.Crewmate, "Medium Questioning Duration", 3f, 0f, 15f, 1f, mediumSpawnRate);
             mediumOneTimeUse = CustomOption.Create(363, Types.Crewmate, "Each Soul Can Only Be Questioned Once", false, mediumSpawnRate);
 
-            robberSpawnRate = CustomOption.Create(400, Types.Neutral, cs(Robber.color, "Robber"), rates, null, true);
-            robberCooldown = CustomOption.Create(401, Types.Neutral, "Robber Cooldown", 30f, 5f, 120f, 5f, robberSpawnRate);
-            robberCanKillSheriff = CustomOption.Create(402, Types.Neutral, "Robber Can Kill Sheriff", true, robberSpawnRate);
-            robberHasImpVision = CustomOption.Create(403, Types.Neutral, "Robber Has Impostor Vision", true, robberSpawnRate);
-            robberCanUseVents = CustomOption.Create(404, Types.Neutral, "Robber Can Use Vents", true, robberSpawnRate);
+            thiefSpawnRate = CustomOption.Create(400, Types.Neutral, cs(Thief.color, "Thief"), rates, null, true);
+            thiefCooldown = CustomOption.Create(401, Types.Neutral, "Thief Cooldown", 30f, 5f, 120f, 5f, thiefSpawnRate);
+            thiefCanKillSheriff = CustomOption.Create(402, Types.Neutral, "Thief Can Kill Sheriff", true, thiefSpawnRate);
+            thiefHasImpVision = CustomOption.Create(403, Types.Neutral, "Thief Has Impostor Vision", true, thiefSpawnRate);
+            thiefCanUseVents = CustomOption.Create(404, Types.Neutral, "Thief Can Use Vents", true, thiefSpawnRate);
 
             trapperSpawnRate = CustomOption.Create(410, Types.Crewmate, cs(Trapper.color, "Trapper"), rates, null, true);
             trapperCooldown = CustomOption.Create(420, Types.Crewmate, "Trapper Cooldown", 30f, 5f, 120f, 5f, trapperSpawnRate);
@@ -623,6 +629,12 @@ namespace TheOtherRoles {
             modifierInvert = CustomOption.Create(1080, Types.Modifier, cs(Color.yellow, "Invert"), rates, null, true);
             modifierInvertQuantity = CustomOption.Create(1081, Types.Modifier, cs(Color.yellow, "Modifier Quantity"), ratesModifier, modifierInvert);
             modifierInvertDuration = CustomOption.Create(1082, Types.Modifier, "Number Of Meetings Inverted", 3f, 1f, 15f, 1f, modifierInvert);
+
+            modifierChameleon = CustomOption.Create(1090, Types.Modifier, cs(Color.yellow, "Chameleon"), rates, null, true);
+            modifierChameleonQuantity = CustomOption.Create(1091, Types.Modifier, cs(Color.yellow, "Chameleon Quantity"), ratesModifier, modifierChameleon);
+            modifierChameleonHoldDuration = CustomOption.Create(1092, Types.Modifier, "Time Until Fading Starts", 3f, 1f, 10f, 0.5f, modifierChameleon);
+            modifierChameleonFadeDuration = CustomOption.Create(1093, Types.Modifier, "Fade Duration", 1f, 0.25f, 10f, 0.25f, modifierChameleon);
+            modifierChameleonMinVisibility = CustomOption.Create(1094, Types.Modifier, "Minimum Visibility", new string[] { "0%", "10%", "20%", "30%", "40%", "50%" }, modifierChameleon);
 
             // Guesser Gamemode (2000 - 2999)
             guesserGamemodeCrewNumber = CustomOption.Create(2001, Types.Guesser, cs(Guesser.color, "Number of Crew Guessers"), 15f, 1f, 15f, 1f, null, true);
@@ -676,11 +688,11 @@ namespace TheOtherRoles {
             shieldFirstKill = CustomOption.Create(8, Types.General, "Shield Last Game First Kill", false);
 
             dynamicMap = CustomOption.Create(500, Types.General, "Play On A Random Map", false, null, false);
-            dynamicMapEnableSkeld = CustomOption.Create(501, Types.General, "Enable Skeld Rotation", true, dynamicMap, false);
-            dynamicMapEnableMira = CustomOption.Create(502, Types.General, "Enable Mira Rotation", true, dynamicMap, false);
-            dynamicMapEnablePolus = CustomOption.Create(503, Types.General, "Enable Polus Rotation", true, dynamicMap, false);
-            dynamicMapEnableAirShip = CustomOption.Create(504, Types.General, "Enable Airship Rotation", true, dynamicMap, false);
-            dynamicMapEnableSubmerged = CustomOption.Create(505, Types.General, "Enable Submerged Rotation", true, dynamicMap, false);
+            dynamicMapEnableSkeld = CustomOption.Create(501, Types.General, "Skeld", rates, dynamicMap, false);
+            dynamicMapEnableMira = CustomOption.Create(502, Types.General, "Mira", rates, dynamicMap, false);
+            dynamicMapEnablePolus = CustomOption.Create(503, Types.General, "Polus", rates, dynamicMap, false);
+            dynamicMapEnableAirShip = CustomOption.Create(504, Types.General, "Airship", rates, dynamicMap, false);
+            dynamicMapEnableSubmerged = CustomOption.Create(505, Types.General, "Submerged", rates, dynamicMap, false);
 
             blockedRolePairings.Add((byte)RoleId.Vampire, new [] { (byte)RoleId.Warlock});
             blockedRolePairings.Add((byte)RoleId.Warlock, new [] { (byte)RoleId.Vampire});

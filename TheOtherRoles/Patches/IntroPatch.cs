@@ -40,7 +40,7 @@ namespace TheOtherRoles.Patches {
                         player.transform.localPosition = bottomLeft + new Vector3(-0.25f, -0.25f, 0) + Vector3.right * playerCounter++ * 0.7f;
                         player.transform.localScale = Vector3.one * 0.4f;
                         player.gameObject.SetActive(true);
-                    } else {   //  This can be done for all players not just for the bounty hunter as it was before. Allows the robber to have the correct position and scaling
+                    } else {   //  This can be done for all players not just for the bounty hunter as it was before. Allows the thief to have the correct position and scaling
                         player.transform.localPosition = bottomLeft + new Vector3(-0.25f, 0f, 0);
                         player.transform.localScale = Vector3.one * 0.4f;
                         player.gameObject.SetActive(false);

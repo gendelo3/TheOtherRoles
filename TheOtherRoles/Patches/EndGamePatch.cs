@@ -87,7 +87,7 @@ namespace TheOtherRoles.Patches {
             if (Vulture.vulture != null) notWinners.Add(Vulture.vulture);
             if (Lawyer.lawyer != null) notWinners.Add(Lawyer.lawyer);
             if (Pursuer.pursuer != null) notWinners.Add(Pursuer.pursuer);
-            if (Robber.robber != null) notWinners.Add(Robber.robber);
+            if (Thief.thief != null) notWinners.Add(Thief.thief);
 
             notWinners.AddRange(Jackal.formerJackals);
 

@@ -55,7 +55,7 @@ namespace TheOtherRoles
             Pursuer.clearAndReload();
             Witch.clearAndReload();
             Ninja.clearAndReload();
-            Robber.clearAndReload();
+            Thief.clearAndReload();
             Trapper.clearAndReload();
 
             // Modifier
@@ -67,6 +67,7 @@ namespace TheOtherRoles
             Mini.clearAndReload();
             Vip.clearAndReload();
             Invert.clearAndReload();
+            Chameleon.clearAndReload();
 
             // Gamemodes
             HandleGuesser.clearAndReload();
@@ -1507,11 +1508,11 @@ namespace TheOtherRoles
         }
     }
 
-    public static class Robber {
-        public static PlayerControl robber;
+    public static class Thief {
+        public static PlayerControl thief;
         public static Color color = new Color32(71, 99, 45, Byte.MaxValue);
         public static PlayerControl currentTarget;
-        public static PlayerControl formerRobber;
+        public static PlayerControl formerThief;
 
         public static float cooldown = 30f;
 
@@ -1522,14 +1523,14 @@ namespace TheOtherRoles
         public static bool canKillSheriff;
 
         public static void clearAndReload() {
-            robber = null;
+            thief = null;
             suicideFlag = false;
             currentTarget = null;
-            formerRobber = null;
-            hasImpostorVision = CustomOptionHolder.robberHasImpVision.getBool();  // todo option and implementation
-            cooldown = CustomOptionHolder.robberCooldown.getFloat();
-            canUseVents = CustomOptionHolder.robberCanUseVents.getBool();
-            canKillSheriff = CustomOptionHolder.robberCanKillSheriff.getBool();
+            formerThief = null;
+            hasImpostorVision = CustomOptionHolder.thiefHasImpVision.getBool();  // todo option and implementation
+            cooldown = CustomOptionHolder.thiefCooldown.getFloat();
+            canUseVents = CustomOptionHolder.thiefCanUseVents.getBool();
+            canKillSheriff = CustomOptionHolder.thiefCanKillSheriff.getBool();
         }
     }
 
@@ -1692,6 +1693,66 @@ namespace TheOtherRoles
         public static void clearAndReload() {
             invert = new List<PlayerControl>();
             meetings = (int) CustomOptionHolder.modifierInvertDuration.getFloat();
+        }
+    }
+
+    public static class Chameleon {
+        public static List<PlayerControl> chameleon = new List<PlayerControl>();
+        public static float minVisibility = 0.2f;
+        public static float holdDuration = 1f;
+        public static float fadeDuration = 0.5f;
+        public static Dictionary<byte, float> lastMoved;
+
+        public static void clearAndReload() {
+            chameleon = new List<PlayerControl>();
+            lastMoved = new Dictionary<byte, float>();
+            holdDuration = CustomOptionHolder.modifierChameleonHoldDuration.getFloat();
+            fadeDuration = CustomOptionHolder.modifierChameleonFadeDuration.getFloat();
+            minVisibility = CustomOptionHolder.modifierChameleonMinVisibility.getSelection() / 10f;
+        }
+
+        public static float visibility(byte playerId) {
+            float visibility = 1f;
+            if (lastMoved != null && lastMoved.ContainsKey(playerId)) {
+                var tStill = Time.time - lastMoved[playerId];
+                if (tStill > holdDuration) {
+                    if (tStill - holdDuration > fadeDuration) visibility = minVisibility;
+                    else visibility = (1 - (tStill - holdDuration) / fadeDuration) * (1 - minVisibility) + minVisibility;
+                }
+            }
+            if (PlayerControl.LocalPlayer.Data.IsDead && visibility < 0.1f) {  // Ghosts can always see!
+                visibility = 0.1f;
+            }
+            return visibility;
+        }
+
+        public static void update() {
+            foreach (var chameleonPlayer in chameleon) {
+                // check movement by animation
+                PlayerPhysics playerPhysics = chameleonPlayer.MyPhysics;
+                var currentPhysicsAnim = playerPhysics.Animator.GetCurrentAnimation();
+                if (currentPhysicsAnim != playerPhysics.CurrentAnimationGroup.IdleAnim) {
+                    lastMoved[chameleonPlayer.PlayerId] = Time.time;
+                }
+                // calculate and set visibility
+                float visibility = Chameleon.visibility(chameleonPlayer.PlayerId);
+                float petVisibility = visibility;
+                if (chameleonPlayer.Data.IsDead) {
+                    visibility = 0.5f;
+                    petVisibility = 1f;
+                }
+
+                try {  // Sometimes renderers are missing for weird reasons. Try catch to avoid exceptions
+                    chameleonPlayer.cosmetics.currentBodySprite.BodySprite.color = chameleonPlayer.cosmetics.currentBodySprite.BodySprite.color.SetAlpha(visibility);
+                    if (SaveManager.colorblindMode) chameleonPlayer.cosmetics.colorBlindText.color = chameleonPlayer.cosmetics.colorBlindText.color.SetAlpha(visibility);
+                    chameleonPlayer.SetHatAndVisorAlpha(visibility);
+                    chameleonPlayer.cosmetics.skin.layer.color = chameleonPlayer.cosmetics.skin.layer.color.SetAlpha(visibility);
+                    chameleonPlayer.cosmetics.nameText.color = chameleonPlayer.cosmetics.nameText.color.SetAlpha(visibility);
+                    chameleonPlayer.cosmetics.currentPet.rend.color = chameleonPlayer.cosmetics.currentPet.rend.color.SetAlpha(petVisibility);
+                    chameleonPlayer.cosmetics.currentPet.shadowRend.color = chameleonPlayer.cosmetics.currentPet.shadowRend.color.SetAlpha(petVisibility);
+                } catch { }
+            }
+                
         }
     }
 }

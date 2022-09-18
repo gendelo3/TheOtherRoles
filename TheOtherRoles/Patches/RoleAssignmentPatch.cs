@@ -105,7 +105,7 @@ namespace TheOtherRoles.Patches {
             neutralSettings.Add((byte)RoleId.Arsonist, CustomOptionHolder.arsonistSpawnRate.getSelection());
             neutralSettings.Add((byte)RoleId.Jackal, CustomOptionHolder.jackalSpawnRate.getSelection());
             neutralSettings.Add((byte)RoleId.Vulture, CustomOptionHolder.vultureSpawnRate.getSelection());
-            neutralSettings.Add((byte)RoleId.Robber, CustomOptionHolder.robberSpawnRate.getSelection());
+            neutralSettings.Add((byte)RoleId.Thief, CustomOptionHolder.thiefSpawnRate.getSelection());
 
             if ((rnd.Next(1, 101) <= CustomOptionHolder.lawyerIsProsecutorChance.getSelection() * 10)) // Lawyer or Prosecutor
                 neutralSettings.Add((byte)RoleId.Prosecutor, CustomOptionHolder.lawyerSpawnRate.getSelection());
@@ -414,7 +414,8 @@ namespace TheOtherRoles.Patches {
                 RoleId.AntiTeleport,
                 RoleId.Sunglasses,
                 RoleId.Vip,
-                RoleId.Invert
+                RoleId.Invert,
+                RoleId.Chameleon,
             });
 
             if (rnd.Next(1, 101) <= CustomOptionHolder.modifierLover.getSelection() * 10) { // Assign lover
@@ -580,6 +581,10 @@ namespace TheOtherRoles.Patches {
                 case RoleId.Invert:
                     selection = CustomOptionHolder.modifierInvert.getSelection();
                     if (multiplyQuantity) selection *= CustomOptionHolder.modifierInvertQuantity.getQuantity();
+                    break;
+                case RoleId.Chameleon:
+                    selection = CustomOptionHolder.modifierChameleon.getSelection();
+                    if (multiplyQuantity) selection *= CustomOptionHolder.modifierChameleonQuantity.getQuantity();
                     break;
             }
                  

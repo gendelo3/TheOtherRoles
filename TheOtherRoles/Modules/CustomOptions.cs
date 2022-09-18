@@ -152,29 +152,20 @@ namespace TheOtherRoles {
 
             switch (MapOptions.gameMode) {
                 case CustomGamemodes.Classic:
-                    createClassicTabs();
+                    createClassicTabs(__instance);
                     break;
                 case CustomGamemodes.Guesser:
-                    createGuesserTabs();
+                    createGuesserTabs(__instance);
                     break;
                 case CustomGamemodes.HideNSeek:
-                    createHideNSeekTabs();
+                    createHideNSeekTabs(__instance);
                     break;
             }
 
-            // Adapt task count for main options
-
-            var commonTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumCommonTasks").TryCast<NumberOption>();
-            if(commonTasksOption != null) commonTasksOption.ValidRange = new FloatRange(0f, 4f);
-
-            var shortTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumShortTasks").TryCast<NumberOption>();
-            if(shortTasksOption != null) shortTasksOption.ValidRange = new FloatRange(0f, 23f);
-
-            var longTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumLongTasks").TryCast<NumberOption>();
-            if(longTasksOption != null) longTasksOption.ValidRange = new FloatRange(0f, 15f);
+            
         }
 
-        private static void createClassicTabs() {
+        private static void createClassicTabs(GameOptionsMenu __instance) {
             if (GameObject.Find("TORSettings") != null) { // Settings setup has already been performed, fixing the title of the tab and returning
                 GameObject.Find("TORSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("The Other Roles Settings");
                 return;
@@ -358,9 +349,19 @@ namespace TheOtherRoles {
 
             modifierMenu.Children = modifierOptions.ToArray();
             modifierSettings.gameObject.SetActive(false);
+
+            // Adapt task count for main options
+            var commonTasksOption = __instance.Children.FirstOrDefault(x => true/*=> x.name == "NumCommonTasks"*/).TryCast<NumberOption>();
+            if (commonTasksOption != null) commonTasksOption.ValidRange = new FloatRange(0f, 4f);
+
+            var shortTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumShortTasks").TryCast<NumberOption>();
+            if (shortTasksOption != null) shortTasksOption.ValidRange = new FloatRange(0f, 23f);
+
+            var longTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumLongTasks").TryCast<NumberOption>();
+            if (longTasksOption != null) longTasksOption.ValidRange = new FloatRange(0f, 15f);
         }
 
-        private static void createGuesserTabs() {
+        private static void createGuesserTabs(GameOptionsMenu __instance) {
             if (GameObject.Find("TORSettings") != null) { // Settings setup has already been performed, fixing the title of the tab and returning
                 GameObject.Find("TORSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("The Other Roles Settings");
                 return;
@@ -574,9 +575,19 @@ namespace TheOtherRoles {
 
             guesserMenu.Children = guesserOptions.ToArray();
             guesserSettings.gameObject.SetActive(false);
+
+            // Adapt task count for main options
+            var commonTasksOption = __instance.Children.FirstOrDefault(x => true/*=> x.name == "NumCommonTasks"*/).TryCast<NumberOption>();
+            if (commonTasksOption != null) commonTasksOption.ValidRange = new FloatRange(0f, 4f);
+
+            var shortTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumShortTasks").TryCast<NumberOption>();
+            if (shortTasksOption != null) shortTasksOption.ValidRange = new FloatRange(0f, 23f);
+
+            var longTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumLongTasks").TryCast<NumberOption>();
+            if (longTasksOption != null) longTasksOption.ValidRange = new FloatRange(0f, 15f);
         }
 
-        private static void createHideNSeekTabs() {
+        private static void createHideNSeekTabs(GameOptionsMenu __instance) {
             if (GameObject.Find("TORSettings") != null) { // Settings setup has already been performed, fixing the title of the tab and returning
                 GameObject.Find("TORSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("The Other Roles Settings");
                 return;
@@ -632,7 +643,6 @@ namespace TheOtherRoles {
                     gameSettingMenu.GameSettingsHightlight.enabled = false;
                     torTabHighlight.enabled = false;
                     hideNSeekTabHighlight.enabled = false;
-
                     if (copiedIndex == 0) {
                         torSettings.gameObject.SetActive(true);
                         torTabHighlight.enabled = true;
@@ -680,6 +690,16 @@ namespace TheOtherRoles {
 
             gameSettingMenu.RegularGameSettings.SetActive(false);
             gameSettingMenu.GameSettingsHightlight.enabled = false;
+
+            // Adapt task count for main options
+            var commonTasksOption = __instance.Children.FirstOrDefault(x => true/*=> x.name == "NumCommonTasks"*/).TryCast<NumberOption>();
+            if (commonTasksOption != null) commonTasksOption.ValidRange = new FloatRange(0f, 4f);
+
+            var shortTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumShortTasks").TryCast<NumberOption>();
+            if (shortTasksOption != null) shortTasksOption.ValidRange = new FloatRange(0f, 23f);
+
+            var longTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumLongTasks").TryCast<NumberOption>();
+            if (longTasksOption != null) longTasksOption.ValidRange = new FloatRange(0f, 15f);
 
         }
     }
@@ -749,7 +769,7 @@ namespace TheOtherRoles {
 
             float offset = 2.75f;
             foreach (CustomOption option in CustomOption.options) {
-                if (GameObject.Find("TORSettings") && option.type != CustomOption.CustomOptionType.General)
+                if (GameObject.Find("TORSettings") && option.type != CustomOption.CustomOptionType.General && option.type != CustomOptionType.HideNSeekMain)
                     continue;
                 if (GameObject.Find("ImpostorSettings") && option.type != CustomOption.CustomOptionType.Impostor)
                     continue;
@@ -760,6 +780,8 @@ namespace TheOtherRoles {
                 if (GameObject.Find("ModifierSettings") && option.type != CustomOption.CustomOptionType.Modifier)
                     continue;
                 if (GameObject.Find("GuesserSettings") && option.type != CustomOption.CustomOptionType.Guesser)
+                    continue;
+                if (GameObject.Find("HideNSeekSettings") && option.type != CustomOption.CustomOptionType.HideNSeekRoles)
                     continue;
                 if (option?.optionBehaviour != null && option.optionBehaviour.gameObject != null) {
                     bool enabled = true;

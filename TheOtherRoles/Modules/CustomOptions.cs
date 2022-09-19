@@ -191,7 +191,7 @@ namespace TheOtherRoles {
             var neutralMenu = getMenu(neutralSettings, "NeutralSettings");
 
             var crewmateSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
-            var crewmateMenu = getMenu(crewmateSettings, "crewmateSettings");
+            var crewmateMenu = getMenu(crewmateSettings, "CrewmateSettings");
 
             var modifierSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
             var modifierMenu = getMenu(modifierSettings, "ModifierSettings");
@@ -537,7 +537,7 @@ namespace TheOtherRoles {
                     return true;
                 }
             }
-
+            TheOtherRolesPlugin.Logger.LogMessage("no tab found");
             return false;
         }
 
@@ -568,6 +568,7 @@ namespace TheOtherRoles {
         }
 
         private static void adaptTaskCount(GameOptionsMenu __instance) {
+            TheOtherRolesPlugin.Logger.LogMessage("task count adaptation called!");
             // Adapt task count for main options
             var commonTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumCommonTasks").TryCast<NumberOption>();
             if (commonTasksOption != null) commonTasksOption.ValidRange = new FloatRange(0f, 4f);

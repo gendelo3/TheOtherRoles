@@ -42,7 +42,7 @@ $@"<size=60%> <color=#FCCE03FF>Special thanks to K3ndo & Smeggy</color></size>";
         internal static class PingTrackerPatch
         {
             public static GameObject modStamp;
-            static void Prefix(PingTracker __instance) {
+            /*static void Prefix(PingTracker __instance) {
                 if (modStamp == null) {
                     modStamp = new GameObject("ModStamp");
                     var rend = modStamp.AddComponent<SpriteRenderer>();
@@ -53,7 +53,7 @@ $@"<size=60%> <color=#FCCE03FF>Special thanks to K3ndo & Smeggy</color></size>";
                 }
                 float offset = (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) ? 0.75f : 0f;
                 modStamp.transform.position = FastDestroyableSingleton<HudManager>.Instance.MapButton.transform.position + Vector3.down * offset;
-            }
+            }*/
 
             static void Postfix(PingTracker __instance){
                 __instance.text.alignment = TMPro.TextAlignmentOptions.TopRight;

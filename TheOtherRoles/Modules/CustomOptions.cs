@@ -537,6 +537,7 @@ namespace TheOtherRoles {
                     return true;
                 }
             }
+
             return false;
         }
 

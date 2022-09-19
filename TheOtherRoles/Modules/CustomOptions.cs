@@ -568,7 +568,6 @@ namespace TheOtherRoles {
         }
 
         private static void adaptTaskCount(GameOptionsMenu __instance) {
-            TheOtherRolesPlugin.Logger.LogMessage("task count adaptation called!");
             // Adapt task count for main options
             var commonTasksOption = __instance.Children.FirstOrDefault(x => x.name == "NumCommonTasks").TryCast<NumberOption>();
             if (commonTasksOption != null) commonTasksOption.ValidRange = new FloatRange(0f, 4f);

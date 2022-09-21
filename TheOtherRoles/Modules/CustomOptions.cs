@@ -191,7 +191,7 @@ namespace TheOtherRoles {
             var neutralMenu = getMenu(neutralSettings, "NeutralSettings");
 
             var crewmateSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
-            var crewmateMenu = getMenu(crewmateSettings, "crewmateSettings");
+            var crewmateMenu = getMenu(crewmateSettings, "CrewmateSettings");
 
             var modifierSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
             var modifierMenu = getMenu(modifierSettings, "ModifierSettings");

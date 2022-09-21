@@ -130,7 +130,6 @@ namespace TheOtherRoles
         ArsonistWin,
         GuesserShoot,
         VultureWin,
-        LawyerWin,
         LawyerSetTarget,
         LawyerPromotesToPursuer,
         SetBlanked,

@@ -17,6 +17,7 @@ namespace TheOtherRoles.Patches {
         public static void Prefix(IntroCutscene __instance) {
             // Generate and initialize player icons
             int playerCounter = 0;
+            int hideNSeekCounter = 0;
             if (CachedPlayer.LocalPlayer != null && FastDestroyableSingleton<HudManager>.Instance != null) {
                 Vector3 bottomLeft = new Vector3(-FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.x, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.y, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.z);
                 foreach (PlayerControl p in CachedPlayer.AllPlayers) {
@@ -30,16 +31,26 @@ namespace TheOtherRoles.Patches {
                     player.cosmetics.nameText.text = data.PlayerName;
                     player.SetFlipX(true);
                     MapOptions.playerIcons[p.PlayerId] = player;
+                    player.gameObject.SetActive(false);
 
                     if (CachedPlayer.LocalPlayer.PlayerControl == Arsonist.arsonist && p != Arsonist.arsonist) {
                         player.transform.localPosition = bottomLeft + new Vector3(-0.25f, -0.25f, 0) + Vector3.right * playerCounter++ * 0.35f;
                         player.transform.localScale = Vector3.one * 0.2f;
                         player.setSemiTransparent(true);
                         player.gameObject.SetActive(true);
-                    } else if (HideNSeek.isHunted() && p.Data.Role.IsImpostor) {
-                        player.transform.localPosition = bottomLeft + new Vector3(-0.25f, -0.25f, 0) + Vector3.right * playerCounter++ * 0.7f;
-                        player.transform.localScale = Vector3.one * 0.4f;
-                        player.gameObject.SetActive(true);
+                    } else if (HideNSeek.isHideNSeekGM) {
+                        if (HideNSeek.isHunted() && p.Data.Role.IsImpostor) {
+                            player.transform.localPosition = bottomLeft + new Vector3(-0.25f, 0.4f, 0) + Vector3.right * playerCounter++ * 0.6f;
+                            player.transform.localScale = Vector3.one * 0.3f;
+                            player.cosmetics.nameText.text += $"{Helpers.cs(Color.red, " (Hunter)")}";
+                            player.gameObject.SetActive(true);
+                        } else if (!p.Data.Role.IsImpostor) {
+                            player.transform.localPosition = bottomLeft + new Vector3(-0.35f, -0.25f, 0) + Vector3.right * hideNSeekCounter++ * 0.35f;
+                            player.transform.localScale = Vector3.one * 0.2f;
+                            player.setSemiTransparent(true);
+                            player.gameObject.SetActive(true);
+                        }
+
                     } else {   //  This can be done for all players not just for the bounty hunter as it was before. Allows the thief to have the correct position and scaling
                         player.transform.localPosition = bottomLeft + new Vector3(-0.25f, 0f, 0);
                         player.transform.localScale = Vector3.one * 0.4f;
@@ -79,7 +90,6 @@ namespace TheOtherRoles.Patches {
                 foreach (PlayerControl player in HideNSeek.getHunters()) {
                     player.moveable = false;
                     player.NetTransform.Halt();
-                    HideNSeek.isWaitingTimer = true;
                     HideNSeek.timer = HideNSeek.hunterWaitingTime;
                     FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(HideNSeek.hunterWaitingTime, new Action<float>((p) => {
                         if (p == 1f) {
@@ -110,6 +120,14 @@ namespace TheOtherRoles.Patches {
                     adminVent.Center = HideNSeek.polusVent;
                     bathroomVent.Center = HideNSeek.polusVent;
                 }
+
+                ShipStatusPatch.originalNumCrewVisionOption = PlayerControl.GameOptions.CrewLightMod;
+                ShipStatusPatch.originalNumImpVisionOption = PlayerControl.GameOptions.ImpostorLightMod;
+                ShipStatusPatch.originalNumKillCooldownOption = PlayerControl.GameOptions.killCooldown;
+
+                PlayerControl.GameOptions.ImpostorLightMod = CustomOptionHolder.hideNSeekHunterVision.getFloat();
+                PlayerControl.GameOptions.CrewLightMod = CustomOptionHolder.hideNSeekHuntedVision.getFloat();
+                PlayerControl.GameOptions.KillCooldown = CustomOptionHolder.hideNSeekKillCooldown.getFloat();
             }
         }
     }

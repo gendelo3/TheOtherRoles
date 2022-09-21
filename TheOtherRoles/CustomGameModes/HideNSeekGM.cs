@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TheOtherRoles.Objects;
 using TheOtherRoles.Players;
@@ -8,7 +9,8 @@ namespace TheOtherRoles.CustomGameModes {
         public static bool isHideNSeekGM = false;
         public static TMPro.TMP_Text timerText = null;
         public static Vent polusVent = null;
-        public static bool isWaitingTimer = false;
+        public static bool isWaitingTimer = true;
+        public static DateTime startTime = DateTime.UtcNow;
 
         public static float timer = 300f;
         public static float hunterVision = 0.5f;
@@ -39,7 +41,8 @@ namespace TheOtherRoles.CustomGameModes {
             timerText = null;
             if (polusVent != null) UnityEngine.Object.Destroy(polusVent);
             polusVent = null;
-            isWaitingTimer = false;
+            isWaitingTimer = true;
+            startTime = DateTime.UtcNow;
 
             timer = CustomOptionHolder.hideNSeekTimer.getFloat() * 60;
             hunterVision = CustomOptionHolder.hideNSeekHunterVision.getFloat();
@@ -53,11 +56,6 @@ namespace TheOtherRoles.CustomGameModes {
 
             Hunter.clearAndReload();
             Hunted.clearAndReload();
-
-            PlayerControl.GameOptions.NumImpostors = impNumber;
-            PlayerControl.GameOptions.ImpostorLightMod = hunterVision;
-            PlayerControl.GameOptions.CrewLightMod = huntedVision;
-            PlayerControl.GameOptions.KillCooldown = killCooldown;
         }
     }
 
@@ -65,6 +63,7 @@ namespace TheOtherRoles.CustomGameModes {
         public static List<Arrow> localArrows = new List<Arrow>();
         public static List<byte> lightActive = new List<byte>();
         public static bool arrowActive = false;
+        public static Dictionary<byte, int> playerKillCountMap = new Dictionary<byte, int>();
 
         public static float lightCooldown = 30f;
         public static float lightDuration = 5f;

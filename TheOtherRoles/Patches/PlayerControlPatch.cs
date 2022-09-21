@@ -864,7 +864,7 @@ namespace TheOtherRoles.Patches {
             }
         }
 
-        static void hunterUpdater() {
+        static void hunterUpdate() {
             if (!HideNSeek.isHideNSeekGM) return;
             int minutes = (int)HideNSeek.timer / 60;
             int seconds = (int)HideNSeek.timer % 60;
@@ -891,15 +891,14 @@ namespace TheOtherRoles.Patches {
                     HideNSeek.timerText.color = Color.red;
                 }
             }
-            if (HideNSeek.isHunted() && !Hunted.taskPunish) {
+            if (HideNSeek.isHunted() && !Hunted.taskPunish && !HideNSeek.isWaitingTimer) {
                 var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);
                 int numberOfTasks = playerTotal - playerCompleted;
-
                 if (numberOfTasks == 0) {
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.HuntedShield, Hazel.SendOption.Reliable, -1);
-                    writer.Write(CachedPlayer.LocalPlayer.PlayerId);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareTimer, Hazel.SendOption.Reliable, -1);
+                    writer.Write(HideNSeek.taskPunish);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.huntedShield(CachedPlayer.LocalPlayer.PlayerId);
+                    RPCProcedure.shareTimer(HideNSeek.taskPunish);
 
                     Hunted.taskPunish = true;
                 }
@@ -1032,7 +1031,7 @@ namespace TheOtherRoles.Patches {
                 Chameleon.update();
 
                 // -- GAME MODE --
-                hunterUpdater();
+                hunterUpdate();
             } 
         }
     }
@@ -1233,6 +1232,23 @@ namespace TheOtherRoles.Patches {
                     else if (RoleInfo.getRoleInfoForPlayer(target, false).FirstOrDefault().isNeutral) color = Color.blue;
                 }
                 Helpers.showFlash(color, 1.5f);
+            }
+
+            // HideNSeek
+            if (HideNSeek.isHideNSeekGM) {
+                int visibleCounter = 0;
+                Vector3 bottomLeft = new Vector3(-FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.x, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.y, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.z);
+                bottomLeft += new Vector3(-0.35f, -0.25f, 0);
+                foreach (PlayerControl p in CachedPlayer.AllPlayers) {
+                    if (!MapOptions.playerIcons.ContainsKey(p.PlayerId) || p.Data.Role.IsImpostor) continue;
+                    if (p.Data.IsDead || p.Data.Disconnected) {
+                        MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(false);
+                    }
+                    else {
+                        MapOptions.playerIcons[p.PlayerId].transform.localPosition = bottomLeft + Vector3.right * visibleCounter * 0.35f;
+                        visibleCounter++;
+                    }
+                }
             }
         }
     }

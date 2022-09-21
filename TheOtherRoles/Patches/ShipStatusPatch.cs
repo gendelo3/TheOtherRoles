@@ -91,9 +91,9 @@ namespace TheOtherRoles.Patches {
         private static int originalNumCommonTasksOption = 0;
         private static int originalNumShortTasksOption = 0;
         private static int originalNumLongTasksOption = 0;
-        private static float originalNumCrewVisionOption = 0;
-        private static float originalNumImpVisionOption = 0;
-        private static float originalNumKillCooldownOption = 0;
+        public static float originalNumCrewVisionOption = 0;
+        public static float originalNumImpVisionOption = 0;
+        public static float originalNumKillCooldownOption = 0;
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.Begin))]
@@ -102,9 +102,6 @@ namespace TheOtherRoles.Patches {
             originalNumCommonTasksOption = PlayerControl.GameOptions.NumCommonTasks;
             originalNumShortTasksOption = PlayerControl.GameOptions.NumShortTasks;
             originalNumLongTasksOption = PlayerControl.GameOptions.NumLongTasks;
-            originalNumCrewVisionOption = PlayerControl.GameOptions.CrewLightMod;
-            originalNumImpVisionOption = PlayerControl.GameOptions.ImpostorLightMod;
-            originalNumKillCooldownOption = PlayerControl.GameOptions.killCooldown;
 
             if (MapOptions.gameMode != CustomGamemodes.HideNSeek) {
                 var commonTaskCount = __instance.CommonTasks.Count;
@@ -118,9 +115,6 @@ namespace TheOtherRoles.Patches {
                 PlayerControl.GameOptions.NumCommonTasks = Mathf.RoundToInt(CustomOptionHolder.hideNSeekCommonTasks.getFloat());
                 PlayerControl.GameOptions.NumShortTasks = Mathf.RoundToInt(CustomOptionHolder.hideNSeekShortTasks.getFloat());
                 PlayerControl.GameOptions.NumLongTasks = Mathf.RoundToInt(CustomOptionHolder.hideNSeekLongTasks.getFloat());
-                PlayerControl.GameOptions.ImpostorLightMod = CustomOptionHolder.hideNSeekHunterVision.getFloat();
-                PlayerControl.GameOptions.CrewLightMod = CustomOptionHolder.hideNSeekHuntedVision.getFloat();
-                PlayerControl.GameOptions.KillCooldown = CustomOptionHolder.hideNSeekKillCooldown.getFloat();
             }
 
             return true;
@@ -137,8 +131,8 @@ namespace TheOtherRoles.Patches {
         }
 
         public static void resetVanillaSettings() {
-            PlayerControl.GameOptions.ImpostorLightMod = originalNumCrewVisionOption;
-            PlayerControl.GameOptions.CrewLightMod = originalNumImpVisionOption;
+            PlayerControl.GameOptions.ImpostorLightMod = originalNumImpVisionOption;
+            PlayerControl.GameOptions.CrewLightMod = originalNumCrewVisionOption;
             PlayerControl.GameOptions.KillCooldown = originalNumKillCooldownOption;
         }
     }

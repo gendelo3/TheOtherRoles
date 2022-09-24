@@ -159,18 +159,6 @@ namespace TheOtherRoles.Patches {
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.shareGamemode((byte) MapOptions.gameMode);
                 }
-
-                if (MapOptions.gameMode != CustomGamemodes.Classic) {
-                    string text = "";
-                    switch (MapOptions.gameMode) {
-                        case CustomGamemodes.Guesser: text = $"\n<color=#FFFFFF>GUESSER GAMEMODE\n</color>"; break;
-                        case CustomGamemodes.HideNSeek: text = $"\n<color=#FFFFFF>HIDE 'N SEEK\n</color>"; break;
-                    }
-                    if (text != "") {
-                        __instance.GameStartText.text += text;
-                        __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 1f;
-                    }
-                }
             }
         }
 

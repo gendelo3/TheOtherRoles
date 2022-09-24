@@ -55,7 +55,7 @@ namespace TheOtherRoles.Patches {
             public int TasksCompleted  {get;set;}
             public int TasksTotal  {get;set;}
             public bool IsGuesser {get; set;}
-            public int Kills {get; set;}
+            public int? Kills {get; set;}
         }
     }
 
@@ -78,7 +78,8 @@ namespace TheOtherRoles.Patches {
                 var roles = RoleInfo.getRoleInfoForPlayer(playerControl);
                 var (tasksCompleted, tasksTotal) = TasksHandler.taskInfo(playerControl.Data);
                 bool isGuesser = HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(playerControl.PlayerId);
-                int killCount = GameHistory.deadPlayers.FindAll(x => x.killerIfExisting != null && x.killerIfExisting.PlayerId == playerControl.PlayerId).Count;
+                int? killCount = GameHistory.deadPlayers.FindAll(x => x.killerIfExisting != null && x.killerIfExisting.PlayerId == playerControl.PlayerId).Count;
+                if (!playerControl.Data.Role.IsImpostor && !playerControl.PlayerControl == Jackal.jackal && !playerControl.PlayerControl == Sidekick.sidekick && !(Jackal.formerJackals.FindAll(x => x.PlayerId == playerControl.PlayerId).Count > 0)) killCount = null;
                 AdditionalTempData.playerRoles.Add(new AdditionalTempData.PlayerRoleInfo() { PlayerName = playerControl.Data.PlayerName, Roles = roles, TasksTotal = tasksTotal, TasksCompleted = tasksCompleted, IsGuesser = isGuesser, Kills = killCount });
             }
 
@@ -342,7 +343,7 @@ namespace TheOtherRoles.Patches {
                     var roles = string.Join(" ", data.Roles.Select(x => Helpers.cs(x.color, x.name)));
                     if (data.IsGuesser) roles += " (Guesser)";
                     var taskInfo = data.TasksTotal > 0 ? $" - <color=#FAD934FF>({data.TasksCompleted}/{data.TasksTotal})</color>" : "";
-                    if (taskInfo == "") taskInfo = $" - <color=#FF0000FF>(Kills: {data.Kills})</color>";
+                    if (data.Kills != null) taskInfo = $" - <color=#FF0000FF>(Kills: {data.Kills})</color>";
                     roleSummaryText.AppendLine($"{data.PlayerName} - {roles}{taskInfo}"); 
                 }
                 TMPro.TMP_Text roleSummaryTextMesh = roleSummary.GetComponent<TMPro.TMP_Text>();

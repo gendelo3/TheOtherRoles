@@ -1609,7 +1609,7 @@ namespace TheOtherRoles
                     writer.EndMessage();
                     RPCProcedure.setTrap(buff);
 
-                    SoundEffectsManager.play("securityGuardPlaceCam");  // Same sound used for both types (cam or vent)!
+                    SoundEffectsManager.play("trapperTrap");
                     trapperButton.Timer = trapperButton.MaxTimer;
                 },
                 () => { return Trapper.trapper != null && Trapper.trapper == CachedPlayer.LocalPlayer.PlayerControl && !CachedPlayer.LocalPlayer.Data.IsDead; },
@@ -1750,7 +1750,7 @@ namespace TheOtherRoles
                Hacker.getAdminSprite(),
                new Vector3(-2.7f, -0.06f, 0),
                __instance,
-               KeyCode.Q,
+               KeyCode.G,
                true,
                Hunter.AdminDuration,
                () => {
@@ -1764,7 +1764,7 @@ namespace TheOtherRoles
             hunterArrowButton = new CustomButton(
                 () => {
                     Hunter.arrowActive = true;
-                    SoundEffectsManager.play("fail");
+                    SoundEffectsManager.play("trackerTrackPlayer");
 
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareTimer, Hazel.SendOption.Reliable, -1);
                     writer.Write(Hunter.ArrowPunish);
@@ -1781,13 +1781,13 @@ namespace TheOtherRoles
                 Arrow.getSprite(),
                 new Vector3(-2.7f, 1f, 0),
                 __instance,
-                KeyCode.F,
+                KeyCode.R,
                 true,
                 Hunter.ArrowDuration,
                 () => {
                     Hunter.arrowActive = false;
                     hunterArrowButton.Timer = hunterArrowButton.MaxTimer;
-                    SoundEffectsManager.play("fail");
+                    SoundEffectsManager.play("trackerTrackPlayer");
                 }
             );           
 

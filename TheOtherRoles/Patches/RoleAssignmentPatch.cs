@@ -33,7 +33,7 @@ namespace TheOtherRoles.Patches {
         private static int impValues;
         private static bool isEvilGuesser;
         private static List<Tuple<byte, byte>> playerRoleMap = new List<Tuple<byte, byte>>();
-        private static bool isGuesserGamemode = MapOptions.gameMode == CustomGamemodes.Guesser;
+        public static bool isGuesserGamemode { get { return MapOptions.gameMode == CustomGamemodes.Guesser; } }
         public static void Postfix() {
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.Reliable, -1);
             AmongUsClient.Instance.FinishRpcImmediately(writer);

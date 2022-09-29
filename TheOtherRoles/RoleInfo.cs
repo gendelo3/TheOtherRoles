@@ -68,15 +68,14 @@ namespace TheOtherRoles
         public static RoleInfo lawyer = new RoleInfo("Lawyer", Lawyer.color, "Defend your client", "Defend your client", RoleId.Lawyer, true);
         public static RoleInfo prosecutor = new RoleInfo("Prosecutor", Lawyer.color, "Vote out your target", "Vote our your target", RoleId.Prosecutor, true);
         public static RoleInfo pursuer = new RoleInfo("Pursuer", Pursuer.color, "Blank the Impostors", "Blank the Impostors", RoleId.Pursuer);
-        public static RoleInfo impostor = 
-            MapOptions.gameMode == CustomGamemodes.HideNSeek ? new RoleInfo("Hunter", Palette.ImpostorRed, Helpers.cs(Palette.ImpostorRed, "Seek and kill everyone"), "Seek and kill everyone", RoleId.Impostor)
-            : new RoleInfo("Impostor", Palette.ImpostorRed, Helpers.cs(Palette.ImpostorRed, "Sabotage and kill everyone"), "Sabotage and kill everyone", RoleId.Impostor);
-        public static RoleInfo crewmate =
-            MapOptions.gameMode == CustomGamemodes.HideNSeek ? new RoleInfo("Hunted", Color.white, "Hide", "Hide", RoleId.Crewmate)
-            : new RoleInfo("Crewmate", Color.white, "Find the Impostors", "Find the Impostors", RoleId.Crewmate);
+        public static RoleInfo impostor = new RoleInfo("Impostor", Palette.ImpostorRed, Helpers.cs(Palette.ImpostorRed, "Sabotage and kill everyone"), "Sabotage and kill everyone", RoleId.Impostor);
+        public static RoleInfo crewmate = new RoleInfo("Crewmate", Color.white, "Find the Impostors", "Find the Impostors", RoleId.Crewmate);
         public static RoleInfo witch = new RoleInfo("Witch", Witch.color, "Cast a spell upon your foes", "Cast a spell upon your foes", RoleId.Witch);
         public static RoleInfo ninja = new RoleInfo("Ninja", Ninja.color, "Surprise and assassinate your foes", "Surprise and assassinate your foes", RoleId.Ninja);
         public static RoleInfo thief = new RoleInfo("Thief", Thief.color, "Steal a killers role by killing them", "Steal a killers role", RoleId.Thief, true);
+
+        public static RoleInfo hunter = new RoleInfo("Hunter", Palette.ImpostorRed, Helpers.cs(Palette.ImpostorRed, "Seek and kill everyone"), "Seek and kill everyone", RoleId.Impostor);
+        public static RoleInfo hunted = new RoleInfo("Hunted", Color.white, "Hide", "Hide", RoleId.Crewmate);
 
 
 
@@ -220,9 +219,13 @@ namespace TheOtherRoles
             if (p == Pursuer.pursuer) infos.Add(pursuer);
             if (p == Thief.thief) infos.Add(thief);
 
-            // Default roles
-            if (infos.Count == count && p.Data.Role.IsImpostor) infos.Add(impostor); // Just Impostor
-            if (infos.Count == count && !p.Data.Role.IsImpostor) infos.Add(crewmate); // Just Crewmate
+            // Default roles (just impostor, just crewmate, or hunter / hunted for hide n seek
+            if (infos.Count == count) {
+                if (p.Data.Role.IsImpostor)
+                    infos.Add(MapOptions.gameMode == CustomGamemodes.HideNSeek ? RoleInfo.hunter : RoleInfo.impostor);
+                else
+                    infos.Add(MapOptions.gameMode == CustomGamemodes.HideNSeek ? RoleInfo.hunted : RoleInfo.crewmate);
+            }
 
             return infos;
         }

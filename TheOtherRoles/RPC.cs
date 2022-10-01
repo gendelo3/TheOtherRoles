@@ -976,6 +976,21 @@ namespace TheOtherRoles
                     FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(dyingLoverPartner.Data, dyingLoverPartner.Data);
                     if (MeetingHudPatch.guesserUI != null) MeetingHudPatch.guesserUIExitButton.OnClick.Invoke();
                 }
+
+            // remove shoot button from targets for all guessers and close their guesserUI
+            if (GuesserGM.isGuesser(PlayerControl.LocalPlayer.PlayerId) && PlayerControl.LocalPlayer != guesser && !PlayerControl.LocalPlayer.Data.IsDead && GuesserGM.remainingShots(PlayerControl.LocalPlayer.PlayerId) > 0 && MeetingHud.Instance) {
+                MeetingHud.Instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == dyingTarget.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
+                if (dyingLoverPartner != null)
+                    MeetingHud.Instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == dyingLoverPartner.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
+
+                if (MeetingHudPatch.guesserUI != null && MeetingHudPatch.guesserUIExitButton != null) {
+                    if (MeetingHudPatch.guesserCurrentTarget == dyingTarget.PlayerId)
+                        MeetingHudPatch.guesserUIExitButton.OnClick.Invoke();
+                    else if (dyingLoverPartner != null && MeetingHudPatch.guesserCurrentTarget == dyingLoverPartner.PlayerId)
+                        MeetingHudPatch.guesserUIExitButton.OnClick.Invoke();
+                }
+            }
+
             
             PlayerControl guessedTarget = Helpers.playerById(guessedTargetId);
             if (CachedPlayer.LocalPlayer.Data.IsDead && guessedTarget != null && guesser != null) {
@@ -1249,7 +1264,9 @@ namespace TheOtherRoles
                     RPCProcedure.sidekickPromotes();
                     break;
                 case (byte)CustomRPC.ErasePlayerRoles:
-                    RPCProcedure.erasePlayerRoles(reader.ReadByte());
+                    byte eraseTarget = reader.ReadByte();
+                    RPCProcedure.erasePlayerRoles(eraseTarget);
+                    Eraser.alreadyErased.Add(eraseTarget);
                     break;
                 case (byte)CustomRPC.SetFutureErased:
                     RPCProcedure.setFutureErased(reader.ReadByte());

@@ -731,7 +731,7 @@ namespace TheOtherRoles.Patches {
             if (Lawyer.lawyer == null || Lawyer.lawyer != CachedPlayer.LocalPlayer.PlayerControl) return;
 
             // Promote to Pursuer
-            if (Lawyer.target != null && Lawyer.target.Data.Disconnected) {
+            if (Lawyer.target != null && Lawyer.target.Data.Disconnected && !Lawyer.lawyer.Data.IsDead) {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.lawyerPromotesToPursuer();
@@ -1129,7 +1129,7 @@ namespace TheOtherRoles.Patches {
             if (resetToDead) __instance.Data.IsDead = true;
 
             // Remove fake tasks when player dies
-            if (target.hasFakeTasks())
+            if (target.hasFakeTasks() || target == Lawyer.lawyer)
                 target.clearAllTasks();
 
             // First kill (set before lover suicide)
@@ -1151,7 +1151,7 @@ namespace TheOtherRoles.Patches {
             }
 
             // Pursuer promotion trigger on murder (the host sends the call such that everyone recieves the update before a possible game End)
-            if (target == Lawyer.target && AmongUsClient.Instance.AmHost) {
+            if (target == Lawyer.target && AmongUsClient.Instance.AmHost && Lawyer.lawyer != null && !Lawyer.lawyer.Data.IsDead) {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.lawyerPromotesToPursuer();
@@ -1305,7 +1305,7 @@ namespace TheOtherRoles.Patches {
             GameHistory.deadPlayers.Add(deadPlayer);
 
             // Remove fake tasks when player dies
-            if (__instance.hasFakeTasks())
+            if (__instance.hasFakeTasks() || __instance == Lawyer.lawyer)
                 __instance.clearAllTasks();
 
             // Lover suicide trigger on exile

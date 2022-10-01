@@ -916,6 +916,8 @@ namespace TheOtherRoles
         public static PlayerControl eraser;
         public static Color color = Palette.ImpostorRed;
 
+        public static List<byte> alreadyErased = new List<byte>();
+
         public static List<PlayerControl> futureErased = new List<PlayerControl>();
         public static PlayerControl currentTarget;
         public static float cooldown = 30f;
@@ -934,6 +936,7 @@ namespace TheOtherRoles
             currentTarget = null;
             cooldown = CustomOptionHolder.eraserCooldown.getFloat();
             canEraseAnyone = CustomOptionHolder.eraserCanEraseAnyone.getBool();
+            alreadyErased = new List<byte>();
         }
     }
     

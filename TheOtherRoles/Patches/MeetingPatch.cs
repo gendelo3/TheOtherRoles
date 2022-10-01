@@ -276,6 +276,7 @@ namespace TheOtherRoles.Patches {
 
         public static GameObject guesserUI;
         public static PassiveButton guesserUIExitButton;
+        public static byte guesserCurrentTarget;
         static void guesserOnClick(int buttonTarget, MeetingHud __instance) {
             if (guesserUI != null || !(__instance.state == MeetingHud.VoteStates.Voted || __instance.state == MeetingHud.VoteStates.NotVoted)) return;
             __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(false));
@@ -289,6 +290,8 @@ namespace TheOtherRoles.Patches {
             var maskTemplate = __instance.playerStates[0].transform.FindChild("MaskArea");
             var smallButtonTemplate = __instance.playerStates[0].Buttons.transform.Find("CancelButton");
             var textTemplate = __instance.playerStates[0].NameText;
+
+            guesserCurrentTarget = __instance.playerStates[buttonTarget].TargetPlayerId;
 
             Transform exitButtonParent = (new GameObject()).transform;
             exitButtonParent.SetParent(container);
@@ -505,6 +508,7 @@ namespace TheOtherRoles.Patches {
                 for (int i = 0; i < __instance.playerStates.Length; i++) {
                     PlayerVoteArea playerVoteArea = __instance.playerStates[i];
                     if (playerVoteArea.AmDead || playerVoteArea.TargetPlayerId == CachedPlayer.LocalPlayer.PlayerId) continue;
+                    if (CachedPlayer.LocalPlayer != null && CachedPlayer.LocalPlayer.PlayerControl == Eraser.eraser && Eraser.alreadyErased.Contains(playerVoteArea.TargetPlayerId)) continue;
 
                     GameObject template = playerVoteArea.Buttons.transform.Find("CancelButton").gameObject;
                     GameObject targetBox = UnityEngine.Object.Instantiate(template, playerVoteArea.transform);

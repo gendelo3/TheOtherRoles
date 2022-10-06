@@ -19,14 +19,14 @@ namespace TheOtherRoles.Modules;
 
 public class BepInExUpdater : MonoBehaviour
 {
-    public const string MinimumBepInExVersion = "6.0.0-be.656+b3485f473918acb0059070d1ad735e6557af34ad";
-    public const string BepInExDownloadURL = "https://builds.bepinex.dev/projects/bepinex_be/656/BepInEx-Unity.IL2CPP-win-x86-6.0.0-be.656%2Bb3485f4.zip";
-    public static bool UpdateRequired => Paths.BepInExVersion.ToString() != MinimumBepInExVersion;
+    public const string RequiredBepInExVersion = "6.0.0-be.660+40bf261c9147dbc084b000504b86df26551b6719";
+    public const string BepInExDownloadURL = "https://builds.bepinex.dev/projects/bepinex_be/660/BepInEx-Unity.IL2CPP-win-x86-6.0.0-be.660%2B40bf261.zip";
+    public static bool UpdateRequired => Paths.BepInExVersion.ToString() != RequiredBepInExVersion;
 
     public void Awake()
     {
         TheOtherRolesPlugin.Logger.LogMessage("BepInEx Update Required...");
-        TheOtherRolesPlugin.Logger.LogMessage($"{Paths.BepInExVersion}, {MinimumBepInExVersion} ");
+        TheOtherRolesPlugin.Logger.LogMessage($"{Paths.BepInExVersion}, {RequiredBepInExVersion} ");
         this.StartCoroutine(CoUpdate());
 
     }

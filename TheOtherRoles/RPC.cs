@@ -182,6 +182,7 @@ namespace TheOtherRoles
         }
 
         public static void forceEnd() {
+            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
             foreach (PlayerControl player in CachedPlayer.AllPlayers)
             {
                 if (!player.Data.Role.IsImpostor)
@@ -412,6 +413,7 @@ namespace TheOtherRoles
         }
 
         public static void uncheckedMurderPlayer(byte sourceId, byte targetId, byte showAnimation) {
+            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
             PlayerControl source = Helpers.playerById(sourceId);
             PlayerControl target = Helpers.playerById(targetId);
             if (source != null && target != null) {

@@ -109,6 +109,23 @@ namespace TheOtherRoles.Modules
             var isSubmerged = TORUpdate == null;
             var announcement = $"<size=150%>A new <color=#FC0303>{(isSubmerged ? "Submerged" : "THE OTHER ROLES")}</color> update to {(isSubmerged ? SubmergedUpdate.Tag : TORUpdate.Tag)} is available</size>\n{(isSubmerged ? SubmergedUpdate.Content : TORUpdate.Content)}";
             var mgr = FindObjectOfType<MainMenuManager>(true);
+
+            if (!isSubmerged) {
+                try {
+                    string updateVersion = TORUpdate.Content[^5..];
+                    if (Version.Parse(TheOtherRolesPlugin.VersionString).BaseVersion() < Version.Parse(updateVersion).BaseVersion()) {
+                        passiveButton.OnClick.RemoveAllListeners();
+                        passiveButton.OnClick = new Button.ButtonClickedEvent();
+                        passiveButton.OnClick.AddListener((Action)(() => {
+                            mgr.StartCoroutine(CoShowAnnouncement($"<size=150%><color=#FC0303>A MANUAL UPDATE IS REQUIRED</color></size>"));
+                        }));
+                    }
+                } catch {  
+                    TheOtherRolesPlugin.Logger.LogError("parsing version for auto updater failed :(");
+                }
+
+            }
+
             if (isSubmerged && !SubmergedCompatibility.Loaded) showPopUp = false;
             if (showPopUp) mgr.StartCoroutine(CoShowAnnouncement(announcement));
             showPopUp = false;

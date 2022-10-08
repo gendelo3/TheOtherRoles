@@ -78,7 +78,7 @@ namespace TheOtherRoles.Objects {
             t.triggerable = false;
             if (playerId == CachedPlayer.LocalPlayer.PlayerId || playerId == Trapper.trapper.PlayerId) {
                 t.trap.SetActive(true);
-                SoundEffectsManager.play("trackerTrap");
+                SoundEffectsManager.play("trapperTrap");
             }
             player.moveable = false;
             player.NetTransform.Halt();

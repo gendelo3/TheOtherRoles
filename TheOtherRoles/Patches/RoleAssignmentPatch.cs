@@ -119,7 +119,6 @@ namespace TheOtherRoles.Patches {
             crewSettings.Add((byte)RoleId.Detective, CustomOptionHolder.detectiveSpawnRate.getSelection());
             crewSettings.Add((byte)RoleId.TimeMaster, CustomOptionHolder.timeMasterSpawnRate.getSelection());
             crewSettings.Add((byte)RoleId.Medic, CustomOptionHolder.medicSpawnRate.getSelection());
-            crewSettings.Add((byte)RoleId.Shifter, CustomOptionHolder.shifterSpawnRate.getSelection());
             crewSettings.Add((byte)RoleId.Swapper,CustomOptionHolder.swapperSpawnRate.getSelection());
             crewSettings.Add((byte)RoleId.Seer, CustomOptionHolder.seerSpawnRate.getSelection());
             crewSettings.Add((byte)RoleId.Hacker, CustomOptionHolder.hackerSpawnRate.getSelection());
@@ -416,6 +415,7 @@ namespace TheOtherRoles.Patches {
                 RoleId.Vip,
                 RoleId.Invert,
                 RoleId.Chameleon,
+                RoleId.Shifter
             });
 
             if (rnd.Next(1, 101) <= CustomOptionHolder.modifierLover.getSelection() * 10) { // Assign lover
@@ -529,9 +529,16 @@ namespace TheOtherRoles.Patches {
             }
 
             byte playerId;
+
+            List<PlayerControl> crewPlayer = new List<PlayerControl>(playerList);
+            crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor || RoleInfo.getRoleInfoForPlayer(x).Any(r => r.isNeutral));
+            if (modifiers.Contains(RoleId.Shifter)) {
+                playerId = setModifierToRandomPlayer((byte)RoleId.Shifter, crewPlayer);
+                crewPlayer.RemoveAll(x => x.PlayerId == playerId);
+                playerList.RemoveAll(x => x.PlayerId == playerId);
+                modifiers.RemoveAll(x => x == RoleId.Shifter);
+            }
             if (modifiers.Contains(RoleId.Sunglasses)) {
-                List<PlayerControl> crewPlayer = new List<PlayerControl>(playerList);
-                crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor || RoleInfo.getRoleInfoForPlayer(x).Any(r => r.isNeutral));
                 int sunglassesCount = 0;
                 while (sunglassesCount < modifiers.FindAll(x => x == RoleId.Sunglasses).Count) {
                     playerId = setModifierToRandomPlayer((byte)RoleId.Sunglasses, crewPlayer);
@@ -586,6 +593,8 @@ namespace TheOtherRoles.Patches {
                     selection = CustomOptionHolder.modifierChameleon.getSelection();
                     if (multiplyQuantity) selection *= CustomOptionHolder.modifierChameleonQuantity.getQuantity();
                     break;
+                case RoleId.Shifter:
+                    selection = CustomOptionHolder.modifierShifter.getSelection(); break;
             }
                  
             return selection;

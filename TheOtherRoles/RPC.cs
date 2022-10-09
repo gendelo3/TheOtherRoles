@@ -30,7 +30,6 @@ namespace TheOtherRoles
         Detective,
         TimeMaster,
         Medic,
-        Shifter,
         Swapper,
         Seer,
         Morphling,
@@ -72,7 +71,8 @@ namespace TheOtherRoles
         Mini,
         Vip,
         Invert,
-        Chameleon
+        Chameleon,
+        Shifter
     }
 
     enum CustomRPC
@@ -385,6 +385,9 @@ namespace TheOtherRoles
                 case RoleId.Chameleon:
                     Chameleon.chameleon.Add(player);
                     break;
+                case RoleId.Shifter:
+                    Shifter.shifter = player;
+                    break;
             }
         }
 
@@ -525,68 +528,8 @@ namespace TheOtherRoles
                 oldShifter.Exiled();
                 return;
             }
-
-            if (Shifter.shiftModifiers) {
-                // Switch shield
-                if (Medic.shielded != null && Medic.shielded == player) {
-                    Medic.shielded = oldShifter;
-                } else if (Medic.shielded != null && Medic.shielded == oldShifter) {
-                    Medic.shielded = player;
-                }
-                // Shift Lovers Role
-                if (Lovers.lover1 != null && oldShifter == Lovers.lover1) Lovers.lover1 = player;
-                else if (Lovers.lover1 != null && player == Lovers.lover1) Lovers.lover1 = oldShifter;
-
-                if (Lovers.lover2 != null && oldShifter == Lovers.lover2) Lovers.lover2 = player;
-                else if (Lovers.lover2 != null && player == Lovers.lover2) Lovers.lover2 = oldShifter;
-
-                // TODO other Modifiers?
-            }
-
-            // Shift role
-            if (Mayor.mayor != null && Mayor.mayor == player)
-                Mayor.mayor = oldShifter;
-            if (Portalmaker.portalmaker != null && Portalmaker.portalmaker == player)
-                Portalmaker.portalmaker = oldShifter;
-            if (Engineer.engineer != null && Engineer.engineer == player)
-                Engineer.engineer = oldShifter;
-            if (Sheriff.sheriff != null && Sheriff.sheriff == player) {
-                if (Sheriff.formerDeputy != null && Sheriff.formerDeputy == Sheriff.sheriff) Sheriff.formerDeputy = oldShifter;  // Shifter also shifts info on promoted deputy (to get handcuffs)
-                Sheriff.sheriff = oldShifter;
-            }
-            if (Deputy.deputy != null && Deputy.deputy == player)
-                Deputy.deputy = oldShifter;
-            if (Lighter.lighter != null && Lighter.lighter == player)
-                Lighter.lighter = oldShifter;
-            if (Detective.detective != null && Detective.detective == player)
-                Detective.detective = oldShifter;
-            if (TimeMaster.timeMaster != null && TimeMaster.timeMaster == player)
-                TimeMaster.timeMaster = oldShifter;
-            if (Medic.medic != null && Medic.medic == player)
-                Medic.medic = oldShifter;
-            if (Swapper.swapper != null && Swapper.swapper == player)
-                Swapper.swapper = oldShifter;
-            if (Seer.seer != null && Seer.seer == player)
-                Seer.seer = oldShifter;
-            if (Hacker.hacker != null && Hacker.hacker == player)
-                Hacker.hacker = oldShifter;
-            if (Tracker.tracker != null && Tracker.tracker == player)
-                Tracker.tracker = oldShifter;
-            if (Snitch.snitch != null && Snitch.snitch == player)
-                Snitch.snitch = oldShifter;
-            if (Spy.spy != null && Spy.spy == player)
-                Spy.spy = oldShifter;
-            if (SecurityGuard.securityGuard != null && SecurityGuard.securityGuard == player)
-                SecurityGuard.securityGuard = oldShifter;
-            if (Guesser.niceGuesser != null && Guesser.niceGuesser == player)
-                Guesser.niceGuesser = oldShifter;
-                
-            if (Medium.medium != null && Medium.medium == player)
-                Medium.medium = oldShifter;
-            if (Pursuer.pursuer != null && Pursuer.pursuer == player)
-                Pursuer.pursuer = oldShifter;
-            if (Trapper.trapper != null && Trapper.trapper == player)
-                Trapper.trapper = oldShifter;
+            
+            Shifter.shiftRole(oldShifter, player);
 
             // Set cooldowns to max for both players
             if (CachedPlayer.LocalPlayer.PlayerControl == oldShifter || CachedPlayer.LocalPlayer.PlayerControl == player)

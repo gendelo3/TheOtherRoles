@@ -139,7 +139,7 @@ namespace TheOtherRoles.Patches {
         static void shifterSetTarget() {
             if (Shifter.shifter == null || Shifter.shifter != CachedPlayer.LocalPlayer.PlayerControl) return;
             Shifter.currentTarget = setTarget();
-            if (Shifter.futureShift == null) setPlayerOutline(Shifter.currentTarget, Shifter.color);
+            if (Shifter.futureShift == null) setPlayerOutline(Shifter.currentTarget, Color.yellow);
         }
 
 

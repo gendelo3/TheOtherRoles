@@ -1151,7 +1151,7 @@ namespace TheOtherRoles.Patches {
             }
 
             // Pursuer promotion trigger on murder (the host sends the call such that everyone recieves the update before a possible game End)
-            if (target == Lawyer.target && AmongUsClient.Instance.AmHost && Lawyer.lawyer != null && !Lawyer.lawyer.Data.IsDead) {
+            if (target == Lawyer.target && AmongUsClient.Instance.AmHost && Lawyer.lawyer != null) {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.lawyerPromotesToPursuer();
@@ -1323,17 +1323,18 @@ namespace TheOtherRoles.Patches {
             }
 
             // Pursuer promotion trigger on exile & suicide (the host sends the call such that everyone recieves the update before a possible game End)
-            if (__instance == Lawyer.target && Lawyer.target != Jester.jester && AmongUsClient.Instance.AmHost && !Lawyer.isProsecutor) {
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, Hazel.SendOption.Reliable, -1);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.lawyerPromotesToPursuer();
-            }
-            if (__instance == Lawyer.target && !Lawyer.targetWasGuessed && !Lawyer.isProsecutor)
-            {
-                if (Lawyer.lawyer != null) Lawyer.lawyer.Exiled();
-                if (Pursuer.pursuer != null) Pursuer.pursuer.Exiled();
-            }
+            if (Lawyer.lawyer != null && __instance == Lawyer.target) {
+                if (AmongUsClient.Instance.AmHost && ((Lawyer.target != Jester.jester && !Lawyer.isProsecutor) || Lawyer.targetWasGuessed)) {
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, Hazel.SendOption.Reliable, -1);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.lawyerPromotesToPursuer();
+                }
 
+                if (!Lawyer.targetWasGuessed && !Lawyer.isProsecutor) {
+                    if (Lawyer.lawyer != null) Lawyer.lawyer.Exiled();
+                    if (Pursuer.pursuer != null) Pursuer.pursuer.Exiled();
+                }
+            }
         }
     }
 

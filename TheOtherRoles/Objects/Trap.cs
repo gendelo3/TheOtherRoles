@@ -73,7 +73,7 @@ namespace TheOtherRoles.Objects {
             PlayerControl player = Helpers.playerById(playerId);
             if (Trapper.trapper == null || t == null || player == null) return;
             bool localIsTrapper = CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId;
-            trapPlayerIdMap.Add(playerId, t);
+            if (!trapPlayerIdMap.ContainsKey(playerId)) trapPlayerIdMap.Add(playerId, t);
             t.usedCount ++;
             t.triggerable = false;
             if (playerId == CachedPlayer.LocalPlayer.PlayerId || playerId == Trapper.trapper.PlayerId) {
@@ -88,8 +88,8 @@ namespace TheOtherRoles.Objects {
             FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Trapper.trapDuration, new Action<float>((p) => { 
                 if (p == 1f) {
                     player.moveable = true;
-                    Trapper.playersOnMap.Remove(player);
-                    trapPlayerIdMap.Remove(playerId);
+                    Trapper.playersOnMap.RemoveAll(x => x == player);
+                    if (trapPlayerIdMap.ContainsKey(playerId)) trapPlayerIdMap.Remove(playerId);
                     t.arrow.arrow.SetActive(false);
                 }
             })));

@@ -1657,13 +1657,17 @@ namespace TheOtherRoles
         public const float defaultColliderOffset = 0.3636057f;
 
         public static float growingUpDuration = 400f;
+        public static bool isGrowingUpInMeeting = true;
         public static DateTime timeOfGrowthStart = DateTime.UtcNow;
+        public static DateTime timeOfMeetingStart = DateTime.UtcNow;
+        public static float ageOnMeetingStart = 0f;
         public static bool triggerMiniLose = false;
 
         public static void clearAndReload() {
             mini = null;
             triggerMiniLose = false;
             growingUpDuration = CustomOptionHolder.modifierMiniGrowingUpDuration.getFloat();
+            isGrowingUpInMeeting = CustomOptionHolder.modifierMiniGrowingUpInMeeting.getBool();
             timeOfGrowthStart = DateTime.UtcNow;
         }
 

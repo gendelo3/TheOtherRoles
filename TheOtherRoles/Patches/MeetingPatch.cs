@@ -207,7 +207,9 @@ namespace TheOtherRoles.Patches {
                     Lovers.notAckedExiledIsLover = ((Lovers.lover1 != null && Lovers.lover1.PlayerId == exiled.PlayerId) || (Lovers.lover2 != null && Lovers.lover2.PlayerId == exiled.PlayerId));
                     Pursuer.notAckedExiled = (Pursuer.pursuer != null && Pursuer.pursuer.PlayerId == exiled.PlayerId) || (Lawyer.lawyer != null && Lawyer.target != null && Lawyer.target.PlayerId == exiled.PlayerId && Lawyer.target != Jester.jester && !Lawyer.isProsecutor);
                 }
-                               
+
+                // Mini
+                if (!Mini.isGrowingUpInMeeting) Mini.timeOfGrowthStart = Mini.timeOfGrowthStart.Add(DateTime.UtcNow.Subtract(Mini.timeOfMeetingStart));
             }
         }
 
@@ -557,6 +559,9 @@ namespace TheOtherRoles.Patches {
 
                 // Medium meeting start time
                 Medium.meetingStartTime = DateTime.UtcNow;
+                // Mini
+                Mini.timeOfMeetingStart = DateTime.UtcNow;
+                Mini.ageOnMeetingStart = Mathf.FloorToInt(Mini.growingProgress() * 18);
                 // Reset vampire bitten
                 Vampire.bitten = null;
                 // Count meetings

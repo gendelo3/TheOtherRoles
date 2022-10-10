@@ -17,9 +17,9 @@ namespace TheOtherRoles.Patches {
                 renderers = new List<SpriteRenderer>();
 
                 // space for max 5 buttons
-                addGamemodeButton(__instance, "Classic", "TheOtherRoles.Resources.GamemodeClassic.png", CustomGamemodes.Classic);
-                addGamemodeButton(__instance, "Guesser", "TheOtherRoles.Resources.GamemodeGuesser.png", CustomGamemodes.Guesser);
-                addGamemodeButton(__instance, "Hide 'N Seek", "TheOtherRoles.Resources.GamemodeClassic.png", CustomGamemodes.HideNSeek);
+                addGamemodeButton(__instance, "Classic", "TheOtherRoles.Resources.TabIconClassicMode.png", CustomGamemodes.Classic);
+                addGamemodeButton(__instance, "Guesser", "TheOtherRoles.Resources.TabIconGuesserMode.png", CustomGamemodes.Guesser);
+                addGamemodeButton(__instance, "Hide 'N Seek", "TheOtherRoles.Resources.TabIconHideNSeekMode.png", CustomGamemodes.HideNSeek);
 
                 switch (MapOptions.gameMode) {
                     case CustomGamemodes.Classic: renderers.FindLast(x => x.name == "Classic").color = Color.white; break;
@@ -42,7 +42,7 @@ namespace TheOtherRoles.Patches {
             gameObject.transform.position = new Vector3(position1.x + p, position2.y - 0.6f, position1.z);
             SpriteRenderer component = gameObject.transform.Find("MapIcon2").GetComponent<SpriteRenderer>();
             component.gameObject.name = "gm" + name;
-            component.sprite = Helpers.loadSpriteFromResources(spritePath, 150f);
+            component.sprite = Helpers.loadSpriteFromResources(spritePath, 550f);
             PassiveButton passiveButton = gameObject.GetComponent<PassiveButton>();
             SpriteRenderer buttonSprite = gameObject.GetComponent<SpriteRenderer>();
             buttonSprite.color *= 0;

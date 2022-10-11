@@ -42,7 +42,7 @@ namespace TheOtherRoles.Patches {
             gameObject.transform.position = new Vector3(position1.x + p, position2.y - 0.6f, position1.z);
             SpriteRenderer component = gameObject.transform.Find("MapIcon2").GetComponent<SpriteRenderer>();
             component.gameObject.name = "gm" + name;
-            component.sprite = Helpers.loadSpriteFromResources(spritePath, 550f);
+            component.sprite = Helpers.loadSpriteFromResources(spritePath, 150f);
             PassiveButton passiveButton = gameObject.GetComponent<PassiveButton>();
             SpriteRenderer buttonSprite = gameObject.GetComponent<SpriteRenderer>();
             buttonSprite.color *= 0;

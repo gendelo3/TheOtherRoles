@@ -75,9 +75,16 @@ namespace TheOtherRoles.CustomGameModes {
         public static float ArrowCooldown = 30f;
         public static float ArrowDuration = 5f;
         public static float ArrowPunish = 5f;
+        private static Sprite buttonSprite;
 
         public static bool isLightActive (byte playerId) {
             return lightActive.Contains(playerId);
+        }
+
+        public static Sprite getArrowSprite() {
+            if (buttonSprite) return buttonSprite;
+            buttonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.HideNSeekArrowButton.png", 115f);
+            return buttonSprite;
         }
 
         public static void clearAndReload() {

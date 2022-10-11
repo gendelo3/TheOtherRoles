@@ -330,7 +330,7 @@ namespace TheOtherRoles {
             var torTabHighlight = getTabHighlight(torTab, "TheOtherRolesTab", "TheOtherRoles.Resources.TabIcon.png");
 
             var guesserTab = UnityEngine.Object.Instantiate(roleTab, torTab.transform);
-            var guesserTabHighlight = getTabHighlight(guesserTab, "GuesserTab", "TheOtherRoles.Resources.TabIconGuesserSettings.png", 400f);
+            var guesserTabHighlight = getTabHighlight(guesserTab, "GuesserTab", "TheOtherRoles.Resources.TabIconGuesserSettings.png");
 
             var impostorTab = UnityEngine.Object.Instantiate(roleTab, guesserTab.transform);
             var impostorTabHighlight = getTabHighlight(impostorTab, "ImpostorTab", "TheOtherRoles.Resources.TabIconImpostor.png");
@@ -446,10 +446,10 @@ namespace TheOtherRoles {
             var gameTab = GameObject.Find("GameTab");
 
             var torTab = UnityEngine.Object.Instantiate(roleTab, gameTab.transform.parent);
-            var torTabHighlight = getTabHighlight(torTab, "TheOtherRolesTab", "TheOtherRoles.Resources.TabIconHideNSeekSettings.png", 350f);
+            var torTabHighlight = getTabHighlight(torTab, "TheOtherRolesTab", "TheOtherRoles.Resources.TabIconHideNSeekSettings.png");
 
             var hideNSeekTab = UnityEngine.Object.Instantiate(roleTab, torTab.transform);
-            var hideNSeekTabHighlight = getTabHighlight(hideNSeekTab, "HideNSeekTab", "TheOtherRoles.Resources.TabIconHideNSeekRoles.png", 350f);
+            var hideNSeekTabHighlight = getTabHighlight(hideNSeekTab, "HideNSeekTab", "TheOtherRoles.Resources.TabIconHideNSeekRoles.png");
 
             roleTab.active = false;
             gameTab.active = false;
@@ -548,9 +548,9 @@ namespace TheOtherRoles {
             return menu;
         }
 
-        private static SpriteRenderer getTabHighlight (GameObject tab, string tabName, string tabSpritePath, float spriteSize = 100f) {
+        private static SpriteRenderer getTabHighlight (GameObject tab, string tabName, string tabSpritePath) {
             var tabHighlight = tab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
-            tab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources(tabSpritePath, spriteSize);
+            tab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources(tabSpritePath, 100f);
             tab.name = "tabName";
 
             return tabHighlight;

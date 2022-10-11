@@ -1779,7 +1779,7 @@ namespace TheOtherRoles
                     hunterArrowButton.isEffectActive = false;
                     hunterArrowButton.actionButton.graphic.color = Palette.EnabledColor;
                 },
-                Arrow.getSprite(),
+                Hunter.getArrowSprite(),
                 new Vector3(-2.7f, 1f, 0),
                 __instance,
                 KeyCode.R,

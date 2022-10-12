@@ -31,6 +31,15 @@
           "Samboy063.Cpp2IL.Core": "2022.0.7.2"
         }
       },
+      "Reactor": {
+        "type": "Direct",
+        "requested": "[2.0.0-ci.185, )",
+        "resolved": "2.0.0-ci.185",
+        "contentHash": "umIFdTG4qCnRwVKh5g4yn9KX5mWTPh8qqZX104zE3v5gzKfvFLfXRjvnmCQD0G41V/+Jn1En56jmdUAaIInJzw==",
+        "dependencies": {
+          "BepInEx.Unity.IL2CPP": "6.0.0-be.660"
+        }
+      },
       "AssetRipper.VersionUtilities": {
         "type": "Transitive",
         "resolved": "1.2.1",

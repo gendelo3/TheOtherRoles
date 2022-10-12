@@ -1129,7 +1129,7 @@ namespace TheOtherRoles.Patches {
             if (resetToDead) __instance.Data.IsDead = true;
 
             // Remove fake tasks when player dies
-            if (target.hasFakeTasks() || target == Lawyer.lawyer)
+            if (target.hasFakeTasks() || target == Lawyer.lawyer || target == Pursuer.pursuer)
                 target.clearAllTasks();
 
             // First kill (set before lover suicide)
@@ -1305,7 +1305,7 @@ namespace TheOtherRoles.Patches {
             GameHistory.deadPlayers.Add(deadPlayer);
 
             // Remove fake tasks when player dies
-            if (__instance.hasFakeTasks() || __instance == Lawyer.lawyer)
+            if (__instance.hasFakeTasks() || __instance == Lawyer.lawyer || __instance == Pursuer.pursuer)
                 __instance.clearAllTasks();
 
             // Lover suicide trigger on exile

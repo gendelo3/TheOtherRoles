@@ -19,6 +19,7 @@ using TheOtherRoles.Utilities;
 using Reactor;
 using Il2CppSystem.Security.Cryptography;
 using Il2CppSystem.Text;
+using Reactor.Networking.Attributes;
 
 namespace TheOtherRoles
 {

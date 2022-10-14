@@ -81,6 +81,7 @@ namespace TheOtherRoles.Patches {
 
                     // TieBreaker 
                     List<GameData.PlayerInfo> potentialExiled = new List<GameData.PlayerInfo>();
+                    bool skipIsTie = false;
                     if (self.Count > 0) {
                         Tiebreaker.isTiebreak = false;
                         int maxVoteValue = self.Values.Max();
@@ -90,9 +91,13 @@ namespace TheOtherRoles.Patches {
                         bool isTiebreakerSkip = tb == null || tb.VotedFor == 253;
                         if (tb != null && tb.AmDead) isTiebreakerSkip = true;
 
-                        foreach (KeyValuePair<byte, int> pair in self)
-                            if (pair.Value == maxVoteValue && !isTiebreakerSkip && pair.Key != 253)
+                        foreach (KeyValuePair<byte, int> pair in self) {
+                            if (pair.Value != maxVoteValue || isTiebreakerSkip) continue;
+                            if (pair.Key != 253)
                                 potentialExiled.Add(GameData.Instance.AllPlayers.ToArray().FirstOrDefault(x => x.PlayerId == pair.Key));
+                            else 
+                                skipIsTie = true;
+                        }
                     }
 
                     MeetingHud.VoterState[] array = new MeetingHud.VoterState[__instance.playerStates.Length];
@@ -112,7 +117,7 @@ namespace TheOtherRoles.Patches {
                             else if (tiebreakerVote == swapped2.TargetPlayerId) tiebreakerVote = swapped1.TargetPlayerId;
                         }
 
-                        if (potentialExiled.FindAll(x => x != null && x.PlayerId == tiebreakerVote).Count > 0) {
+                        if (potentialExiled.FindAll(x => x != null && x.PlayerId == tiebreakerVote).Count > 0 && (potentialExiled.Count > 1 || skipIsTie)) {
                             exiled = potentialExiled.ToArray().FirstOrDefault(v => v.PlayerId == tiebreakerVote);
                             tie = false;
 

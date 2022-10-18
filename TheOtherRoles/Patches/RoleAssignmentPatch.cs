@@ -533,7 +533,9 @@ namespace TheOtherRoles.Patches {
             List<PlayerControl> crewPlayer = new List<PlayerControl>(playerList);
             crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor || RoleInfo.getRoleInfoForPlayer(x).Any(r => r.isNeutral));
             if (modifiers.Contains(RoleId.Shifter)) {
-                playerId = setModifierToRandomPlayer((byte)RoleId.Shifter, crewPlayer);
+                var crewPlayerShifter = new List<PlayerControl>(crewPlayer);
+                crewPlayerShifter.RemoveAll(x => x == Spy.spy);
+                playerId = setModifierToRandomPlayer((byte)RoleId.Shifter, crewPlayerShifter);
                 crewPlayer.RemoveAll(x => x.PlayerId == playerId);
                 playerList.RemoveAll(x => x.PlayerId == playerId);
                 modifiers.RemoveAll(x => x == RoleId.Shifter);

@@ -179,14 +179,18 @@ namespace TheOtherRoles.Modules {
 
         [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetHatById))]
         private static class HatManagerPatch {
+            private static List<HatData> allHatsList;
             static void Prefix(HatManager __instance) {
                 if (RUNNING) return;
                 RUNNING = true; // prevent simultanious execution
+                allHatsList = __instance.allHats.ToList();
+
                 try {
                     while (CustomHatLoader.hatdetails.Count > 0) {
-                        __instance.allHats.Add(CreateHatBehaviour(CustomHatLoader.hatdetails[0]));
+                        allHatsList.Add(CreateHatBehaviour(CustomHatLoader.hatdetails[0]));
                         CustomHatLoader.hatdetails.RemoveAt(0);
                     }
+                    __instance.allHats = allHatsList.ToArray();
                 } catch (System.Exception e) {
                     if (!LOADED)
                         System.Console.WriteLine("Unable to add Custom Hats\n" + e);

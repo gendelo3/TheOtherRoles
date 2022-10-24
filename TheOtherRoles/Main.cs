@@ -20,6 +20,7 @@ using Reactor;
 using Il2CppSystem.Security.Cryptography;
 using Il2CppSystem.Text;
 using Reactor.Networking.Attributes;
+using AmongUs.Data;
 
 namespace TheOtherRoles
 {
@@ -148,8 +149,7 @@ namespace TheOtherRoles
     public static class ChatControllerAwakePatch {
         private static void Prefix() {
             if (!EOSManager.Instance.isKWSMinor) {
-                SaveManager.chatModeType = 1;
-                SaveManager.isGuest = false;
+                DataManager.Settings.Multiplayer.ChatMode = InnerNet.QuickChatModes.FreeChatOrQuickChat;
             }
         }
     }

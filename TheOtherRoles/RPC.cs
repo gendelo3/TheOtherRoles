@@ -13,6 +13,7 @@ using System;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
 using TheOtherRoles.CustomGameModes;
+using AmongUs.Data;
 
 namespace TheOtherRoles
 {
@@ -758,7 +759,7 @@ namespace TheOtherRoles
             if (flag == byte.MaxValue)
             {
                 target.cosmetics.currentBodySprite.BodySprite.color = Color.white;
-                target.cosmetics.colorBlindText.gameObject.SetActive(SaveManager.colorblindMode);
+                target.cosmetics.colorBlindText.gameObject.SetActive(DataManager.Settings.Accessibility.ColorBlindMode);
                 if (Camouflager.camouflageTimer <= 0) target.setDefaultLook();
                 Ninja.isInvisble = false;
                 return;

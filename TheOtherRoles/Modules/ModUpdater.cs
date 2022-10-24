@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using AmongUs.Data;
 using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Unity.IL2CPP;
@@ -161,7 +162,7 @@ namespace TheOtherRoles.Modules
             var popUp = Instantiate(FindObjectOfType<AnnouncementPopUp>(true));
             popUp.gameObject.SetActive(true);
             yield return popUp.Init();
-            var last = SaveManager.LastAnnouncement;
+            var last = DataManager.Announcements.LastViewedAnnouncement;
             last.Id = 1;
             last.Text = announcement;
             SelectableHyperLinkHelper.DestroyGOs(popUp.selectableHyperLinks, name);

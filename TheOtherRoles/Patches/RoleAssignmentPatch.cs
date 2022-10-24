@@ -424,7 +424,7 @@ namespace TheOtherRoles.Patches {
                 List<PlayerControl> impPlayer = new List<PlayerControl>(players);
                 List<PlayerControl> crewPlayer = new List<PlayerControl>(players);
                 impPlayer.RemoveAll(x => !x.Data.Role.IsImpostor);
-                crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor && x == Lawyer.lawyer);
+                crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor || x == Lawyer.lawyer);
 
                 if (isEvilLover) firstLoverId = setModifierToRandomPlayer((byte)RoleId.Lover, impPlayer);
                 else firstLoverId = setModifierToRandomPlayer((byte)RoleId.Lover, crewPlayer);

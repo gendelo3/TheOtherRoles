@@ -9,7 +9,8 @@ using static TheOtherRoles.MapOptions;
 using System.Collections.Generic;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
-
+using TheOtherRoles.Objects;
+using TheOtherRoles.CustomGameModes;
 
 namespace TheOtherRoles.Patches {
 
@@ -99,11 +100,12 @@ namespace TheOtherRoles.Patches {
                 Deputy.setHandcuffedKnows();
                 return false;
             }
+            if (Trapper.playersOnMap.Contains(CachedPlayer.LocalPlayer.PlayerControl)) return false;
 
             bool canUse;
             bool couldUse;
             __instance.CanUse(CachedPlayer.LocalPlayer.Data, out canUse, out couldUse);
-            bool canMoveInVents = CachedPlayer.LocalPlayer.PlayerControl != Spy.spy;
+            bool canMoveInVents = CachedPlayer.LocalPlayer.PlayerControl != Spy.spy && !Trapper.playersOnMap.Contains(CachedPlayer.LocalPlayer.PlayerControl);
             if (!canUse) return false; // No need to execute the native method as using is disallowed anyways
 
             bool isEnter = !CachedPlayer.LocalPlayer.PlayerControl.inVent;
@@ -116,6 +118,7 @@ namespace TheOtherRoles.Patches {
                 writer.Write(isEnter ? byte.MaxValue : (byte)0);
                 writer.EndMessage();
                 RPCProcedure.useUncheckedVent(__instance.Id, CachedPlayer.LocalPlayer.PlayerId, isEnter ? byte.MaxValue : (byte)0);
+                SoundEffectsManager.play("tricksterUseBoxVent");
                 return false;
             }
 
@@ -126,6 +129,13 @@ namespace TheOtherRoles.Patches {
             }
             __instance.SetButtons(isEnter && canMoveInVents);
             return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(Vent), nameof(Vent.MoveToVent))]
+    public static class MoveToVentPatch {
+        public static bool Prefix(Vent otherVent) {
+            return !Trapper.playersOnMap.Contains(CachedPlayer.LocalPlayer.PlayerControl);
         }
     }
 
@@ -163,7 +173,7 @@ namespace TheOtherRoles.Patches {
                 }
                 
                 // Use an unchecked kill command, to allow shorter kill cooldowns etc. without getting kicked
-                MurderAttemptResult res = Helpers.checkMuderAttemptAndKill(CachedPlayer.LocalPlayer.PlayerControl, __instance.currentTarget);
+                MurderAttemptResult res = Helpers.checkMurderAttemptAndKill(CachedPlayer.LocalPlayer.PlayerControl, __instance.currentTarget);
                 // Handle blank kill
                 if (res == MurderAttemptResult.BlankKill) {
                     CachedPlayer.LocalPlayer.PlayerControl.killTimer = PlayerControl.GameOptions.KillCooldown;
@@ -219,6 +229,12 @@ namespace TheOtherRoles.Patches {
             if (Jester.jester != null && Jester.jester == CachedPlayer.LocalPlayer.PlayerControl && !Jester.canCallEmergency) {
                 roleCanCallEmergency = false;
                 statusText = "The Jester can't start an emergency meeting";
+            }
+            // Potentially deactivate emergency button for Lawyer/Prosecutor
+            if (Lawyer.lawyer != null && Lawyer.lawyer == CachedPlayer.LocalPlayer.PlayerControl && !Lawyer.canCallEmergency) {
+                roleCanCallEmergency = false;
+                statusText = "The Lawyer can't start an emergency meeting";
+                if (Lawyer.isProsecutor) statusText = "The Prosecutor can't start an emergency meeting";
             }
 
             if (!roleCanCallEmergency) {
@@ -300,8 +316,8 @@ namespace TheOtherRoles.Patches {
 
                 //Fix Visor in Vitals
                 foreach (VitalsPanel panel in __instance.vitals) {
-                    if (panel.PlayerIcon != null && panel.PlayerIcon.Skin != null) {
-                         panel.PlayerIcon.Skin.transform.position = new Vector3(0, 0, 0f);
+                    if (panel.PlayerIcon != null && panel.PlayerIcon.cosmetics.skin != null) {
+                         panel.PlayerIcon.cosmetics.skin.transform.position = new Vector3(0, 0, 0f);
                     }
                 }
             }
@@ -394,8 +410,8 @@ namespace TheOtherRoles.Patches {
                                     if (!component || component.Data == null || component.Data.Disconnected || component.Data.IsDead)
                                     {
                                         num2--;
-                                    } else if (component?.MyRend?.material != null) {
-                                        Color color = component.MyRend.material.GetColor("_BodyColor");
+                                    } else if (component?.cosmetics?.currentBodySprite?.BodySprite?.material != null) {
+                                        Color color = component.cosmetics.currentBodySprite.BodySprite.material.GetColor("_BodyColor");
                                         if (Hacker.onlyColorType) {
                                             var id = Mathf.Max(0, Palette.PlayerColors.IndexOf(color));
                                             color = Helpers.isLighterColor((byte)id) ? Palette.PlayerColors[7] : Palette.PlayerColors[6];
@@ -545,6 +561,16 @@ namespace TheOtherRoles.Patches {
                 __instance.medscan.CurrentUser = CachedPlayer.LocalPlayer.PlayerId;
                 __instance.medscan.UsersList.Clear();
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.ShowSabotageMap))]
+    class ShowSabotageMapPatch {
+        static bool Prefix(MapBehaviour __instance) {
+            if (HideNSeek.isHideNSeekGM) 
+                return HideNSeek.canSabotage;
+
+            return true;
         }
     }
 

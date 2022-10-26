@@ -7,11 +7,12 @@ using Hazel;
 using System;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
+using System.Linq;
 
 namespace TheOtherRoles.Patches {
     public class GameStartManagerPatch  {
         public static Dictionary<int, PlayerVersion> playerVersions = new Dictionary<int, PlayerVersion>();
-        private static float timer = 600f;
+        public static float timer = 600f;
         private static float kickingTimer = 0f;
         private static bool versionSent = false;
         private static string lobbyCodeText = "";
@@ -43,49 +44,53 @@ namespace TheOtherRoles.Patches {
 
         [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
         public class GameStartManagerUpdatePatch {
+            public static float startingTimer = 0;
             private static bool update = false;
             private static string currentText = "";
         
             public static void Prefix(GameStartManager __instance) {
-                if (!AmongUsClient.Instance.AmHost  || !GameData.Instance ) return; // Not host or no instance
+                if (!GameData.Instance ) return; // No instance
                 update = GameData.Instance.PlayerCount != __instance.LastPlayerCount;
             }
 
             public static void Postfix(GameStartManager __instance) {
                 // Send version as soon as CachedPlayer.LocalPlayer.PlayerControl exists
-                if (CachedPlayer.LocalPlayer != null && !versionSent) {
+                if (PlayerControl.LocalPlayer != null && !versionSent) {
                     versionSent = true;
                     Helpers.shareGameVersion();
                 }
 
-                // Host update with version handshake infos
-                if (AmongUsClient.Instance.AmHost) {
-                    bool blockStart = false;
-                    string message = "";
-                    foreach (InnerNet.ClientData client in AmongUsClient.Instance.allClients.ToArray()) {
-                        if (client.Character == null) continue;
-                        var dummyComponent = client.Character.GetComponent<DummyBehaviour>();
-                        if (dummyComponent != null && dummyComponent.enabled)
-                            continue;
-                        else if (!playerVersions.ContainsKey(client.Id))  {
-                            blockStart = true;
-                            message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} has a different or no version of The Other Roles\n</color>";
-                        } else {
-                            PlayerVersion PV = playerVersions[client.Id];
-                            int diff = TheOtherRolesPlugin.Version.CompareTo(PV.version);
-                            if (diff > 0) {
-                                message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} has an older version of The Other Roles (v{playerVersions[client.Id].version.ToString()})\n</color>";
-                                blockStart = true;
-                            } else if (diff < 0) {
-                                message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} has a newer version of The Other Roles (v{playerVersions[client.Id].version.ToString()})\n</color>";
-                                blockStart = true;
-                            } else if (!PV.GuidMatches()) { // version presumably matches, check if Guid matches
-                                message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} has a modified version of TOR v{playerVersions[client.Id].version.ToString()} <size=30%>({PV.guid.ToString()})</size>\n</color>";
-                                blockStart = true;
-                            }
+                // Check version handshake infos
+
+                bool versionMismatch = false;
+                string message = "";
+                foreach (InnerNet.ClientData client in AmongUsClient.Instance.allClients.ToArray()) {
+                    if (client.Character == null) continue;
+                    var dummyComponent = client.Character.GetComponent<DummyBehaviour>();
+                    if (dummyComponent != null && dummyComponent.enabled)
+                        continue;
+                    else if (!playerVersions.ContainsKey(client.Id))  {
+                        versionMismatch = true;
+                        message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} has a different or no version of The Other Roles\n</color>";
+                    } else {
+                        PlayerVersion PV = playerVersions[client.Id];
+                        int diff = TheOtherRolesPlugin.Version.CompareTo(PV.version);
+                        if (diff > 0) {
+                            message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} has an older version of The Other Roles (v{playerVersions[client.Id].version.ToString()})\n</color>";
+                            versionMismatch = true;
+                        } else if (diff < 0) {
+                            message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} has a newer version of The Other Roles (v{playerVersions[client.Id].version.ToString()})\n</color>";
+                            versionMismatch = true;
+                        } else if (!PV.GuidMatches()) { // version presumably matches, check if Guid matches
+                            message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} has a modified version of TOR v{playerVersions[client.Id].version.ToString()} <size=30%>({PV.guid.ToString()})</size>\n</color>";
+                            versionMismatch = true;
                         }
                     }
-                    if (blockStart) {
+                }
+
+                // Display message to the host
+                if (AmongUsClient.Instance.AmHost) {
+                    if (versionMismatch) {
                         __instance.StartButton.color = __instance.startLabelText.color = Palette.DisabledClear;
                         __instance.GameStartText.text = message;
                         __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
@@ -93,10 +98,17 @@ namespace TheOtherRoles.Patches {
                         __instance.StartButton.color = __instance.startLabelText.color = ((__instance.LastPlayerCount >= __instance.MinPlayers) ? Palette.EnabledColor : Palette.DisabledClear);
                         __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition;
                     }
+
+                    // Make starting info available to clients:
+                    if (startingTimer <= 0 && __instance.startState == GameStartManager.StartingStates.Countdown) {
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SetGameStarting, Hazel.SendOption.Reliable, -1);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        RPCProcedure.setGameStarting();
+                    }
                 }
 
                 // Client update with handshake infos
-                if (!AmongUsClient.Instance.AmHost) {
+                else {
                     if (!playerVersions.ContainsKey(AmongUsClient.Instance.HostId) || TheOtherRolesPlugin.Version.CompareTo(playerVersions[AmongUsClient.Instance.HostId].version) != 0) {
                         kickingTimer += Time.deltaTime;
                         if (kickingTimer > 10) {
@@ -107,19 +119,29 @@ namespace TheOtherRoles.Patches {
 
                         __instance.GameStartText.text = $"<color=#FF0000FF>The host has no or a different version of The Other Roles\nYou will be kicked in {Math.Round(10 - kickingTimer)}s</color>";
                         __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
+                    } else if (versionMismatch) {
+                        __instance.GameStartText.text = $"<color=#FF0000FF>Players With Different Versions:\n</color>" + message;
+                        __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
                     } else {
                         __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition;
-                        if (__instance.startState != GameStartManager.StartingStates.Countdown) {
+                        if (__instance.startState != GameStartManager.StartingStates.Countdown && startingTimer <= 0) {
                             __instance.GameStartText.text = String.Empty;
+                        }
+                        else {
+                            __instance.GameStartText.text = $"Starting in {(int)startingTimer + 1}";
+                            if (startingTimer <= 0) {
+                                __instance.GameStartText.text = String.Empty;
+                            }
                         }
                     }
                 }
 
-                // Lobby code replacement
-                __instance.GameRoomName.text = TheOtherRolesPlugin.StreamerMode.Value ? $"<color={TheOtherRolesPlugin.StreamerModeReplacementColor.Value}>{TheOtherRolesPlugin.StreamerModeReplacementText.Value}</color>" : lobbyCodeText;
-
+                // Start Timer
+                if (startingTimer > 0) {
+                    startingTimer -= Time.deltaTime;
+                }
                 // Lobby timer
-                if (!AmongUsClient.Instance.AmHost || !GameData.Instance) return; // Not host or no instance
+                if (!GameData.Instance) return; // No instance
 
                 if (update) currentText = __instance.PlayerCounter.text;
 
@@ -131,6 +153,12 @@ namespace TheOtherRoles.Patches {
                 __instance.PlayerCounter.text = currentText + suffix;
                 __instance.PlayerCounter.autoSizeTextContainer = true;
 
+                if (AmongUsClient.Instance.AmHost) {
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareGamemode, Hazel.SendOption.Reliable, -1);
+                    writer.Write((byte) MapOptions.gameMode);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.shareGamemode((byte) MapOptions.gameMode);
+                }
             }
         }
 
@@ -159,25 +187,52 @@ namespace TheOtherRoles.Patches {
                             break;
                         }
                     }
-
-                    if (CustomOptionHolder.dynamicMap.getBool() && continueStart) {
+                    if (continueStart && MapOptions.gameMode == CustomGamemodes.HideNSeek) {
+                        byte mapId = (byte) CustomOptionHolder.hideNSeekMap.getSelection();
+                        if (mapId >= 3) mapId++;
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.DynamicMapOption, Hazel.SendOption.Reliable, -1);
+                        writer.Write(mapId);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        RPCProcedure.dynamicMapOption(mapId);
+                    }            
+                    else if (CustomOptionHolder.dynamicMap.getBool() && continueStart) {
                         // 0 = Skeld
                         // 1 = Mira HQ
                         // 2 = Polus
                         // 3 = Dleks - deactivated
                         // 4 = Airship
-                        List<byte> possibleMaps = new List<byte>();
-                        if (CustomOptionHolder.dynamicMapEnableSkeld.getBool())
-                            possibleMaps.Add(0);
-                        if (CustomOptionHolder.dynamicMapEnableMira.getBool())
-                            possibleMaps.Add(1);
-                        if (CustomOptionHolder.dynamicMapEnablePolus.getBool())
-                            possibleMaps.Add(2);
-                        if (CustomOptionHolder.dynamicMapEnableAirShip.getBool())
-                            possibleMaps.Add(4);
-                        if (CustomOptionHolder.dynamicMapEnableSubmerged.getBool())
-                            possibleMaps.Add(5);
-                        byte chosenMapId  = possibleMaps[TheOtherRoles.rnd.Next(possibleMaps.Count)];
+                        // 5 = Submerged
+                        byte chosenMapId = 0;
+                        List<float> probabilities = new List<float>();
+                        probabilities.Add(CustomOptionHolder.dynamicMapEnableSkeld.getSelection() / 10f);
+                        probabilities.Add(CustomOptionHolder.dynamicMapEnableMira.getSelection() / 10f);
+                        probabilities.Add(CustomOptionHolder.dynamicMapEnablePolus.getSelection() / 10f);
+                        probabilities.Add(CustomOptionHolder.dynamicMapEnableAirShip.getSelection() / 10f);
+                        probabilities.Add(CustomOptionHolder.dynamicMapEnableSubmerged.getSelection() / 10f);
+
+                        // if any map is at 100%, remove all maps that are not!
+                        if (probabilities.Contains(1.0f)) {
+                            for (int i=0; i < probabilities.Count; i++) {
+                                if (probabilities[i] != 1.0) probabilities[i] = 0;
+                            }
+                        }
+
+                        float sum = probabilities.Sum();
+                        if (sum == 0) return continueStart;  // All maps set to 0, why are you doing this???
+                        for (int i = 0; i < probabilities.Count; i++) {  // Normalize to [0,1]
+                            probabilities[i] /= sum;
+                        }
+                        float selection = (float)TheOtherRoles.rnd.NextDouble();
+                        float cumsum = 0;
+                        for (byte i = 0; i < probabilities.Count; i++) {
+                            cumsum += probabilities[i];
+                            if (cumsum > selection) {
+                                chosenMapId = i;
+                                break;
+                            }
+                        }
+
+                        if (chosenMapId >= 3) chosenMapId++;  // Skip dlekS
 
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.DynamicMapOption, Hazel.SendOption.Reliable, -1);
                         writer.Write(chosenMapId);

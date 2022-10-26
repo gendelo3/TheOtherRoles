@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using HarmonyLib;
+using AmongUs.Data.Legacy;
 using TheOtherRoles.Utilities;
 
 namespace TheOtherRoles.Modules {
@@ -73,7 +74,7 @@ namespace TheOtherRoles.Modules {
                                         color = new Color32(0xDB, 0xFD, 0x2F, byte.MaxValue), 
                                         shadow = new Color32(0x74, 0xE5, 0x10, byte.MaxValue), 
                                         isLighterColor = true });
-            colors.Add(new CustomColor { longname = "Signal Orange",
+            colors.Add(new CustomColor { longname = "Signal\nOrange",
                                         color = new Color32(0xF7, 0x44, 0x17, byte.MaxValue), 
                                         shadow = new Color32(0x9B, 0x2E, 0x0F, byte.MaxValue),
                                         isLighterColor = true });   
@@ -131,6 +132,7 @@ namespace TheOtherRoles.Modules {
                 typeof(Il2CppReferenceArray<Il2CppSystem.Object>)
             })]
             private class ColorStringPatch {
+                [HarmonyPriority(Priority.Last)]
                 public static bool Prefix(ref string __result, [HarmonyArgument(0)] StringNames name) {
                     if ((int)name >= 50000) {
                         string text = CustomColors.ColorStrings[(int)name];
@@ -166,16 +168,16 @@ namespace TheOtherRoles.Modules {
                     }
                 }
             }
-            [HarmonyPatch(typeof(SaveManager), nameof(SaveManager.LoadPlayerPrefs))]
+            [HarmonyPatch(typeof(LegacySaveManager), nameof(LegacySaveManager.LoadPlayerPrefs))]
             private static class LoadPlayerPrefsPatch { // Fix Potential issues with broken colors
                 private static bool needsPatch = false;
                 public static void Prefix([HarmonyArgument(0)] bool overrideLoad) {
-                    if (!SaveManager.loaded || overrideLoad)
+                    if (!LegacySaveManager.loaded || overrideLoad)
                         needsPatch = true;
                 }
                 public static void Postfix() {
                     if (!needsPatch) return;
-                    SaveManager.colorConfig %= CustomColors.pickableColors;
+                    LegacySaveManager.colorConfig %= CustomColors.pickableColors;
                     needsPatch = false;
                 }
             }

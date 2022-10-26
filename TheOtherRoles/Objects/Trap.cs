@@ -115,6 +115,7 @@ namespace TheOtherRoles.Objects {
             foreach (Trap trap in traps) {
                 if (trap.arrow.arrow.active) trap.arrow.Update();
                 if (trap.revealed || !trap.triggerable || trap.trappedPlayer.Contains(player.PlayerControl)) continue;
+                if (player.PlayerControl.inVent || !player.PlayerControl.CanMove) continue;
                 float distance = Vector2.Distance(trap.trap.transform.position, player.PlayerControl.GetTruePosition());
                 if (distance <= ud && distance < closestDistance) {
                     closestDistance = distance;

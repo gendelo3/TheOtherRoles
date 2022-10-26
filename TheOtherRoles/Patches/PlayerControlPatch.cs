@@ -882,6 +882,7 @@ namespace TheOtherRoles.Patches {
 
                     // Use local position to place it in the player's view instead of the world location
                     gameObject.transform.localPosition = new Vector3(0, -1.8f, gameObject.transform.localPosition.z);
+                    if (AmongUs.Data.DataManager.Settings.Gameplay.StreamerMode) gameObject.transform.localPosition = new Vector3(0, 2f, gameObject.transform.localPosition.z);
                 }
             } else {
                 if (HideNSeek.isWaitingTimer) {

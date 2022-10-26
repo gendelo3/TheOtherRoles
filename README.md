@@ -112,18 +112,21 @@ The [Role Assignment](#role-assignment) sections explains how the roles are bein
   <summary>Click to show the Changelog</summary>
 
 **Version 4.2.0**
-- Added support for joining public TOR lobbies using the "Find Game"-Button **on "Modded EU" & "Modded NA" (only!)** | Thanks to [miniduikboot](https://github.com/miniduikboot)
-- Added a new "Guesser Modifier"-Gamemode
-- Added a new "Hide 'n Seek"-Gamemode
+- Added a new Guesser-Gamemode
+- Added a new Hide 'n Seek-Gamemode | Thanks to [Oberbayer](https://twitch.tv/oberbayer)
+- Added a new role for Hide 'n Seek-Gamemode: Hunter
+- Added a new role for Hide 'n Seek-Gamemode: Hunted
 - Added a new role: Thief
 - Added a new role: Trapper
 - Added a new modifier: Chameleon
 - Added a new feature to hide the "Colorblind"-Text when hiding behind obstacles
-- Added/Changed Prosecutor/Lawyer
-- Added a new option to the Mini Modifier: "Mini Grows Up In Meeting" (Idea: Maray1337)
+- Added a new role: Prosecutor (in the Lawyer settings) | Thanks to [Scoom](https://github.com/JustASysAdmin)
+- Added a new option to the Mini Modifier: "Mini Grows Up In Meeting"
+- Added a new server: Modded Asia (MAS) | Thanks to [miniduikboot](https://github.com/miniduikboot)
+- Added support for joining public TOR lobbies using the "Find Game"-Button **on Modded Servers (only!)** | Thanks to [miniduikboot](https://github.com/miniduikboot)
 - Changed Shifter to be a Modifier instead of being a role
 - Changed Eraser to only erase the role and not the Modifier
-- Changed that the Lawyer doesn't have to do tasks anymore to get the overview when they died before their client
+- Changed that neutral roles doesn't have to do tasks anymore to get the overview when they died before their client
 - Changed "Play On Random Map". You can now set percentages for each map (like you can do for roles)
 - Fixed a bug where the trail color of the player with the "Bloody"-Modifier sometimes had the wrong color when they got killed
 - Fixed a bug where the Ninja could target the Spy, but not the Impostor
@@ -1854,8 +1857,8 @@ can only use them, if the previous player did not use them before)
 # Gamemodes
 
 ## Guesser Modifier
-The **Guesser Modifier**-Gamemode is an extension to the Classic-Gamemode and gives you a multitude of new options for Guessers.\
-The Guesser is now like a modifier and can be applied to all players IF you want to. Settings are available to set the number of guessers for each team separately (Impostor, Neutral, Crewmate).\
+The **Guesser-Gamemode** is an extension to the Classic-Gamemode and gives you a multitude of new options for Guessers.\
+The Guesser is now like an addition and can be applied to all players IF you want to. Settings are available to set the number of guessers for each team separately (Impostor, Neutral, Crewmate).\
 When playing this game mode, the Guessers can have another role (e.g. Medic Guesser). The same
 applies of course for Impostor and/or Neutral roles.\
 Players can additionally have a modifier, if enabled (e.g. Medic Guesser Mini).
@@ -1879,7 +1882,7 @@ Players can additionally have a modifier, if enabled (e.g. Medic Guesser Mini).
 - If a Crewmate Guesser gets sidekicked, they will remain a Guesser even if the host (maybe) has set up only 1 "Neutral role Guesser".
 
 ## Hide 'n Seek
-The **Hide 'n Seek**-Gamemode is a standalone Gamemode where Hunter have to catch their prey ("Hunted" players).\
+The **Hide 'n Seek-Gamemode** is a standalone Gamemode where Hunter have to catch their prey ("Hunted" players).\
 The Hunter and Hunted player who are still alive are displayed to everyone in the bottom left corner (similar to the Arsonist display).\
 When the game starts, the Hunter's movement is disabled for x-seconds (depends on the settings).\
 There is a time-limit for each round, if the timer runs out and at least one Hunted is still alive, the Crew wins. The Hunted players can also win, if Taskwin is enabled and the Crew completes all tasks.\

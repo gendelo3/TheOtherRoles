@@ -10,6 +10,7 @@ using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
 using UnityEngine;
 using TheOtherRoles.CustomGameModes;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TheOtherRoles.Patches {
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
@@ -1129,7 +1130,7 @@ namespace TheOtherRoles.Patches {
             if (resetToDead) __instance.Data.IsDead = true;
 
             // Remove fake tasks when player dies
-            if (target.hasFakeTasks() || target == Lawyer.lawyer || target == Pursuer.pursuer)
+            if (target.hasFakeTasks() || target == Lawyer.lawyer || target == Pursuer.pursuer || target == Thief.thief)
                 target.clearAllTasks();
 
             // First kill (set before lover suicide)
@@ -1305,7 +1306,7 @@ namespace TheOtherRoles.Patches {
             GameHistory.deadPlayers.Add(deadPlayer);
 
             // Remove fake tasks when player dies
-            if (__instance.hasFakeTasks() || __instance == Lawyer.lawyer || __instance == Pursuer.pursuer)
+            if (__instance.hasFakeTasks() || __instance == Lawyer.lawyer || __instance == Pursuer.pursuer || __instance == Thief.thief)
                 __instance.clearAllTasks();
 
             // Lover suicide trigger on exile

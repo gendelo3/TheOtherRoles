@@ -6,52 +6,47 @@ using UnityEngine;
 using static UnityEngine.UI.Button;
 
 namespace TheOtherRoles.Patches {
-    [HarmonyPatch(typeof(CreateOptionsPicker))]
+    [HarmonyPatch(typeof(GameModeMenu))]
     class CreateOptionsPickerPatch {
         private static List<SpriteRenderer> renderers = new List<SpriteRenderer>();
 
-        [HarmonyPatch(typeof(CreateOptionsPicker), "Awake")]
+        [HarmonyPatch(typeof(GameModeMenu), "Awake")]
         [HarmonyPrefix]
-        public static void Prefix(CreateOptionsPicker __instance) {
-            if (__instance.mode == SettingsMode.Host) {
-                renderers = new List<SpriteRenderer>();
+        public static void Prefix(GameModeMenu __instance) {
+            renderers = new List<SpriteRenderer>();
 
-                // space for max 5 buttons
-                addGamemodeButton(__instance, "Classic", "TheOtherRoles.Resources.TabIconClassicMode.png", CustomGamemodes.Classic);
-                addGamemodeButton(__instance, "Guesser", "TheOtherRoles.Resources.TabIconGuesserMode.png", CustomGamemodes.Guesser);
-                addGamemodeButton(__instance, "Hide 'N Seek", "TheOtherRoles.Resources.TabIconHideNSeekMode.png", CustomGamemodes.HideNSeek);
+            // space for max 5 buttons
+            addGamemodeButton(__instance, "Guesser", "TheOtherRoles.Resources.TabIconGuesserMode.png", CustomGamemodes.Guesser);
+            addGamemodeButton(__instance, "Hide 'N Seek", "TheOtherRoles.Resources.TabIconHideNSeekMode.png", CustomGamemodes.HideNSeek);
 
-                switch (MapOptions.gameMode) {
-                    case CustomGamemodes.Classic: renderers.FindLast(x => x.name == "Classic").color = Color.white; break;
-                    case CustomGamemodes.Guesser: renderers.FindLast(x => x.name == "Guesser").color = Color.white; break;
-                    case CustomGamemodes.HideNSeek: renderers.FindLast(x => x.name == "Hide 'N Seek").color = Color.white; break;
-                }
-            }
-            else {
-                //
+            switch (MapOptions.gameMode) {
+                case CustomGamemodes.Classic: break;
+                case CustomGamemodes.Guesser: renderers.FindLast(x => x.name == "Guesser").color = Color.white; break;
+                case CustomGamemodes.HideNSeek: renderers.FindLast(x => x.name == "Hide 'N Seek").color = Color.white; break;
             }
         }
 
-        private static void addGamemodeButton(CreateOptionsPicker __instance, string name, string spritePath, CustomGamemodes gamemode) {
-            Vector3 position1 = __instance.MapButtons[3].transform.position;
-            Vector3 position2 = __instance.transform.Find("Max Players").position;
-            float p = -5.8f + (renderers.Count * 1.4f);
+        private static void addGamemodeButton(GameModeMenu __instance, string name, string spritePath, CustomGamemodes gamemode) {
+            Vector3 offset = __instance.ButtonPool.transform.position;
+            Vector3 dist = new Vector3(0f, -0.6f, 0f);
+            Vector3 target = offset + dist * (renderers.Count + 1);
 
-            GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(__instance.MapButtons[2].gameObject, __instance.MapButtons[2].transform.parent);
-            gameObject.name = name;
-            gameObject.transform.position = new Vector3(position1.x + p, position2.y - 0.6f, position1.z);
-            SpriteRenderer component = gameObject.transform.Find("MapIcon2").GetComponent<SpriteRenderer>();
-            component.gameObject.name = "gm" + name;
-            component.sprite = Helpers.loadSpriteFromResources(spritePath, 150f);
-            PassiveButton passiveButton = gameObject.GetComponent<PassiveButton>();
-            SpriteRenderer buttonSprite = gameObject.GetComponent<SpriteRenderer>();
-            buttonSprite.color *= 0;
+            GameObject gameObject = new("gm" + name);
+            gameObject.transform.position = target;
+            gameObject.transform.SetParent(__instance.ButtonPool.transform, worldPositionStays: true);
+
+            SpriteRenderer buttonSprite = gameObject.AddComponent<SpriteRenderer>();
+            buttonSprite.sprite = Helpers.loadSpriteFromResources(spritePath, 150f);
+            PassiveButton passiveButton = gameObject.AddComponent<PassiveButton>();
+            //buttonSprite.color *= 0;
 
             renderers.Add(buttonSprite);
 
             passiveButton.OnClick = new ButtonClickedEvent();
             passiveButton.OnClick.AddListener((System.Action)(() => setListener(buttonSprite, gamemode)));
+            gameObject.SetActive(true);
         }
+
 
         private static void setListener(SpriteRenderer renderer, CustomGamemodes gameMode) {
             MapOptions.gameMode = gameMode;

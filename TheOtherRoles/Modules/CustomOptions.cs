@@ -680,9 +680,9 @@ namespace TheOtherRoles {
     [HarmonyPatch] 
     class GameOptionsDataPatch
     {
-        private static IEnumerable<MethodBase> TargetMethods() {
-            return typeof(GameOptionsData).GetMethods().Where(x => x.ReturnType == typeof(string) && x.GetParameters().Length == 1 && x.GetParameters()[0].ParameterType == typeof(int));
-        }
+        /*private static IEnumerable<MethodBase> TargetMethods() {
+            return typeof(IGameOptionsExtensions.).GetMethods().Where(x => x.ReturnType == typeof(string) && x.GetParameters().Length == 1 && x.GetParameters()[0].ParameterType == typeof(int));
+        }*/
 
         private static string buildRoleOptions() {
             var impRoles = buildOptionsOfType(CustomOption.CustomOptionType.Impostor, true) + "\n";
@@ -781,6 +781,7 @@ namespace TheOtherRoles {
             return sb.ToString();
         }
 
+        [HarmonyPatch(typeof(IGameOptionsExtensions), nameof(IGameOptionsExtensions.ToHudString))]
         private static void Postfix(ref string __result)
         {
             int counter = TheOtherRolesPlugin.optionsPage;

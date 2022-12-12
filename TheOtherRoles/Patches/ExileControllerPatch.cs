@@ -146,7 +146,7 @@ namespace TheOtherRoles.Patches {
             // Mini set adapted cooldown
             if (Mini.mini != null && CachedPlayer.LocalPlayer.PlayerControl == Mini.mini && Mini.mini.Data.Role.IsImpostor) {
                 var multiplier = Mini.isGrownUp() ? 0.66f : 2f;
-                Mini.mini.SetKillTimer(PlayerControl.GameOptions.KillCooldown * multiplier);
+                Mini.mini.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown * multiplier);
             }
 
             // Seer spawn souls
@@ -235,7 +235,7 @@ namespace TheOtherRoles.Patches {
             Chameleon.lastMoved.Clear();
 
             foreach (Trap trap in Trap.traps) trap.triggerable = false;
-            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(PlayerControl.GameOptions.KillCooldown / 2 + 2, new Action<float>((p) => {
+            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown / 2 + 2, new Action<float>((p) => {
             if (p == 1f) foreach (Trap trap in Trap.traps) trap.triggerable = true;
             })));
         }

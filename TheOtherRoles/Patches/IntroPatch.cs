@@ -100,7 +100,7 @@ namespace TheOtherRoles.Patches {
                     })));
                 }
 
-                if (HideNSeek.polusVent == null && PlayerControl.GameOptions.MapId == 2) {
+                if (HideNSeek.polusVent == null && GameOptionsManager.Instance.currentNormalGameOptions.MapId == 2) {
                     var list = GameObject.FindObjectsOfType<Vent>().ToList();
                     var adminVent = list.FirstOrDefault(x => x.gameObject.name == "AdminVent");
                     var bathroomVent = list.FirstOrDefault(x => x.gameObject.name == "BathroomVent");
@@ -121,13 +121,13 @@ namespace TheOtherRoles.Patches {
                     bathroomVent.Center = HideNSeek.polusVent;
                 }
 
-                ShipStatusPatch.originalNumCrewVisionOption = PlayerControl.GameOptions.CrewLightMod;
-                ShipStatusPatch.originalNumImpVisionOption = PlayerControl.GameOptions.ImpostorLightMod;
-                ShipStatusPatch.originalNumKillCooldownOption = PlayerControl.GameOptions.killCooldown;
+                ShipStatusPatch.originalNumCrewVisionOption = GameOptionsManager.Instance.currentNormalGameOptions.CrewLightMod;
+                ShipStatusPatch.originalNumImpVisionOption = GameOptionsManager.Instance.currentNormalGameOptions.ImpostorLightMod;
+                ShipStatusPatch.originalNumKillCooldownOption = GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown;
 
-                PlayerControl.GameOptions.ImpostorLightMod = CustomOptionHolder.hideNSeekHunterVision.getFloat();
-                PlayerControl.GameOptions.CrewLightMod = CustomOptionHolder.hideNSeekHuntedVision.getFloat();
-                PlayerControl.GameOptions.KillCooldown = CustomOptionHolder.hideNSeekKillCooldown.getFloat();
+                GameOptionsManager.Instance.currentNormalGameOptions.ImpostorLightMod = CustomOptionHolder.hideNSeekHunterVision.getFloat();
+                GameOptionsManager.Instance.currentNormalGameOptions.CrewLightMod = CustomOptionHolder.hideNSeekHuntedVision.getFloat();
+                GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown = CustomOptionHolder.hideNSeekKillCooldown.getFloat();
             }
         }
     }

@@ -315,8 +315,8 @@ namespace TheOtherRoles.Patches {
         }
 
         static void updateMapButton(HudManager __instance) {
-            if (Trapper.trapper == null || !(CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) || __instance == null || __instance.MapButton == null) return;
-            __instance.MapButton.color = Trapper.playersOnMap.Any() ? Trapper.color : Color.white;
+            if (Trapper.trapper == null || !(CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) || __instance == null || __instance.MapButton.HeldButtonSprite == null) return;
+            __instance.MapButton.HeldButtonSprite.color = Trapper.playersOnMap.Any() ? Trapper.color : Color.white;
         }
 
         static void Postfix(HudManager __instance)

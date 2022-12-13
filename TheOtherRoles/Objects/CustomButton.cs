@@ -189,7 +189,6 @@ namespace TheOtherRoles.Objects {
                     float aspect = Camera.main.aspect;
                     float safeOrthographicSize = CameraSafeArea.GetSafeOrthographicSize(Camera.main);
                     float xpos = 0.05f - safeOrthographicSize * aspect * 1.70f;
-                    TheOtherRolesPlugin.Logger.LogMessage($"xpos: {xpos}, Ortho: {safeOrthographicSize}, asp: {aspect}");
                     pos = new Vector3(xpos, pos.y, pos.z);
                 }
                 actionButton.transform.localPosition = pos + PositionOffset;

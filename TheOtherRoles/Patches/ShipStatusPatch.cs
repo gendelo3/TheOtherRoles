@@ -5,6 +5,7 @@ using TheOtherRoles.Utilities;
 using static TheOtherRoles.TheOtherRoles;
 using UnityEngine;
 using TheOtherRoles.CustomGameModes;
+using AmongUs.GameOptions;
 
 namespace TheOtherRoles.Patches {
 
@@ -14,7 +15,7 @@ namespace TheOtherRoles.Patches {
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.CalculateLightRadius))]
         public static bool Prefix(ref float __result, ShipStatus __instance, [HarmonyArgument(0)] GameData.PlayerInfo player) {
-            if (!__instance.Systems.ContainsKey(SystemTypes.Electrical)) return true;
+            if (!__instance.Systems.ContainsKey(SystemTypes.Electrical) || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return true;
 
             
             if (!HideNSeek.isHideNSeekGM || (HideNSeek.isHideNSeekGM && !Hunter.lightActive.Contains(player.PlayerId))) {

@@ -75,7 +75,13 @@ namespace TheOtherRoles
 
         public static void setCustomButtonCooldowns() {
             if (!initialized) {
-                createButtonsPostfix(HudManager.Instance);
+                try {
+                    createButtonsPostfix(HudManager.Instance);
+                } 
+                catch {
+                    TheOtherRolesPlugin.Logger.LogWarning("Button cooldowns not set, either the gamemode does not require them or there's something wrong.");
+                    return;
+                }
             }
             engineerRepairButton.MaxTimer = 0f;
             janitorCleanButton.MaxTimer = Janitor.cooldown;

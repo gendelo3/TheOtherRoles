@@ -11,6 +11,7 @@ using TheOtherRoles.Utilities;
 using UnityEngine;
 using TheOtherRoles.CustomGameModes;
 using static UnityEngine.GraphicsBuffer;
+using AmongUs.GameOptions;
 
 namespace TheOtherRoles.Patches {
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
@@ -928,7 +929,7 @@ namespace TheOtherRoles.Patches {
         }
 
         public static void Postfix(PlayerControl __instance) {
-            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
+            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
 
             // Mini and Morphling shrink
             playerSizeUpdate(__instance);
@@ -1258,6 +1259,7 @@ namespace TheOtherRoles.Patches {
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.SetKillTimer))]
     class PlayerControlSetCoolDownPatch {
         public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)]float time) {
+            if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return true;
             if (GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown <= 0f) return false;
             float multiplier = 1f;
             float addition = 0f;
@@ -1344,7 +1346,9 @@ namespace TheOtherRoles.Patches {
     public static class PlayerPhysicsFixedUpdate {
         public static void Postfix(PlayerPhysics __instance)
         {
-            if (__instance.AmOwner && 
+            if (__instance.AmOwner &&
+                AmongUsClient.Instance &&
+                AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started &&
                 !CachedPlayer.LocalPlayer.Data.IsDead && 
                 Invert.invert.FindAll(x => x.PlayerId == CachedPlayer.LocalPlayer.PlayerId).Count > 0 && 
                 Invert.meetings > 0 && 

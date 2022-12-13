@@ -206,11 +206,11 @@ namespace TheOtherRoles
 
                 // Non Custom (Vanilla) Buttons. The Originals are disabled / hidden in UpdatePatch.cs already, just need to replace them. Can use any button, as we replace onclick etc anyways.
                 // Kill Button if enabled for the Role
-                if (FastDestroyableSingleton<HudManager>.Instance.KillButton.isActiveAndEnabled) addReplacementHandcuffedButton(arsonistButton, new Vector3(0, 1f, 0), couldUse: () => { return FastDestroyableSingleton<HudManager>.Instance.KillButton.currentTarget != null; });
+                if (FastDestroyableSingleton<HudManager>.Instance.KillButton.isActiveAndEnabled) addReplacementHandcuffedButton(arsonistButton, CustomButton.ButtonPositions.upperRowRight, couldUse: () => { return FastDestroyableSingleton<HudManager>.Instance.KillButton.currentTarget != null; });
                 // Vent Button if enabled
-                if (CachedPlayer.LocalPlayer.PlayerControl.roleCanUseVents()) addReplacementHandcuffedButton(arsonistButton, new Vector3(-1.8f, 1f, 0), couldUse: () => { return FastDestroyableSingleton<HudManager>.Instance.ImpostorVentButton.currentTarget != null; });
+                if (CachedPlayer.LocalPlayer.PlayerControl.roleCanUseVents()) addReplacementHandcuffedButton(arsonistButton, CustomButton.ButtonPositions.upperRowCenter, couldUse: () => { return FastDestroyableSingleton<HudManager>.Instance.ImpostorVentButton.currentTarget != null; });
                 // Report Button
-                addReplacementHandcuffedButton(arsonistButton, new Vector3(-0.9f, -0.06f, 0), () => { return FastDestroyableSingleton<HudManager>.Instance.ReportButton.graphic.color == Palette.EnabledColor; });
+                addReplacementHandcuffedButton(arsonistButton, new Vector3(-1f, -0.06f, 0), () => { return FastDestroyableSingleton<HudManager>.Instance.ReportButton.graphic.color == Palette.EnabledColor; });
             }
             else if (!handcuffed && deputyHandcuffedButtons.ContainsKey(CachedPlayer.LocalPlayer.PlayerId))  // Reset to original. Disables the replacements, enables the original buttons.
             {
@@ -238,6 +238,9 @@ namespace TheOtherRoles
         }
          
         public static void createButtonsPostfix(HudManager __instance) {
+            // get map id, or raise error to wait...
+            var mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
+
             // Engineer Repair
             engineerRepairButton = new CustomButton(
                 () => {
@@ -283,7 +286,7 @@ namespace TheOtherRoles
                 },
                 () => {},
                 Engineer.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.F
             );
@@ -320,7 +323,7 @@ namespace TheOtherRoles
                 () => { return __instance.ReportButton.graphic.color == Palette.EnabledColor && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
                 () => { janitorCleanButton.Timer = janitorCleanButton.MaxTimer; },
                 Janitor.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F
             );
@@ -358,7 +361,7 @@ namespace TheOtherRoles
                 () => { return Sheriff.currentTarget && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
                 () => { sheriffKillButton.Timer = sheriffKillButton.MaxTimer;},
                 __instance.KillButton.graphic.sprite,
-                new Vector3(0f, 1f, 0),
+                CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.Q
             );
@@ -385,7 +388,7 @@ namespace TheOtherRoles
                 },
                 () => { deputyHandcuffButton.Timer = deputyHandcuffButton.MaxTimer; },
                 Deputy.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F
             );
@@ -412,7 +415,7 @@ namespace TheOtherRoles
                     timeMasterShieldButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 TimeMaster.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F, 
                 true,
@@ -444,7 +447,7 @@ namespace TheOtherRoles
                 () => { return !Medic.usedShield && Medic.currentTarget && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
                 () => {},
                 Medic.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F
             );
@@ -517,7 +520,7 @@ namespace TheOtherRoles
                     }
                 },
                 Morphling.getSampleSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
                 true,
@@ -552,7 +555,7 @@ namespace TheOtherRoles
                     camouflagerButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Camouflager.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
                 true,
@@ -577,7 +580,7 @@ namespace TheOtherRoles
                     hackerButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Hacker.getButtonSprite(),
-                new Vector3(0f, 1f, 0),
+                CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.F,
                 true,
@@ -607,7 +610,7 @@ namespace TheOtherRoles
                    hackerAdminTableButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                },
                Hacker.getAdminSprite(),
-               new Vector3(-1.8f, -0.06f, 0),
+               CustomButton.ButtonPositions.lowerRowRight,
                __instance,
                KeyCode.Q,
                true,
@@ -668,7 +671,7 @@ namespace TheOtherRoles
                    hackerVitalsButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                },
                Hacker.getVitalsSprite(),
-               new Vector3(-2.7f, -0.06f, 0),
+               CustomButton.ButtonPositions.lowerRowCenter,
                __instance,
                KeyCode.Q,
                true,
@@ -705,7 +708,7 @@ namespace TheOtherRoles
                 () => { return CachedPlayer.LocalPlayer.PlayerControl.CanMove && Tracker.currentTarget != null && !Tracker.usedTracker; },
                 () => { if(Tracker.resetTargetAfterMeeting) Tracker.resetTracked(); },
                 Tracker.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F
             );
@@ -721,7 +724,7 @@ namespace TheOtherRoles
                     trackerTrackCorpsesButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Tracker.getTrackCorpsesButtonSprite(),
-                new Vector3(-2.7f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowCenter,
                 __instance,
                 KeyCode.Q,
                 true,
@@ -794,7 +797,7 @@ namespace TheOtherRoles
                     vampireKillButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Vampire.getButtonSprite(),
-                new Vector3(0, 1f, 0),
+                CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.Q,
                 false,
@@ -847,7 +850,7 @@ namespace TheOtherRoles
                 () => { return CachedPlayer.LocalPlayer.PlayerControl.CanMove && Portal.secondPortal == null; },
                 () => { portalmakerPlacePortalButton.Timer = portalmakerPlacePortalButton.MaxTimer; },
                 Portalmaker.getPlacePortalButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F
             );
@@ -905,7 +908,7 @@ namespace TheOtherRoles
                 () => { return Jackal.canCreateSidekick && Jackal.currentTarget != null && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
                 () => { jackalSidekickButton.Timer = jackalSidekickButton.MaxTimer;},
                 Jackal.getSidekickButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F
             );
@@ -922,7 +925,7 @@ namespace TheOtherRoles
                 () => { return Jackal.currentTarget && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
                 () => { jackalKillButton.Timer = jackalKillButton.MaxTimer;},
                 __instance.KillButton.graphic.sprite,
-                new Vector3(0, 1f, 0),
+                CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.Q
             );
@@ -938,7 +941,7 @@ namespace TheOtherRoles
                 () => { return Sidekick.currentTarget && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
                 () => { sidekickKillButton.Timer = sidekickKillButton.MaxTimer;},
                 __instance.KillButton.graphic.sprite,
-                new Vector3(0, 1f, 0),
+                CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.Q
             );
@@ -957,7 +960,7 @@ namespace TheOtherRoles
                     lighterButton.actionButton.graphic.color = Palette.EnabledColor;
                 },
                 Lighter.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
                 true,
@@ -984,7 +987,7 @@ namespace TheOtherRoles
                 () => { return CachedPlayer.LocalPlayer.PlayerControl.CanMove && Eraser.currentTarget != null; },
                 () => { eraserButton.Timer = eraserButton.MaxTimer;},
                 Eraser.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F
             );
@@ -1008,7 +1011,7 @@ namespace TheOtherRoles
                 () => { return CachedPlayer.LocalPlayer.PlayerControl.CanMove && !JackInTheBox.hasJackInTheBoxLimitReached(); },
                 () => { placeJackInTheBoxButton.Timer = placeJackInTheBoxButton.MaxTimer;},
                 Trickster.getPlaceBoxButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F
             );
@@ -1028,7 +1031,7 @@ namespace TheOtherRoles
                     lightsOutButton.actionButton.graphic.color = Palette.EnabledColor;
                 },
                 Trickster.getLightsOutButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
                 true,
@@ -1071,7 +1074,7 @@ namespace TheOtherRoles
                 () => { return __instance.ReportButton.graphic.color == Palette.EnabledColor && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
                 () => { cleanerCleanButton.Timer = cleanerCleanButton.MaxTimer; },
                 Cleaner.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F
             );
@@ -1117,7 +1120,7 @@ namespace TheOtherRoles
                     Warlock.curseVictimTarget = null;
                 },
                 Warlock.getCurseButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F
             );
@@ -1157,7 +1160,7 @@ namespace TheOtherRoles
                 },
                 () => { securityGuardButton.Timer = securityGuardButton.MaxTimer; },
                 SecurityGuard.getPlaceCameraButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F
             );
@@ -1212,7 +1215,7 @@ namespace TheOtherRoles
                     securityGuardCamButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 SecurityGuard.getCamSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.Q,
                 true,
@@ -1269,7 +1272,7 @@ namespace TheOtherRoles
                     Arsonist.douseTarget = null;
                 },
                 Arsonist.getDouseSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
                 true,
@@ -1323,7 +1326,7 @@ namespace TheOtherRoles
                 () => { return __instance.ReportButton.graphic.color == Palette.EnabledColor && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
                 () => { vultureEatButton.Timer = vultureEatButton.MaxTimer; },
                 Vulture.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F
             );
@@ -1352,7 +1355,7 @@ namespace TheOtherRoles
                     Medium.soulTarget = null;
                 },
                 Medium.getQuestionSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
                 true,
@@ -1437,7 +1440,7 @@ namespace TheOtherRoles
                 },
                 () => { pursuerButton.Timer = pursuerButton.MaxTimer; },
                 Pursuer.getTargetSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F
             );
@@ -1473,7 +1476,7 @@ namespace TheOtherRoles
                     Witch.spellCastingTarget = null;
                 },
                 Witch.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F,
                 true,
@@ -1575,7 +1578,7 @@ namespace TheOtherRoles
                     Ninja.ninjaMarked = null;
                 },
                 Ninja.getMarkButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.F                   
             );
@@ -1605,7 +1608,7 @@ namespace TheOtherRoles
                },
                () => { mayorMeetingButton.Timer = mayorMeetingButton.MaxTimer; },
                Mayor.getMeetingSprite(),
-               new Vector3(-1.8f, -0.06f, 0),
+               CustomButton.ButtonPositions.lowerRowRight,
                __instance,
                KeyCode.F,
                true,
@@ -1640,7 +1643,7 @@ namespace TheOtherRoles
                 },
                 () => { trapperButton.Timer = trapperButton.MaxTimer; },
                 Trapper.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F
             );
@@ -1690,7 +1693,7 @@ namespace TheOtherRoles
                () => { return Thief.currentTarget != null && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
                () => { thiefKillButton.Timer = thiefKillButton.MaxTimer; },
                __instance.KillButton.graphic.sprite,
-               new Vector3(0, 1f, 0),
+               CustomButton.ButtonPositions.upperRowRight,
                __instance,
                KeyCode.Q
                );
@@ -1738,7 +1741,7 @@ namespace TheOtherRoles
                     hunterLighterButton.actionButton.graphic.color = Palette.EnabledColor;
                 },
                 Lighter.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
                 true,
@@ -1773,7 +1776,7 @@ namespace TheOtherRoles
                    hunterAdminTableButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                },
                Hacker.getAdminSprite(),
-               new Vector3(-2.7f, -0.06f, 0),
+               CustomButton.ButtonPositions.lowerRowCenter,
                __instance,
                KeyCode.G,
                true,
@@ -1804,7 +1807,7 @@ namespace TheOtherRoles
                     hunterArrowButton.actionButton.graphic.color = Palette.EnabledColor;
                 },
                 Hunter.getArrowSprite(),
-                new Vector3(-2.7f, 1f, 0),
+                CustomButton.ButtonPositions.upperRowFarLeft,
                 __instance,
                 KeyCode.R,
                 true,
@@ -1837,7 +1840,7 @@ namespace TheOtherRoles
                     huntedShieldButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 TimeMaster.getButtonSprite(),
-                new Vector3(-1.8f, -0.06f, 0),
+                CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
                 KeyCode.F,
                 true,

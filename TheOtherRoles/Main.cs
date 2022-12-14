@@ -124,6 +124,7 @@ namespace TheOtherRoles
             
             SubmergedCompatibility.Initialize();
             AddComponent<ModUpdateBehaviour>();
+            Modules.MainMenuPatch.addSceneChangeCallbacks();
         }
         public static Sprite GetModStamp() {
             if (ModStamp) return ModStamp;

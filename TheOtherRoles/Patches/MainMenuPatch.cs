@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using static UnityEngine.UI.Button;
 using Object = UnityEngine.Object;
 using TheOtherRoles.Patches;
+using UnityEngine.SceneManagement;
 
 namespace TheOtherRoles.Modules {
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
@@ -143,6 +144,45 @@ Goose-Goose-Duck - Idea for the Vulture role came from Slushiegoose</size>";
                 }
             })));
 
+        }
+
+        public static void addSceneChangeCallbacks() {
+            SceneManager.add_sceneLoaded((Action<Scene, LoadSceneMode>)((scene, _) => {
+                if (!scene.name.Equals("MatchMaking", StringComparison.Ordinal)) return;
+                MapOptions.gameMode = CustomGamemodes.Classic;
+                // Add buttons For Guesser Mode, Hide N Seek in this scene.
+                // find "HostLocalGameButton"
+                var template = GameObject.FindObjectOfType<HostLocalGameButton>();
+                var gameButton = template.transform.FindChild("CreateGameButton");
+                var gameButtonPassiveButton = gameButton.GetComponentInChildren<PassiveButton>();
+
+                var guesserButton = GameObject.Instantiate<Transform>(gameButton, gameButton.parent);
+                guesserButton.transform.localPosition += new Vector3(0f, -0.5f);
+                var guesserButtonText = guesserButton.GetComponentInChildren<TMPro.TextMeshPro>();
+                var guesserButtonPassiveButton = guesserButton.GetComponentInChildren<PassiveButton>();
+                
+                guesserButtonPassiveButton.OnClick = new Button.ButtonClickedEvent();
+                guesserButtonPassiveButton.OnClick.AddListener((System.Action)(() => {
+                    MapOptions.gameMode = CustomGamemodes.Guesser;
+                    template.OnClick();
+                }));
+
+                var HideNSeekButton = GameObject.Instantiate<Transform>(gameButton, gameButton.parent);
+                HideNSeekButton.transform.localPosition += new Vector3(1.7f, -0.5f);
+                var HideNSeekButtonText = HideNSeekButton.GetComponentInChildren<TMPro.TextMeshPro>();
+                var HideNSeekButtonPassiveButton = HideNSeekButton.GetComponentInChildren<PassiveButton>();
+                
+                HideNSeekButtonPassiveButton.OnClick = new Button.ButtonClickedEvent();
+                HideNSeekButtonPassiveButton.OnClick.AddListener((System.Action)(() => {
+                    MapOptions.gameMode = CustomGamemodes.HideNSeek;
+                    template.OnClick();
+                }));
+
+                template.StartCoroutine(Effects.Lerp(0.1f, new System.Action<float>((p) => {
+                    guesserButtonText.SetText("TOR Guesser");
+                    HideNSeekButtonText.SetText("TOR Hide N Seek");
+                 })));
+            }));
         }
     }
 

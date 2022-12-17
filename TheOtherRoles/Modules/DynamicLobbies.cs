@@ -46,7 +46,14 @@ namespace TheOtherRoles.Modules {
         [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.HostGame))]
         public static class InnerNetClientHostPatch {
             public static void Prefix(InnerNet.InnerNetClient __instance, [HarmonyArgument(0)] GameOptionsData settings) {
-                DynamicLobbies.LobbyLimit = settings.MaxPlayers;
+                int maxPlayers;
+                try {
+                    maxPlayers = GameOptionsManager.Instance.currentNormalGameOptions.MaxPlayers;
+                }
+                catch {
+                    maxPlayers = 15;
+                }
+                DynamicLobbies.LobbyLimit = maxPlayers;
                 settings.MaxPlayers = 15; // Force 15 Player Lobby on Server
                 DataManager.Settings.Multiplayer.ChatMode = InnerNet.QuickChatModes.FreeChatOrQuickChat;
             }

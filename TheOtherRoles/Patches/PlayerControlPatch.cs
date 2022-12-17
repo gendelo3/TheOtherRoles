@@ -466,7 +466,7 @@ namespace TheOtherRoles.Patches {
                     TMPro.TextMeshPro playerInfo = playerInfoTransform != null ? playerInfoTransform.GetComponent<TMPro.TextMeshPro>() : null;
                     if (playerInfo == null) {
                         playerInfo = UnityEngine.Object.Instantiate(p.cosmetics.nameText, p.cosmetics.nameText.transform.parent);
-                        playerInfo.transform.localPosition += Vector3.up * 0.5f;
+                        playerInfo.transform.localPosition += Vector3.up * 0.225f;
                         playerInfo.fontSize *= 0.75f;
                         playerInfo.gameObject.name = "Info";
                         playerInfo.color = playerInfo.color.SetAlpha(1f);

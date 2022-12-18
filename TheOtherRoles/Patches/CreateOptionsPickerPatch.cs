@@ -19,7 +19,7 @@ namespace TheOtherRoles.Patches {
             }
 
             __instance.SetGameMode(GameModes.Normal);  //__instance.Refresh();
-            
+
             if ((int)mode == 3) {
                 __instance.GameModeText.text = "TOR Guesser";
                 MapOptions.gameMode = CustomGamemodes.Guesser;
@@ -28,6 +28,17 @@ namespace TheOtherRoles.Patches {
                 MapOptions.gameMode = CustomGamemodes.HideNSeek;
             }
             return false;
+        }
+
+
+        [HarmonyPatch(typeof(CreateOptionsPicker), nameof(CreateOptionsPicker.Refresh))]
+        public static void Postfix(CreateOptionsPicker __instance) {
+            if (MapOptions.gameMode == CustomGamemodes.Guesser) {
+                __instance.GameModeText.text = "TOR Guesser";
+            }
+            else if (MapOptions.gameMode == CustomGamemodes.HideNSeek) {
+                __instance.GameModeText.text = "TOR Hide N Seek";
+            }
         }
     }
 

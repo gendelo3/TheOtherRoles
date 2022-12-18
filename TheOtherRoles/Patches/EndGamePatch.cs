@@ -363,7 +363,7 @@ namespace TheOtherRoles.Patches {
         }
     }
 
-    [HarmonyPatch(typeof(LogicGameFlow), nameof(LogicGameFlow.CheckEndCriteria))] 
+    [HarmonyPatch(typeof(LogicGameFlowNormal), nameof(LogicGameFlowNormal.CheckEndCriteria))] 
     class CheckEndCriteriaPatch {
         public static bool Prefix(ShipStatus __instance) {
             if (!GameData.Instance) return false;
@@ -386,7 +386,7 @@ namespace TheOtherRoles.Patches {
 
         private static bool CheckAndEndGameForMiniLose(ShipStatus __instance) {
             if (Mini.triggerMiniLose) {
-                __instance.enabled = false;
+                //__instance.enabled = false;
                 GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MiniLose, false);
                 return true;
             }
@@ -395,7 +395,7 @@ namespace TheOtherRoles.Patches {
 
         private static bool CheckAndEndGameForJesterWin(ShipStatus __instance) {
             if (Jester.triggerJesterWin) {
-                __instance.enabled = false;
+                //__instance.enabled = false;
                 GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.JesterWin, false);
                 return true;
             }
@@ -404,7 +404,7 @@ namespace TheOtherRoles.Patches {
 
         private static bool CheckAndEndGameForArsonistWin(ShipStatus __instance) {
             if (Arsonist.triggerArsonistWin) {
-                __instance.enabled = false;
+                //__instance.enabled = false;
                 GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ArsonistWin, false);
                 return true;
             }
@@ -413,7 +413,7 @@ namespace TheOtherRoles.Patches {
 
         private static bool CheckAndEndGameForVultureWin(ShipStatus __instance) {
             if (Vulture.triggerVultureWin) {
-                __instance.enabled = false;
+                //__instance.enabled = false;
                 GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.VultureWin, false);
                 return true;
             }
@@ -449,7 +449,7 @@ namespace TheOtherRoles.Patches {
         private static bool CheckAndEndGameForTaskWin(ShipStatus __instance) {
             if (HideNSeek.isHideNSeekGM && !HideNSeek.taskWinPossible) return false;
             if (GameData.Instance.TotalTasks > 0 && GameData.Instance.TotalTasks <= GameData.Instance.CompletedTasks) {
-                __instance.enabled = false;
+                //__instance.enabled = false;
                 GameManager.Instance.RpcEndGame(GameOverReason.HumansByTask, false);
                 return true;
             }
@@ -458,7 +458,7 @@ namespace TheOtherRoles.Patches {
 
         private static bool CheckAndEndGameForProsecutorWin(ShipStatus __instance) {
             if (Lawyer.triggerProsecutorWin) {
-                __instance.enabled = false;
+                //__instance.enabled = false;
                 GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ProsecutorWin, false);
                 return true;
             }
@@ -467,7 +467,7 @@ namespace TheOtherRoles.Patches {
 
         private static bool CheckAndEndGameForLoverWin(ShipStatus __instance, PlayerStatistics statistics) {
             if (statistics.TeamLoversAlive == 2 && statistics.TotalAlive <= 3) {
-                __instance.enabled = false;
+                //__instance.enabled = false;
                 GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.LoversWin, false);
                 return true;
             }
@@ -476,7 +476,7 @@ namespace TheOtherRoles.Patches {
 
         private static bool CheckAndEndGameForJackalWin(ShipStatus __instance, PlayerStatistics statistics) {
             if (statistics.TeamJackalAlive >= statistics.TotalAlive - statistics.TeamJackalAlive && statistics.TeamImpostorsAlive == 0 && !(statistics.TeamJackalHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
+                //__instance.enabled = false;
                 GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.TeamJackalWin, false);
                 return true;
             }
@@ -488,7 +488,7 @@ namespace TheOtherRoles.Patches {
                 if ((0 != statistics.TotalAlive - statistics.TeamImpostorsAlive)) return false;
 
             if (statistics.TeamImpostorsAlive >= statistics.TotalAlive - statistics.TeamImpostorsAlive && statistics.TeamJackalAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
+                //__instance.enabled = false;
                 GameOverReason endReason;
                 switch (TempData.LastDeathReason) {
                     case DeathReason.Exile:
@@ -509,12 +509,12 @@ namespace TheOtherRoles.Patches {
 
         private static bool CheckAndEndGameForCrewmateWin(ShipStatus __instance, PlayerStatistics statistics) {
             if (HideNSeek.isHideNSeekGM && HideNSeek.timer <= 0 && !HideNSeek.isWaitingTimer) {
-                __instance.enabled = false;
+                //__instance.enabled = false;
                 GameManager.Instance.RpcEndGame(GameOverReason.HumansByVote, false);
                 return true;
             }
             if (statistics.TeamImpostorsAlive == 0 && statistics.TeamJackalAlive == 0) {
-                __instance.enabled = false;
+                //__instance.enabled = false;
                 GameManager.Instance.RpcEndGame(GameOverReason.HumansByVote, false);
                 return true;
             }
@@ -522,7 +522,7 @@ namespace TheOtherRoles.Patches {
         }
 
         private static void EndGameForSabotage(ShipStatus __instance) {
-            __instance.enabled = false;
+            //__instance.enabled = false;
             GameManager.Instance.RpcEndGame(GameOverReason.ImpostorBySabotage, false);
             return;
         }

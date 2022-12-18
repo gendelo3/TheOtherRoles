@@ -34,7 +34,7 @@ namespace TheOtherRoles
         private static CustomButton trackerTrackPlayerButton;
         private static CustomButton trackerTrackCorpsesButton;
         public static CustomButton vampireKillButton;
-        private static CustomButton garlicButton;
+        public static CustomButton garlicButton;
         public static CustomButton jackalKillButton;
         public static CustomButton sidekickKillButton;
         private static CustomButton jackalSidekickButton;
@@ -907,7 +907,7 @@ namespace TheOtherRoles
                 () => { return Jackal.canCreateSidekick && Jackal.currentTarget != null && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
                 () => { jackalSidekickButton.Timer = jackalSidekickButton.MaxTimer;},
                 Jackal.getSidekickButtonSprite(),
-                CustomButton.ButtonPositions.lowerRowRight,
+                CustomButton.ButtonPositions.lowerRowCenter,
                 __instance,
                 KeyCode.F
             );

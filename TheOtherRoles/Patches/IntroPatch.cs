@@ -14,12 +14,18 @@ namespace TheOtherRoles.Patches {
     class IntroCutsceneOnDestroyPatch
     {
         public static PoolablePlayer playerPrefab;
+        public static Vector3 bottomLeft;
         public static void Prefix(IntroCutscene __instance) {
             // Generate and initialize player icons
             int playerCounter = 0;
             int hideNSeekCounter = 0;
             if (CachedPlayer.LocalPlayer != null && FastDestroyableSingleton<HudManager>.Instance != null) {
-                Vector3 bottomLeft = new Vector3(-FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.x, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.y, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.z);
+                float aspect = Camera.main.aspect;
+                float safeOrthographicSize = CameraSafeArea.GetSafeOrthographicSize(Camera.main);
+                float xpos = 1.75f - safeOrthographicSize * aspect * 1.70f;
+                float ypos = 0.15f - safeOrthographicSize * 1.7f;
+                bottomLeft = new Vector3(xpos / 2, ypos/2, -61f);
+
                 foreach (PlayerControl p in CachedPlayer.AllPlayers) {
                     GameData.PlayerInfo data = p.Data;
                     PoolablePlayer player = UnityEngine.Object.Instantiate<PoolablePlayer>(__instance.PlayerPrefab, FastDestroyableSingleton<HudManager>.Instance.transform);
@@ -52,7 +58,7 @@ namespace TheOtherRoles.Patches {
                         }
 
                     } else {   //  This can be done for all players not just for the bounty hunter as it was before. Allows the thief to have the correct position and scaling
-                        player.transform.localPosition = bottomLeft + new Vector3(-0.25f, 0f, 0);
+                        player.transform.localPosition = bottomLeft;
                         player.transform.localScale = Vector3.one * 0.4f;
                         player.gameObject.SetActive(false);
                     }
@@ -63,10 +69,10 @@ namespace TheOtherRoles.Patches {
             if (BountyHunter.bounty != null && CachedPlayer.LocalPlayer.PlayerControl == BountyHunter.bountyHunter) {
                 BountyHunter.bountyUpdateTimer = 0f;
                 if (FastDestroyableSingleton<HudManager>.Instance != null) {
-                    Vector3 bottomLeft = new Vector3(-FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.x, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.y, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.z) + new Vector3(-0.25f, 1f, 0);
                     BountyHunter.cooldownText = UnityEngine.Object.Instantiate<TMPro.TextMeshPro>(FastDestroyableSingleton<HudManager>.Instance.KillButton.cooldownTimerText, FastDestroyableSingleton<HudManager>.Instance.transform);
                     BountyHunter.cooldownText.alignment = TMPro.TextAlignmentOptions.Center;
-                    BountyHunter.cooldownText.transform.localPosition = bottomLeft + new Vector3(0f, -1f, -1f);
+                    BountyHunter.cooldownText.transform.localPosition = bottomLeft + new Vector3(0f, -0.35f, -62f);
+                    BountyHunter.cooldownText.transform.localScale = Vector3.one * 0.4f;
                     BountyHunter.cooldownText.gameObject.SetActive(true);
                 }
             }

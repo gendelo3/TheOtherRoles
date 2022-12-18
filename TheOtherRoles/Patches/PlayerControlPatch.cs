@@ -648,9 +648,14 @@ namespace TheOtherRoles.Patches {
                 }
             }
 
+            // Hide in meeting
+            if (MeetingHud.Instance && MapOptions.playerIcons.ContainsKey(BountyHunter.bounty.PlayerId) && MapOptions.playerIcons[BountyHunter.bounty.PlayerId].gameObject != null)
+                MapOptions.playerIcons[BountyHunter.bounty.PlayerId].gameObject.SetActive(false);
+
             // Update Cooldown Text
             if (BountyHunter.cooldownText != null) {
                 BountyHunter.cooldownText.text = Mathf.CeilToInt(Mathf.Clamp(BountyHunter.bountyUpdateTimer, 0, BountyHunter.bountyDuration)).ToString();
+                BountyHunter.cooldownText.gameObject.SetActive(!MeetingHud.Instance);  // Show if not in meeting
             }
 
             // Update Arrow

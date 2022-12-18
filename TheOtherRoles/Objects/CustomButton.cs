@@ -45,7 +45,6 @@ namespace TheOtherRoles.Objects {
             public static readonly Vector3 upperRowCenter = new Vector3(-1f, 1f, 0f);  // Not usable for imps beacuse of new button positions!
             public static readonly Vector3 upperRowLeft = new Vector3(-2f, 1f, 0f);
             public static readonly Vector3 upperRowFarLeft = new Vector3(-3f, 1f, 0f);
-
         }
 
         public CustomButton(Action OnClick, Func<bool> HasButton, Func<bool> CouldUse, Action OnMeetingEnds, Sprite Sprite, Vector3 PositionOffset, HudManager hudManager, KeyCode? hotkey, bool HasEffect, float EffectDuration, Action OnEffectEnds, bool mirror = false, string buttonText = "")

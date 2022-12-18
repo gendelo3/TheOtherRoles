@@ -180,14 +180,14 @@ namespace TheOtherRoles.Patches {
             // Arsonist deactivate dead poolable players
             if (Arsonist.arsonist != null && Arsonist.arsonist == CachedPlayer.LocalPlayer.PlayerControl) {
                 int visibleCounter = 0;
-                Vector3 bottomLeft = new Vector3(-FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.x, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.y, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.z);
-                bottomLeft += new Vector3(-0.25f, -0.25f, 0);
+                Vector3 newBottomLeft = IntroCutsceneOnDestroyPatch.bottomLeft;
+                var BottomLeft = newBottomLeft + new Vector3(-0.25f, -0.25f, 0);
                 foreach (PlayerControl p in CachedPlayer.AllPlayers) {
                     if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
                     if (p.Data.IsDead || p.Data.Disconnected) {
                         MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(false);
                     } else {
-                        MapOptions.playerIcons[p.PlayerId].transform.localPosition = bottomLeft + Vector3.right * visibleCounter * 0.35f;
+                        MapOptions.playerIcons[p.PlayerId].transform.localPosition = newBottomLeft + Vector3.right * visibleCounter * 0.35f;
                         visibleCounter++;
                     }
                 }

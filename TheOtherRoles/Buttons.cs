@@ -1325,7 +1325,7 @@ namespace TheOtherRoles
                 () => { return __instance.ReportButton.graphic.color == Palette.EnabledColor && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
                 () => { vultureEatButton.Timer = vultureEatButton.MaxTimer; },
                 Vulture.getButtonSprite(),
-                CustomButton.ButtonPositions.lowerRowRight,
+                CustomButton.ButtonPositions.lowerRowCenter,
                 __instance,
                 KeyCode.F
             );

@@ -465,7 +465,7 @@ namespace TheOtherRoles
                 () => { return Shifter.currentTarget && Shifter.futureShift == null && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
                 () => { },
                 Shifter.getButtonSprite(),
-                new Vector3(0, 0.73f, 0),
+                new Vector3(0, 1f, 0),
                 __instance,
                 null,
                 true

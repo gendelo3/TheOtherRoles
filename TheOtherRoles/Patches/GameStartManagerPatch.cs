@@ -19,10 +19,15 @@ namespace TheOtherRoles.Patches {
 
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
         public class AmongUsClientOnPlayerJoinedPatch {
-            public static void Postfix() {
+            public static void Postfix(AmongUsClient __instance) {
                 if (CachedPlayer.LocalPlayer != null) {
                     Helpers.shareGameVersion();
                 }
+
+                // Force sharing of options whenever a new player joins
+                __instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) => {
+                    if (p == 1f) CustomOption.ShareOptionSelections();
+                })));
             }
         }
 

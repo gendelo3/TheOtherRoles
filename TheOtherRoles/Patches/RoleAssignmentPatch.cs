@@ -24,7 +24,17 @@ namespace TheOtherRoles.Patches {
             if (MapOptions.gameMode == CustomGamemodes.HideNSeek) {
                 int impCount = Mathf.RoundToInt(CustomOptionHolder.hideNSeekHunterCount.getFloat());
                 __result = impCount; ; // Set Imp Num
-            }           
+            } else if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.Normal) {  // Ignore Vanilla impostor limits in TOR Games.
+                __result = Mathf.Clamp(GameOptionsManager.Instance.CurrentGameOptions.NumImpostors, 1, 3);
+            } 
+        }
+    }
+
+    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.Validate))]
+    class GameOptionsDataValidatePatch {
+        public static void Postfix(GameOptionsData __instance) {
+            if (MapOptions.gameMode == CustomGamemodes.HideNSeek || GameOptionsManager.Instance.CurrentGameOptions.GameMode != GameModes.Normal) return;
+            __instance.NumImpostors = GameOptionsManager.Instance.CurrentGameOptions.NumImpostors;
         }
     }
 
@@ -508,6 +518,7 @@ namespace TheOtherRoles.Patches {
         }
 
         private static byte setModifierToRandomPlayer(byte modifierId, List<PlayerControl> playerList, byte flag = 0) {
+            if (playerList.Count == 0) return Byte.MaxValue;
             var index = rnd.Next(0, playerList.Count);
             byte playerId = playerList[index].PlayerId;
             playerList.RemoveAt(index);

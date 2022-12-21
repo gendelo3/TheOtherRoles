@@ -168,7 +168,7 @@ namespace TheOtherRoles.Objects {
                 setActive(false);
                 return;
             }
-            setActive(hudManager.UseButton.isActiveAndEnabled);
+            setActive(hudManager.UseButton.isActiveAndEnabled || hudManager.PetButton.isActiveAndEnabled);
 
             if (DeputyTimer >= 0) { // This had to be reordered, so that the handcuffs do not stop the underlying timers from running
                 if (HasEffect && isEffectActive)

@@ -27,6 +27,7 @@ namespace TheOtherRoles {
 
         public static List<CustomOption> options = new List<CustomOption>();
         public static int preset = 0;
+        public static ConfigEntry<string> vanillaSettings;
 
         public int id;
         public string name;
@@ -76,8 +77,11 @@ namespace TheOtherRoles {
 
         // Static behaviour
 
-            public static void switchPreset(int newPreset) {
+        public static void switchPreset(int newPreset) {
+            saveVanillaOptions();
             CustomOption.preset = newPreset;
+            vanillaSettings = TheOtherRolesPlugin.Instance.Config.Bind($"Preset{preset}", "GameOptions", "");
+            loadVanillaOptions();
             foreach (CustomOption option in CustomOption.options) {
                 if (option.id == 0) continue;
 
@@ -88,6 +92,16 @@ namespace TheOtherRoles {
                     stringOption.ValueText.text = option.selections[option.selection].ToString();
                 }
             }
+        }
+
+        public static void saveVanillaOptions() {
+            vanillaSettings.Value = Convert.ToBase64String(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.CurrentGameOptions));
+        }
+
+        public static void loadVanillaOptions() {
+            string optionsString = vanillaSettings.Value;
+            if (optionsString == "") return;
+            GameOptionsManager.Instance.CurrentGameOptions = GameOptionsManager.Instance.gameOptionsFactory.FromBytes(Convert.FromBase64String(optionsString));
         }
 
         public static void ShareOptionSelections() {
@@ -142,7 +156,10 @@ namespace TheOtherRoles {
 
                     ShareOptionSelections();// Share all selections
                 }
-           }
+            } else if (id == 0 && AmongUsClient.Instance?.AmHost == true && PlayerControl.LocalPlayer) {  // Share the preset switch for random maps, even if the menu isnt open!
+                switchPreset(selection);
+                ShareOptionSelections();// Share all selections
+            }
         }
     }
 

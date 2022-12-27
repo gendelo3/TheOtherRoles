@@ -124,7 +124,7 @@ namespace TheOtherRoles {
             var optionsList = new List<CustomOption>(CustomOption.options);
             while (optionsList.Any())
             {
-                byte amount = (byte) Math.Min(optionsList.Count, 20);
+                byte amount = (byte) Math.Min(optionsList.Count, 200); // takes less than 3 bytes per option on average
                 var writer = AmongUsClient.Instance!.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareOptions, SendOption.Reliable, -1);
                 writer.Write(amount);
                 for (int i = 0; i < amount; i++)

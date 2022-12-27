@@ -95,13 +95,27 @@ namespace TheOtherRoles {
         }
 
         public static void saveVanillaOptions() {
-            vanillaSettings.Value = Convert.ToBase64String(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.CurrentGameOptions));
+            vanillaSettings.Value = Convert.ToBase64String(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameManager.Instance.LogicOptions.currentGameOptions));
         }
 
         public static void loadVanillaOptions() {
             string optionsString = vanillaSettings.Value;
             if (optionsString == "") return;
-            GameOptionsManager.Instance.CurrentGameOptions = GameOptionsManager.Instance.gameOptionsFactory.FromBytes(Convert.FromBase64String(optionsString));
+            GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.gameOptionsFactory.FromBytes(Convert.FromBase64String(optionsString));
+            GameOptionsManager.Instance.CurrentGameOptions = GameOptionsManager.Instance.GameHostOptions;
+            GameManager.Instance.LogicOptions.SetGameOptions(GameOptionsManager.Instance.CurrentGameOptions);
+            GameManager.Instance.LogicOptions.SyncOptions();
+        }
+
+        public static void ShareOptionChange(uint optionId) {
+            var option = options.FirstOrDefault(x => x.id == optionId);
+            if (option == null) return;
+
+            var writer = AmongUsClient.Instance!.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareOptions, SendOption.Reliable, -1);
+            writer.Write((byte)1);
+            writer.WritePacked((uint)option.id);
+            writer.WritePacked(Convert.ToUInt32(option.selection));
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
 
         public static void ShareOptionSelections() {
@@ -151,10 +165,13 @@ namespace TheOtherRoles {
                 stringOption.ValueText.text = selections[selection].ToString();
 
                 if (AmongUsClient.Instance?.AmHost == true && CachedPlayer.LocalPlayer.PlayerControl) {
-                    if (id == 0) switchPreset(selection); // Switch presets
-                    else if (entry != null) entry.Value = selection; // Save selection to config
-
-                    ShareOptionSelections();// Share all selections
+                    if (id == 0 && selection != preset) {
+                        switchPreset(selection); // Switch presets
+                        ShareOptionSelections();
+                    } else if (entry != null) {
+                        entry.Value = selection; // Save selection to config
+                        ShareOptionChange((uint)id);// Share single selection
+                    }
                 }
             } else if (id == 0 && AmongUsClient.Instance?.AmHost == true && PlayerControl.LocalPlayer) {  // Share the preset switch for random maps, even if the menu isnt open!
                 switchPreset(selection);
@@ -642,6 +659,7 @@ namespace TheOtherRoles {
         public static void Postfix()
         {
             CustomOption.ShareOptionSelections();
+            CustomOption.saveVanillaOptions();
         }
     }
 

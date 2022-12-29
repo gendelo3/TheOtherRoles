@@ -1740,7 +1740,7 @@ namespace TheOtherRoles
                     hunterLighterButton.actionButton.graphic.color = Palette.EnabledColor;
                 },
                 Lighter.getButtonSprite(),
-                CustomButton.ButtonPositions.lowerRowRight,
+                CustomButton.ButtonPositions.upperRowCenter,
                 __instance,
                 KeyCode.F,
                 true,
@@ -1806,7 +1806,7 @@ namespace TheOtherRoles
                     hunterArrowButton.actionButton.graphic.color = Palette.EnabledColor;
                 },
                 Hunter.getArrowSprite(),
-                CustomButton.ButtonPositions.upperRowFarLeft,
+                CustomButton.ButtonPositions.upperRowLeft,
                 __instance,
                 KeyCode.R,
                 true,

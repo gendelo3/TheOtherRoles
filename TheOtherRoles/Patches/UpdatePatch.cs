@@ -311,7 +311,7 @@ namespace TheOtherRoles.Patches {
         }
 
         static void updateSabotageButton(HudManager __instance) {
-            if (MeetingHud.Instance) __instance.SabotageButton.Hide();
+            if (MeetingHud.Instance || MapOptions.gameMode == CustomGamemodes.HideNSeek) __instance.SabotageButton.Hide();
         }
 
         static void updateMapButton(HudManager __instance) {

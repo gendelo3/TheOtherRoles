@@ -104,6 +104,7 @@ namespace TheOtherRoles.Patches {
                             HideNSeek.isWaitingTimer = false;
                         }
                     })));
+                    player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                 }
 
                 if (HideNSeek.polusVent == null && GameOptionsManager.Instance.currentNormalGameOptions.MapId == 2) {

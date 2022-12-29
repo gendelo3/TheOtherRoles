@@ -33,9 +33,9 @@
       },
       "Reactor": {
         "type": "Direct",
-        "requested": "[2.0.0-ci.224, )",
-        "resolved": "2.0.0-ci.224",
-        "contentHash": "3Xpyw6VBc7HX0jbS017U6bqvrqKQvuzyoch2qHHaQqrzwz3J6p+BR9w3yNySMv3AAqOfvl2/B2+3CWGC7OkBRw==",
+        "requested": "[2.1.0, )",
+        "resolved": "2.1.0",
+        "contentHash": "sJaWGAn+c8efXKZS+sFcz+ybHYdp7CFJVdcX5+r0QbyPpruo/GotNdhrxvUUlCVAhhX/e0epIFKGRZJcprhp9w==",
         "dependencies": {
           "BepInEx.Unity.IL2CPP": "6.0.0-be.663"
         }

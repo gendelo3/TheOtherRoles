@@ -251,7 +251,7 @@ namespace TheOtherRoles.Patches {
         }
     }
 
-    [HarmonyPatch(typeof(Constants), nameof(Constants.ShouldHorseAround))]
+    /*[HarmonyPatch(typeof(Constants), nameof(Constants.ShouldHorseAround))]
     public static class ShouldAlwaysHorseAround {
         public static bool isHorseMode;
         public static bool Prefix(ref bool __result) {
@@ -262,6 +262,6 @@ namespace TheOtherRoles.Patches {
             }
             return false;
         }
-    }
+    }*/
 }
 

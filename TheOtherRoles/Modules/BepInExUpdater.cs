@@ -34,7 +34,7 @@ public class BepInExUpdater : MonoBehaviour
     [HideFromIl2Cpp]
     public IEnumerator CoUpdate()
     {
-        Task.Run(() => MessageBox(IntPtr.Zero, "Required BepInEx update is downloading, please wait...","The Other Roles", 0));
+        Task.Run(() => MessageBox(GetForegroundWindow(), "Required BepInEx update is downloading, please wait...","The Other Roles", 0));
         UnityWebRequest www = UnityWebRequest.Get(BepInExDownloadURL);
         yield return www.Send();        
         if (www.isNetworkError || www.isHttpError)
@@ -64,9 +64,13 @@ public class BepInExUpdater : MonoBehaviour
         Process.Start(startInfo);
         Application.Quit();
     }
-    
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetForegroundWindow();
     [DllImport("user32.dll")]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, int options);
+    [DllImport("user32.dll")]
+    public static extern int MessageBoxTimeout(IntPtr hwnd, String text, String title, uint type, Int16 wLanguageId, Int32 milliseconds);
 }
 
 [HarmonyPatch(typeof(SplashManager), nameof(SplashManager.Update))]

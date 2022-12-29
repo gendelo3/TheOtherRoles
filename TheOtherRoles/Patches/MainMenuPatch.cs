@@ -12,8 +12,8 @@ namespace TheOtherRoles.Modules {
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
     public class MainMenuPatch {
         private static bool horseButtonState = MapOptions.enableHorseMode;
-        private static Sprite horseModeOffSprite = null;
-        private static Sprite horseModeOnSprite = null;
+        //private static Sprite horseModeOffSprite = null;
+        //private static Sprite horseModeOnSprite = null;
         private static GameObject bottomTemplate;
         private static AnnouncementPopUp popUp;
 
@@ -43,10 +43,12 @@ namespace TheOtherRoles.Modules {
             });
 
 
+            bottomTemplate = GameObject.Find("InventoryButton");
+            /*
             // Horse mode stuff
             var horseModeSelectionBehavior = new ClientOptionsPatch.SelectionBehaviour("Enable Horse Mode", () => MapOptions.enableHorseMode = TheOtherRolesPlugin.EnableHorseMode.Value = !TheOtherRolesPlugin.EnableHorseMode.Value, TheOtherRolesPlugin.EnableHorseMode.Value);
 
-            bottomTemplate = GameObject.Find("InventoryButton");
+            
             if (bottomTemplate == null) return;
             var horseButton = Object.Instantiate(bottomTemplate, bottomTemplate.transform.parent);
             var passiveHorseButton = horseButton.GetComponent<PassiveButton>();
@@ -75,7 +77,7 @@ namespace TheOtherRoles.Modules {
                     particles.pool.ReclaimAll();
                     particles.Start();
                 }
-            });
+            });*/
 
             // TOR credits button
             if (bottomTemplate == null) return;
@@ -100,8 +102,9 @@ Psynomit    probablyadnf    JustASysAdmin
 
 Discord Moderators:
 Streamblox    Draco Cordraconis
-
 Thanks to all our discord helpers!
+
+Thanks to miniduikboot & GD for hosting modded servers
 
 ";
                 creditsString += $@"<size=60%> Other Credits & Resources:

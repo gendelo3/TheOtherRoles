@@ -460,7 +460,22 @@ namespace TheOtherRoles.Patches {
         }
 
         public static void updatePlayerInfo() {
-            foreach (PlayerControl p in CachedPlayer.AllPlayers) {         
+            Vector3 colorBlindTextMeetingInitialLocalPos = new Vector3(0.3384f, -0.16666f, -0.01f);
+            Vector3 colorBlindTextMeetingInitialLocalScale = new Vector3(0.9f, 1f, 1f);
+            foreach (PlayerControl p in CachedPlayer.AllPlayers) {
+                
+                // Colorblind Text in Meeting
+                PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == p.PlayerId);
+                if (playerVoteArea != null && playerVoteArea.ColorBlindName.gameObject.active) {
+                    playerVoteArea.ColorBlindName.transform.localPosition = colorBlindTextMeetingInitialLocalPos + new Vector3(0f, 0.4f, 0f);
+                    playerVoteArea.ColorBlindName.transform.localScale = colorBlindTextMeetingInitialLocalScale * 0.8f;
+                }
+
+                // Colorblind Text During the round
+                if (p.cosmetics.colorBlindText != null && p.cosmetics.showColorBlindText && p.cosmetics.colorBlindText.gameObject.active) {
+                    p.cosmetics.colorBlindText.transform.localPosition = new Vector3(0, -1f, -0.001f);
+                }
+
                 if ((Lawyer.lawyerKnowsRole && CachedPlayer.LocalPlayer.PlayerControl == Lawyer.lawyer && p == Lawyer.target) || p == CachedPlayer.LocalPlayer.PlayerControl || CachedPlayer.LocalPlayer.Data.IsDead) {
                     Transform playerInfoTransform = p.cosmetics.nameText.transform.parent.FindChild("Info");
                     TMPro.TextMeshPro playerInfo = playerInfoTransform != null ? playerInfoTransform.GetComponent<TMPro.TextMeshPro>() : null;
@@ -471,13 +486,12 @@ namespace TheOtherRoles.Patches {
                         playerInfo.gameObject.name = "Info";
                         playerInfo.color = playerInfo.color.SetAlpha(1f);
                     }
-
-                    PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == p.PlayerId);
+    
                     Transform meetingInfoTransform = playerVoteArea != null ? playerVoteArea.NameText.transform.parent.FindChild("Info") : null;
                     TMPro.TextMeshPro meetingInfo = meetingInfoTransform != null ? meetingInfoTransform.GetComponent<TMPro.TextMeshPro>() : null;
                     if (meetingInfo == null && playerVoteArea != null) {
                         meetingInfo = UnityEngine.Object.Instantiate(playerVoteArea.NameText, playerVoteArea.NameText.transform.parent);
-                        meetingInfo.transform.localPosition += Vector3.down * 0.16f;
+                        meetingInfo.transform.localPosition += Vector3.down * 0.2f;
                         meetingInfo.fontSize *= 0.60f;
                         meetingInfo.gameObject.name = "Info";
                     }
@@ -485,7 +499,7 @@ namespace TheOtherRoles.Patches {
                     // Set player name higher to align in middle
                     if (meetingInfo != null && playerVoteArea != null) {
                         var playerName = playerVoteArea.NameText;
-                        playerName.transform.localPosition = new Vector3(0.3384f, (0.0311f + 0.0683f), -0.1f);    
+                        playerName.transform.localPosition = new Vector3(0.3384f, 0.0311f, -0.1f);
                     }
 
                     var (tasksCompleted, tasksTotal) = TasksHandler.taskInfo(p.Data);
@@ -941,7 +955,7 @@ namespace TheOtherRoles.Patches {
             
             // set position of colorblind text
             foreach (var pc in PlayerControl.AllPlayerControls) {
-                pc.cosmetics.colorBlindText.gameObject.transform.localPosition = new Vector3(0, 0, -0.0001f);
+                //pc.cosmetics.colorBlindText.gameObject.transform.localPosition = new Vector3(0, 0, -0.0001f);
             }
             
             if (CachedPlayer.LocalPlayer.PlayerControl == __instance) {

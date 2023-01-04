@@ -110,7 +110,6 @@ namespace TheOtherRoles {
         public static void ShareOptionChange(uint optionId) {
             var option = options.FirstOrDefault(x => x.id == optionId);
             if (option == null) return;
-
             var writer = AmongUsClient.Instance!.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareOptions, SendOption.Reliable, -1);
             writer.Write((byte)1);
             writer.WritePacked((uint)option.id);
@@ -120,7 +119,6 @@ namespace TheOtherRoles {
 
         public static void ShareOptionSelections() {
             if (CachedPlayer.AllPlayers.Count <= 1 || AmongUsClient.Instance!.AmHost == false && CachedPlayer.LocalPlayer.PlayerControl == null) return;
-
             var optionsList = new List<CustomOption>(CustomOption.options);
             while (optionsList.Any())
             {
@@ -660,6 +658,15 @@ namespace TheOtherRoles {
         {
             CustomOption.ShareOptionSelections();
             CustomOption.saveVanillaOptions();
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.CoSpawnPlayer))]
+    public class AmongUsClientOnPlayerJoinedPatch {
+        public static void Postfix() {
+            if (PlayerControl.LocalPlayer != null) {
+                CustomOption.ShareOptionSelections();
+            }
         }
     }
 

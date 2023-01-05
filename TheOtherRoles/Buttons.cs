@@ -119,7 +119,7 @@ namespace TheOtherRoles
             witchSpellButton.MaxTimer = Witch.cooldown;
             ninjaButton.MaxTimer = Ninja.cooldown;
             thiefKillButton.MaxTimer = Thief.cooldown;
-            mayorMeetingButton.MaxTimer = ShipStatus.Instance.EmergencyCooldown;
+            mayorMeetingButton.MaxTimer = GameManager.Instance.LogicOptions.GetEmergencyCooldown();
             trapperButton.MaxTimer = Trapper.cooldown;
             hunterLighterButton.MaxTimer = Hunter.lightCooldown;
             hunterAdminTableButton.MaxTimer = Hunter.AdminCooldown;

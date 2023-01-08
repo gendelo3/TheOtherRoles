@@ -69,6 +69,11 @@ namespace TheOtherRoles.Patches {
                         writer.Write(target.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.uncheckedExilePlayer(target.PlayerId);
+                        if (target == Lawyer.target && Lawyer.lawyer != null) {
+                            MessageWriter writer2 = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, Hazel.SendOption.Reliable, -1);
+                            AmongUsClient.Instance.FinishRpcImmediately(writer2);
+                            RPCProcedure.lawyerPromotesToPursuer();
+                        }
                     }
                 }
             }

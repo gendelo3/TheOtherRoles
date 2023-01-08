@@ -122,6 +122,7 @@ The [Role Assignment](#role-assignment) sections explains how the roles are bein
 - Changed the way option presets work: They now include all vanilla options (e.g. amount of tasks, movement speed etc.) 
 - Changed the animation of the TOR Hunter to the Seeker animation of vanilla
 - Fixed a bug where the prosecutor did not promote to pursuer when the target shifted an evil role and died. 
+- Fixed a bug where the prosecutor did not promote to pursuer when the target is Witch exiled
 - Removed Horse Mode (for now)
 
 **Version 4.2.0**

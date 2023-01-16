@@ -2,6 +2,8 @@
 using AmongUs.GameOptions;
 using System.Collections.Generic;
 using System.Linq;
+using TheOtherRoles.Players;
+using System;
 
 namespace TheOtherRoles.Patches {
     [HarmonyPatch]
@@ -55,6 +57,20 @@ namespace TheOtherRoles.Patches {
 			    }
             }
             return false;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(AbilityButton), nameof(AbilityButton.Update))]
+        public static void showOrHideAbilityButtonPostfix(AbilityButton __instance) {
+            if (CachedPlayer.LocalPlayer.Data.IsDead && CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.getBool()) {
+                // player has haunt button.
+                var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);
+                int numberOfLeftTasks = playerTotal - playerCompleted;
+                if (numberOfLeftTasks <= 0)
+                    __instance.Show();
+                else
+                    __instance.Hide();
+            }
         }
     }
 }

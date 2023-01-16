@@ -31,7 +31,7 @@ namespace TheOtherRoles
     public class TheOtherRolesPlugin : BasePlugin
     {
         public const string Id = "me.eisbison.theotherroles";
-        public const string VersionString = "4.2.1";
+        public const string VersionString = "4.2.2";
         public static uint betaDays = 0;  // amount of days for the build to be usable (0 for infinite!)
 
         public static Version Version = Version.Parse(VersionString);
@@ -64,7 +64,7 @@ namespace TheOtherRoles
         public static void UpdateRegions() {
             ServerManager serverManager = FastDestroyableSingleton<ServerManager>.Instance;
             var regions = new IRegionInfo[] {
-                new DnsRegionInfo(Ip.Value, "Custom", StringNames.NoTranslation, Ip.Value, Port.Value, false).CastFast<IRegionInfo>()
+                new StaticHttpRegionInfo("Custom", StringNames.NoTranslation, Ip.Value, new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Custom", Ip.Value, Port.Value, false) })).CastFast<IRegionInfo>()
             };
             
             IRegionInfo currentRegion = serverManager.CurrentRegion;

@@ -343,7 +343,7 @@ namespace TheOtherRoles.Patches {
             updateSabotageButton(__instance);
             updateUseButton(__instance);
             updateMapButton(__instance);
-            __instance.AbilityButton?.Update();
+            if (!MeetingHud.Instance) __instance.AbilityButton?.Update();
 
         }
     }

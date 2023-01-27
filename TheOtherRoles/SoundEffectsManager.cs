@@ -46,6 +46,24 @@ namespace TheOtherRoles
             stop(path);
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(clipToPlay, false, volume);
         }
+        public static void playAtPosition(string path, Vector2 position, float maxDuration = 15f, float range = 5f) {
+            if (!MapOptions.enableSoundEffects || !Constants.ShouldPlaySfx()) return;
+            AudioClip clipToPlay = get(path);
+
+            AudioSource source = SoundManager.Instance.PlaySound(clipToPlay, false, 1f);
+            HudManager.Instance.StartCoroutine(Effects.Lerp(maxDuration, new Action<float>((p) => {
+                if (p == 1) {
+                    source.Stop();
+                }
+                float distance, volume;
+                distance = Vector2.Distance(position, Players.CachedPlayer.LocalPlayer.transform.position);
+                if (distance < range)
+                    volume = (1f - distance / range);
+                else
+                    volume = 0f;
+                source.volume = volume;
+            })));
+        }
 
         public static void stop(string path) {
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.StopSound(get(path));
